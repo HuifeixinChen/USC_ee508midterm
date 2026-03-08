@@ -495,11 +495,15 @@
         <a href="#ml">ML Fundamentals</a>
         <a href="#loss">Loss Functions</a>
         <a href="#gd">Gradient Descent</a>
+        <a href="#backprop">Backpropagation</a>
+        <a href="#activations">Activation Functions</a>
       </div>
 
       <div class="nav-group">
         <div class="nav-label">CNN</div>
         <a href="#cnn">CNN and Convolution</a>
+        <a href="#conv-math">Convolution Math &amp; Examples</a>
+        <a href="#batchnorm">Batch Norm &amp; Regularization</a>
         <a href="#models">Classic Models</a>
       </div>
 
@@ -521,12 +525,20 @@
       </div>
 
       <div class="nav-group">
+        <div class="nav-label">Deep Reference</div>
+        <a href="#formulas">All Formulas Reference</a>
+        <a href="#worked-examples">Worked Examples</a>
+        <a href="#hw-deep">Hardware Deep Dive</a>
+      </div>
+
+      <div class="nav-group">
         <div class="nav-label">Before the Exam</div>
         <a href="#deepdive">Full Lecture Notes</a>
         <a href="#dense-notes">Detailed Slide-Based Notes</a>
         <a href="#compare">High-Frequency Comparisons</a>
         <a href="#plan">6-Day Study Plan</a>
         <a href="#quiz">Self-Test Questions</a>
+        <a href="CSCI566_Quiz_v2.html">CSCI 566 Practice Quiz</a>
       </div>
     </aside>
 
@@ -677,6 +689,40 @@
           </div>
         </div>
 
+        <h3 style="margin-top:22px;">评估指标 (Evaluation Metrics)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>指标</th><th>公式</th><th>含义</th><th>什么时候用</th></tr></thead>
+            <tbody>
+              <tr><td>Accuracy</td><td>(TP+TN) / (TP+TN+FP+FN)</td><td>总体预测对了多少</td><td>类别平衡时很直观</td></tr>
+              <tr><td>Precision</td><td>TP / (TP + FP)</td><td>"预测为正的"里有多少真正的正</td><td>关注误报时（如垃圾邮件检测）</td></tr>
+              <tr><td>Recall</td><td>TP / (TP + FN)</td><td>"真实为正的"有多少被检出</td><td>关注漏检时（如疾病筛查）</td></tr>
+              <tr><td>F1 Score</td><td>2 × P × R / (P + R)</td><td>Precision 和 Recall 的调和平均</td><td>需要同时关注精确率和召回率</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout"><strong>Confusion Matrix</strong>（混淆矩阵）: 2×2 矩阵，行为真实标签，列为预测标签。四个格分别是 TP（真正）、FP（假正 / 误报）、FN（假负 / 漏检）、TN（真负）。所有分类指标都从这个矩阵推导出来。</div>
+
+        <h3 style="margin-top:22px;">Bias-Variance Tradeoff</h3>
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Bias（偏差）</span>
+            <h3>模型太简单，学不到真实规律</h3>
+            <p>高 bias = underfitting（欠拟合）。模型在训练集和测试集上都表现差。<br><strong>解决：</strong>增大模型容量、减少正则化。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Variance（方差）</span>
+            <h3>模型太复杂，过度适应训练数据</h3>
+            <p>高 variance = overfitting（过拟合）。训练集好、测试集差。<br><strong>解决：</strong>更多数据、正则化、dropout、early stopping。</p>
+          </div>
+        </div>
+
+        <div class="equation">
+          <strong>Error = Bias² + Variance + Irreducible Noise</strong><br>
+          好的模型是在 bias 和 variance 之间找到平衡点。
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
@@ -793,6 +839,47 @@
             <p>如果正确类别概率很小，loss 会非常大，所以它逼模型把高概率给正确类别。</p>
           </div>
         </div>
+
+        <h3 style="margin-top:22px;">Loss 函数数学公式详解</h3>
+
+        <div class="equation">
+          <strong>MSE (Mean Squared Error):</strong><br>
+          L = (1/n) Σᵢ (yᵢ − ŷᵢ)²<br><br>
+          <strong>MAE (Mean Absolute Error):</strong><br>
+          L = (1/n) Σᵢ |yᵢ − ŷᵢ|<br><br>
+          <strong>0/1 Loss:</strong><br>
+          L = 𝟙(ŷ ≠ y)，即预测错了就是 1，对了就是 0<br><br>
+          <strong>Hinge Loss (SVM margin loss):</strong><br>
+          L = max(0, 1 − y · f(x))，其中 y ∈ {−1, +1}<br>
+          多分类版本 (Multiclass SVM): Lᵢ = Σ_{j≠yᵢ} max(0, sⱼ − s_{yᵢ} + Δ)，Δ 通常取 1<br><br>
+          <strong>Logistic Loss (Binary Cross-Entropy):</strong><br>
+          L = −[y log(σ(z)) + (1−y) log(1−σ(z))]<br>
+          其中 σ(z) = 1/(1 + e⁻ᶻ) 是 sigmoid 函数<br><br>
+          <strong>Cross-Entropy Loss (多分类):</strong><br>
+          L = −Σ_{c=1}^{C} yc log(pc)<br>
+          对于 one-hot 编码简化为: L = −log(p_{正确类别})<br><br>
+          <strong>Softmax → Cross-Entropy 完整链:</strong><br>
+          先 Softmax: pⱼ = exp(sⱼ) / Σₖ exp(sₖ)<br>
+          再 Cross-Entropy: L = −log(p_{正确类别}) = −s_{正确类别} + log(Σₖ exp(sₖ))
+        </div>
+
+        <div class="callout">
+          <strong>为什么 Softmax + Cross-Entropy 如此重要：</strong>
+          Softmax 把任意实数 logits 变成概率分布（所有类别概率之和为 1）。Cross-Entropy 然后衡量预测分布和真实分布（one-hot）之间的差异。如果正确类别的概率接近 1，loss 接近 0；如果正确类别概率接近 0，loss 趋向无穷大。这给了优化器非常强的信号。
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">梯度性质</span>
+            <h3>Softmax + CE 的梯度非常简洁</h3>
+            <p>对 logits sⱼ 的梯度: ∂L/∂sⱼ = pⱼ − yⱼ，即"预测概率减去真实标签"。这使得实现和计算都很高效。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">数值稳定性</span>
+            <h3>Log-Sum-Exp Trick</h3>
+            <p>实际计算时先减去 max(s)：log Σexp(sₖ) = M + log Σexp(sₖ − M)，其中 M = max(s)。这防止 exp 溢出。</p>
+          </div>
+        </div>
       </section>
 
       <section class="section" id="gd">
@@ -873,6 +960,235 @@
             </tbody>
           </table>
         </div>
+
+        <h3 style="margin-top:22px;">优化器数学公式详解</h3>
+
+        <div class="equation">
+          <strong>Vanilla SGD:</strong><br>
+          θ_{t+1} = θ_t − η · ∇L(θ_t)<br><br>
+          <strong>SGD with Momentum:</strong><br>
+          v_t = β · v_{t-1} + ∇L(θ_t)　　（β 通常取 0.9）<br>
+          θ_{t+1} = θ_t − η · v_t<br>
+          直觉：v 像一个有惯性的球，即使当前梯度变化，也会保留之前的方向<br><br>
+          <strong>Nesterov Momentum (NAG):</strong><br>
+          v_t = β · v_{t-1} + ∇L(θ_t − η · β · v_{t-1})<br>
+          θ_{t+1} = θ_t − η · v_t<br>
+          直觉：先"往前看一步"再计算梯度，通常比标准 momentum 收敛更好<br><br>
+          <strong>AdaGrad:</strong><br>
+          G_t = G_{t-1} + (∇L)²　　（逐元素累积平方梯度）<br>
+          θ_{t+1} = θ_t − η / (√G_t + ε) · ∇L<br>
+          问题：G 只增不降，后期学习率可能太小<br><br>
+          <strong>RMSProp:</strong><br>
+          E[g²]_t = γ · E[g²]_{t-1} + (1−γ) · (∇L)²<br>
+          θ_{t+1} = θ_t − η / (√E[g²]_t + ε) · ∇L<br>
+          改进：用滑动平均代替累积，解决学习率过度衰减<br><br>
+          <strong>Adam (Adaptive Moment Estimation):</strong><br>
+          m_t = β₁ · m_{t-1} + (1−β₁) · ∇L　　（一阶矩 / 均值估计）<br>
+          v_t = β₂ · v_{t-1} + (1−β₂) · (∇L)²　　（二阶矩 / 方差估计）<br>
+          m̂_t = m_t / (1 − β₁ᵗ)　　（偏差修正）<br>
+          v̂_t = v_t / (1 − β₂ᵗ)　　（偏差修正）<br>
+          θ_{t+1} = θ_t − η · m̂_t / (√v̂_t + ε)<br>
+          常见默认值：β₁=0.9，β₂=0.999，ε=1e-8
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">为什么 Adam 需要偏差修正</span>
+            <h3>Bias Correction</h3>
+            <p>因为 m 和 v 初始化为 0，前几步估计值偏低。除以 (1 − βᵗ) 补偿这种初始偏差，使得前几步的更新方向和大小更准确。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">Learning Rate Schedule</span>
+            <h3>学习率衰减策略</h3>
+            <p><strong>Step decay:</strong> 每隔 N 个 epoch 乘以 γ（通常 0.1）<br>
+               <strong>Cosine annealing:</strong> η_t = η_min + ½(η_max − η_min)(1 + cos(πt/T))<br>
+               <strong>Warm-up:</strong> 前几百步线性增大 η，然后再衰减，防止初始阶段大梯度造成不稳定</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="backprop">
+        <h2>Backpropagation 反向传播</h2>
+        <p class="lead">Backprop 是神经网络训练的核心算法。它利用 chain rule 高效计算 loss 对每个参数的梯度。</p>
+
+        <div class="flow">
+          <div class="node">Forward Pass</div>
+          <div class="arrow">→</div>
+          <div class="node gold">计算 Loss</div>
+          <div class="arrow">→</div>
+          <div class="node">Backward Pass</div>
+          <div class="arrow">→</div>
+          <div class="node gold">更新参数</div>
+        </div>
+
+        <div class="equation">
+          <strong>Chain Rule（链式法则）:</strong><br>
+          如果 y = f(g(x))，则 dy/dx = (df/dg) · (dg/dx)<br><br>
+          <strong>多层神经网络的反向传播:</strong><br>
+          设 z = Wx + b，a = σ(z)（激活后输出），L = loss(a, y)<br>
+          ∂L/∂W = ∂L/∂a · ∂a/∂z · ∂z/∂W = δ · xᵀ<br>
+          ∂L/∂b = δ<br>
+          ∂L/∂x = Wᵀ · δ　　（传给上一层的梯度）<br>
+          其中 δ = ∂L/∂z = ∂L/∂a · σ'(z)
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Forward Pass</span>
+            <h3>前向传播做了什么</h3>
+            <p>逐层计算输出，同时 <strong>缓存中间值</strong>（z 和 a），因为 backward pass 需要它们来计算局部梯度。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag green">Backward Pass</span>
+            <h3>反向传播做了什么</h3>
+            <p>从输出层开始，逐层用 chain rule 把梯度传回来。每一层用缓存的中间值计算局部梯度，然后把梯度传给前一层。</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;">常见门/操作的梯度</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>操作</th>
+                <th>Forward</th>
+                <th>Backward（Local gradient）</th>
+                <th>直觉</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Add: f = x + y</td><td>z = x + y</td><td>∂z/∂x = 1, ∂z/∂y = 1</td><td>梯度直接复制给两个输入</td></tr>
+              <tr><td>Multiply: f = x · y</td><td>z = xy</td><td>∂z/∂x = y, ∂z/∂y = x</td><td>梯度被另一个输入缩放（交换）</td></tr>
+              <tr><td>Max: f = max(x, y)</td><td>z = max(x,y)</td><td>赢家得 1, 输家得 0</td><td>梯度只流向较大的那个</td></tr>
+              <tr><td>ReLU: f = max(0, x)</td><td>z = max(0,x)</td><td>x>0 时为 1, x≤0 时为 0</td><td>正区间传梯度，负区间拦截</td></tr>
+              <tr><td>Sigmoid: f = σ(x)</td><td>z = σ(x)</td><td>σ(x)(1−σ(x))</td><td>最大值 0.25（在 x=0），容易饱和</td></tr>
+              <tr><td>矩阵乘法: Y = XW</td><td>Y = XW</td><td>∂L/∂X = (∂L/∂Y)Wᵀ，∂L/∂W = Xᵀ(∂L/∂Y)</td><td>转置并乘上游梯度</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag alt">Vanishing Gradient 梯度消失</span>
+            <h3>为什么深层网络难训练</h3>
+            <p>如果每层的梯度都 &lt; 1（如 sigmoid 饱和区），多层连乘后梯度指数衰减。前面的层几乎收不到有效的梯度信号。<br><strong>解决方案：</strong>ReLU 激活、残差连接、BatchNorm</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">Exploding Gradient 梯度爆炸</span>
+            <h3>梯度太大怎么办</h3>
+            <p>如果每层的梯度都 &gt; 1，连乘后指数增长，参数更新过大导致训练发散。<br><strong>解决方案：</strong>梯度裁剪 (gradient clipping)、更好的初始化</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">Computational Graph</span>
+            <h3>计算图的意义</h3>
+            <p>把前向计算画成有向无环图 (DAG)，每个节点是一个操作。Backprop 就是从 loss 节点沿着反向边逐步传播梯度。框架（PyTorch、TF）自动构建和遍历这个图。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="activations">
+        <h2>Activation Functions 激活函数</h2>
+        <p class="lead">非线性激活是让神经网络表达能力超越线性模型的关键。没有激活函数，再深的网络也只是一个大型线性变换。</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>激活函数</th>
+                <th>公式</th>
+                <th>输出范围</th>
+                <th>导数</th>
+                <th>优点</th>
+                <th>缺点</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sigmoid</td>
+                <td>σ(x) = 1/(1+e⁻ˣ)</td>
+                <td>(0, 1)</td>
+                <td>σ(x)(1−σ(x))</td>
+                <td>输出可解释为概率</td>
+                <td>饱和区梯度消失、非零中心、计算 exp 较贵</td>
+              </tr>
+              <tr>
+                <td>Tanh</td>
+                <td>tanh(x) = (eˣ−e⁻ˣ)/(eˣ+e⁻ˣ)</td>
+                <td>(−1, 1)</td>
+                <td>1 − tanh²(x)</td>
+                <td>零中心</td>
+                <td>饱和区仍有梯度消失</td>
+              </tr>
+              <tr>
+                <td>ReLU</td>
+                <td>f(x) = max(0, x)</td>
+                <td>[0, ∞)</td>
+                <td>x>0 时 1，x≤0 时 0</td>
+                <td>计算简单、不会正区间饱和、收敛快</td>
+                <td>Dead ReLU（负半轴永久为 0），非零中心</td>
+              </tr>
+              <tr>
+                <td>Leaky ReLU</td>
+                <td>f(x) = max(αx, x)，α≈0.01</td>
+                <td>(−∞, ∞)</td>
+                <td>x>0 时 1，x≤0 时 α</td>
+                <td>解决 dead ReLU</td>
+                <td>多一个超参数 α</td>
+              </tr>
+              <tr>
+                <td>PReLU</td>
+                <td>同 Leaky ReLU，但 α 可学习</td>
+                <td>(−∞, ∞)</td>
+                <td>同上</td>
+                <td>α 由网络自动调整</td>
+                <td>增加参数量</td>
+              </tr>
+              <tr>
+                <td>ELU</td>
+                <td>x>0 时 x，x≤0 时 α(eˣ−1)</td>
+                <td>(−α, ∞)</td>
+                <td>x>0 时 1，x≤0 时 f(x)+α</td>
+                <td>接近零中心、负区间平滑</td>
+                <td>计算 exp 较贵</td>
+              </tr>
+              <tr>
+                <td>GELU</td>
+                <td>x · Φ(x)，Φ 是标准正态 CDF</td>
+                <td>≈(−0.17, ∞)</td>
+                <td>—</td>
+                <td>Transformer 中常用、平滑</td>
+                <td>计算相对复杂</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">最重要的两个事实</span>
+            <h3>为什么 ReLU 是现代标准</h3>
+            <p>1. 计算极简（一个 max）；2. 正区间梯度恒为 1，不会饱和导致梯度消失。 AlexNet 用 ReLU 替换 sigmoid/tanh 是深度学习史上的关键转折。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Dead ReLU Problem</span>
+            <h3>什么时候 ReLU 会"死"</h3>
+            <p>如果一个 ReLU 神经元的输入永远为负（比如因为大 learning rate 导致权重偏移），该神经元永远输出 0，梯度也永远是 0，再也学不回来。Leaky ReLU 和 PReLU 的设计目的就是避免这种情况。</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;">隐藏层 vs 输出层的激活选择</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>场景</th><th>推荐激活</th><th>原因</th></tr></thead>
+            <tbody>
+              <tr><td>隐藏层（通用）</td><td>ReLU / Leaky ReLU</td><td>简单高效、不饱和</td></tr>
+              <tr><td>二分类输出层</td><td>Sigmoid</td><td>输出 (0,1) 可视为概率</td></tr>
+              <tr><td>多分类输出层</td><td>Softmax</td><td>输出概率分布，和为 1</td></tr>
+              <tr><td>回归输出层</td><td>无激活（线性）</td><td>输出不应被限制范围</td></tr>
+              <tr><td>Transformer 隐藏层</td><td>GELU</td><td>GPT/BERT 等常用</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section class="section" id="cnn">
@@ -949,6 +1265,194 @@
         </div>
       </section>
 
+      </section>
+
+      <section class="section" id="conv-math">
+        <h2>Convolution 计算详解 &amp; 数值示例</h2>
+        <p class="lead">这部分用具体数字把卷积的每一步算明白，包括输出尺寸、参数量、FLOPs。</p>
+
+        <h3>输出尺寸公式</h3>
+        <div class="equation">
+          O = ⌊(W − K + 2P) / S⌋ + 1<br>
+          W = 输入宽/高，K = 卷积核大小，P = padding，S = stride
+        </div>
+
+        <h3 style="margin-top:22px;">🔢 数值示例 1：基本卷积</h3>
+        <div class="callout">
+          <strong>题目：</strong>输入 32×32×3，用 64 个 5×5 的 filter，stride=1，padding=2<br><br>
+          <strong>Step 1 — 空间输出：</strong><br>
+          O = (32 − 5 + 2×2) / 1 + 1 = (32 − 5 + 4) / 1 + 1 = 32<br>
+          所以输出空间尺寸 = 32×32（padding=2 保持了尺寸）<br><br>
+          <strong>Step 2 — 输出深度：</strong><br>
+          使用 64 个 filter → 输出深度 = 64<br>
+          <strong>最终输出体积：32 × 32 × 64</strong><br><br>
+          <strong>Step 3 — 参数量：</strong><br>
+          每个 filter: 5 × 5 × 3 = 75 个权重 + 1 个 bias = 76<br>
+          总参数: 64 × 76 = <strong>4,864</strong><br><br>
+          <strong>Step 4 — FLOPs（乘加次数）：</strong><br>
+          每个输出位置做 5×5×3 = 75 次乘法和 75 次加法<br>
+          输出位置数: 32 × 32 × 64 = 65,536<br>
+          总 MACs: 65,536 × 75 = <strong>4,915,200</strong>
+        </div>
+
+        <h3 style="margin-top:22px;">🔢 数值示例 2：stride 和 no-padding</h3>
+        <div class="callout">
+          <strong>题目：</strong>输入 28×28×1，用 16 个 3×3 filter，stride=2，padding=0<br><br>
+          O = (28 − 3 + 0) / 2 + 1 = 25/2 + 1 = 12 + 1 = <strong>13</strong><br>
+          输出：13 × 13 × 16<br>
+          参数：16 × (3×3×1 + 1) = 16 × 10 = <strong>160</strong>
+        </div>
+
+        <h3 style="margin-top:22px;">🔢 数值示例 3：1×1 卷积</h3>
+        <div class="callout">
+          <strong>题目：</strong>输入 14×14×512，用 256 个 1×1 filter<br><br>
+          O = (14 − 1 + 0) / 1 + 1 = 14<br>
+          输出：14 × 14 × 256 （空间不变，深度改变）<br>
+          参数：256 × (1×1×512 + 1) = 256 × 513 = <strong>131,328</strong><br><br>
+          <strong>1×1 卷积的作用：</strong>不改变空间尺寸，只做通道间的线性组合。常用于 bottleneck（降维）和 pointwise 融合。
+        </div>
+
+        <h3 style="margin-top:22px;">Receptive Field 感受野</h3>
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">定义</span>
+            <h3>输出一个值"看到"原始输入多大区域</h3>
+            <p>感受野 = 经过多层卷积后，输出 feature map 上一个像素对应原始输入图像上多大面积。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">递推公式</span>
+            <h3>RF_l = RF_{l-1} + (K_l − 1) × ∏ S</h3>
+            <p>每加一层卷积，感受野增大。stride 越大，上层感受野增长越快。两个 3×3 层的感受野 = 一个 5×5 层，但参数更少。</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;">Pooling 详细对比</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>特性</th><th>Max Pooling</th><th>Average Pooling</th><th>Global Average Pooling</th></tr></thead>
+            <tbody>
+              <tr><td>操作</td><td>取区域最大值</td><td>取区域平均值</td><td>对整个 feature map 取平均</td></tr>
+              <tr><td>保留什么</td><td>最强激活</td><td>整体分布</td><td>通道级全局统计</td></tr>
+              <tr><td>参数</td><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td>常见用途</td><td>特征提取阶段下采样</td><td>有时替代 max pool</td><td>替代全连接层（如 ResNet 末尾）</td></tr>
+              <tr><td>输出大小</td><td>⌊(W−K)/S⌋+1</td><td>同上</td><td>1×1×C</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px;">Depthwise Separable Convolution（MobileNet 核心）</h3>
+        <div class="equation">
+          <strong>标准卷积参数：</strong>K × K × C_in × C_out<br>
+          <strong>Depthwise Separable 参数：</strong>K × K × C_in (depthwise) + 1 × 1 × C_in × C_out (pointwise)<br>
+          <strong>计算量比值 ≈ 1/C_out + 1/K²</strong><br><br>
+          例：3×3 filter, C_in=C_out=256<br>
+          标准：3×3×256×256 = 589,824<br>
+          分离式：3×3×256 + 1×1×256×256 = 2,304 + 65,536 = 67,840 （约 <strong>8.7×</strong> 参数减少）
+        </div>
+      </section>
+
+      <section class="section" id="batchnorm">
+        <h2>Batch Normalization 和 Regularization</h2>
+        <p class="lead">BN 是现代深度学习训练中最重要的技巧之一。这一节详细讲解 BN 的数学公式、训练/测试行为差异，以及其他正则化方法。</p>
+
+        <h3>Batch Normalization 公式</h3>
+        <div class="equation">
+          <strong>Training（对每个 mini-batch）：</strong><br>
+          μ_B = (1/m) Σᵢ xᵢ　　（batch 均值）<br>
+          σ²_B = (1/m) Σᵢ (xᵢ − μ_B)²　　（batch 方差）<br>
+          x̂ᵢ = (xᵢ − μ_B) / √(σ²_B + ε)　　（标准化）<br>
+          yᵢ = γ · x̂ᵢ + β　　（可学习的缩放和平移）<br><br>
+          <strong>Inference（推理时）：</strong><br>
+          使用训练期间累计的 running mean 和 running variance（通常用指数滑动平均）<br>
+          x̂ = (x − μ_running) / √(σ²_running + ε)<br>
+          y = γ · x̂ + β
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">为什么 BN 有效</span>
+            <h3>BN 的三大好处</h3>
+            <p><strong>1.</strong> 减少 internal covariate shift（每层输入分布更稳定）<br>
+               <strong>2.</strong> 允许使用更大的 learning rate（加速收敛）<br>
+               <strong>3.</strong> 有一定正则化效果（因为 batch 统计带噪声）</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Train vs Test 区别</span>
+            <h3>考试高频考点</h3>
+            <p><strong>训练时：</strong>用当前 mini-batch 的均值和方差。<br>
+               <strong>测试时：</strong>用训练期间累积的全局统计量（running mean / running var）。<br>
+               <strong>为什么不同：</strong>测试时可能只有一个样本，无法计算有意义的 batch 统计。</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>BN 参数</th><th>是否可学习</th><th>作用</th></tr></thead>
+            <tbody>
+              <tr><td>γ (scale)</td><td>✅ 可学习</td><td>允许网络恢复需要的方差</td></tr>
+              <tr><td>β (shift)</td><td>✅ 可学习</td><td>允许网络恢复需要的均值偏移</td></tr>
+              <tr><td>μ_running</td><td>❌ 不可学习</td><td>训练时用 EMA 自动更新</td></tr>
+              <tr><td>σ²_running</td><td>❌ 不可学习</td><td>训练时用 EMA 自动更新</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px;">其他 Normalization 方法</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>方法</th><th>normalize 的维度</th><th>适用场景</th></tr></thead>
+            <tbody>
+              <tr><td>Batch Norm</td><td>对 batch 维度</td><td>CNN 训练、大 batch</td></tr>
+              <tr><td>Layer Norm</td><td>对 feature 维度</td><td>Transformer、RNN</td></tr>
+              <tr><td>Instance Norm</td><td>对单个样本的空间维度</td><td>风格迁移</td></tr>
+              <tr><td>Group Norm</td><td>对通道分组</td><td>小 batch 的 CNN</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px;">Regularization 正则化方法</h3>
+
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag green">L2 Regularization (Weight Decay)</span>
+            <h3>L_total = L_data + λ · ½ · ||W||²</h3>
+            <p>惩罚大权重，使权重趋向较小值，模型更平滑。梯度更新变成：W = W − η(∂L/∂W + λW)</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">L1 Regularization</span>
+            <h3>L_total = L_data + λ · ||W||₁</h3>
+            <p>倾向于产生稀疏权重（很多权重变 0）。适合特征选择。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">Dropout</span>
+            <h3>训练时随机置零一部分神经元</h3>
+            <p>每次训练迭代随机以概率 p drop 掉一些神经元的输出。<br><strong>Inverted Dropout：</strong>训练时把存活的激活除以 (1−p)，这样测试时不需要额外缩放。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">Data Augmentation</span>
+            <h3>增加训练数据多样性</h3>
+            <p>翻转、旋转、裁剪、颜色抖动、Mixup、CutOut、CutMix 等。不增加真实数据量，但让模型看到更多变体。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">Early Stopping</span>
+            <h3>在 validation loss 最低时停止</h3>
+            <p>监控 validation loss，当它不再下降（patience 次内）就停止训练，防止过拟合到训练集。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">Weight Initialization</span>
+            <h3>好的初始化 = 好的开始</h3>
+            <p><strong>Xavier/Glorot：</strong>Var(W) = 2/(n_in + n_out)，适合 sigmoid/tanh<br>
+               <strong>He/Kaiming：</strong>Var(W) = 2/n_in，适合 ReLU<br>
+               全零初始化会导致对称性问题（所有神经元学到一样的东西）</p>
+          </div>
+        </div>
+
+        <div class="callout"><strong>Overfitting vs Underfitting 诊断：</strong><br>
+          • Training loss 低 + Validation loss 高 → <strong>过拟合</strong> → 加正则化/dropout/data augmentation/减少模型大小<br>
+          • Training loss 高 + Validation loss 高 → <strong>欠拟合</strong> → 增大模型/训练更久/减少正则化
+        </div>
+      </section>
+
       <section class="section" id="models">
         <h2>Famous CNN Models</h2>
         <p class="lead">你不需要背所有层数和参数，只需要记住每个模型为什么重要。</p>
@@ -957,33 +1461,61 @@
           <div class="model-card">
             <span class="tag green">LeNet</span>
             <h3>最早期经典 CNN</h3>
-            <p>手写数字识别，证明 CNN 这条路线是可行的。</p>
+            <p>手写数字识别，证明 CNN 这条路线是可行的。<br>结构：Conv→Pool→Conv→Pool→FC→FC→Output</p>
           </div>
           <div class="model-card">
-            <span class="tag green">AlexNet</span>
-            <h3>2012 爆发点</h3>
-            <p>ReLU、dropout、GPU 训练，真正推动深度学习在图像分类上爆发。</p>
+            <span class="tag green">AlexNet (2012)</span>
+            <h3>深度学习爆发点</h3>
+            <p>ReLU、dropout、GPU 训练、data augmentation。8 层，60M参数。ImageNet top-5 error 从 25.8% 降到 16.4%。<br><strong>Group Conv：</strong>因当年 GPU 显存不够，分到两块 GPU 上算，意外发现有正则化效果。</p>
           </div>
           <div class="model-card">
-            <span class="tag green">VGG</span>
-            <h3>大量 3x3 卷积</h3>
-            <p>结构统一，堆深网络，直观而强大。</p>
+            <span class="tag green">VGG (2014)</span>
+            <h3>统一 3×3 卷积</h3>
+            <p>VGG-16 有 13 Conv + 3 FC。证明了用小 filter 堆深比大 filter 更好。<br>参数 138M，大部分在 FC 层。缺点：计算量大、内存消耗高。<br><strong>关键洞察：</strong>两个 3×3 = 一个 5×5 的感受野，但只用 2×3²=18 vs 5²=25 参数。</p>
           </div>
           <div class="model-card">
-            <span class="tag">GoogLeNet</span>
-            <h3>Inception</h3>
-            <p>多尺度并行，用 1x1 bottleneck 降低成本。</p>
+            <span class="tag">GoogLeNet / Inception (2014)</span>
+            <h3>多尺度并行 + 1×1 bottleneck</h3>
+            <p>22 层但只有 ~5M 参数（靠 1×1 conv 降维）。<br><strong>Inception module：</strong>并行执行 1×1、3×3、5×5 conv 和 3×3 max pool，然后在 channel 维拼接。<br><strong>1×1 conv 的作用：</strong>在 3×3、5×5 前先降低 channel 数，大幅减少计算量。</p>
           </div>
           <div class="model-card">
-            <span class="tag">ResNet</span>
+            <span class="tag">ResNet (2015)</span>
             <h3>Residual / Skip Connection</h3>
-            <p>让梯度更容易回传，解决深层网络退化和训练困难。</p>
+            <p>y = F(x) + x，学习残差而不是完整映射。<br><strong>Degradation problem：</strong>更深的 plain 网络反而比浅的准确率低，不是因为过拟合而是优化困难。<br><strong>Skip connection 为什么有效：</strong>1. 提供梯度直通路径（缓解梯度消失）2. 最坏情况下 F(x)=0，网络退化为恒等映射。<br>ResNet-50 的 bottleneck 结构：1×1(降维) → 3×3 → 1×1(升维)</p>
           </div>
           <div class="model-card">
-            <span class="tag">MobileNet</span>
-            <h3>轻量化</h3>
-            <p>面向移动端，追求更低计算量和功耗。</p>
+            <span class="tag">MobileNet (2017)</span>
+            <h3>轻量化 — Depthwise Separable Conv</h3>
+            <p>标准 Conv 拆成两步：<br>1. Depthwise：每个 channel 单独用一个 K×K filter<br>2. Pointwise：用 1×1 conv 做通道融合<br>计算量约降低 8-9 倍，适合移动端和嵌入式设备。</p>
           </div>
+        </div>
+
+        <h3 style="margin-top:22px;">模型演进总结</h3>
+        <div class="flow">
+          <div class="node">LeNet (可行性)</div>
+          <div class="arrow">→</div>
+          <div class="node gold">AlexNet (GPU+ReLU)</div>
+          <div class="arrow">→</div>
+          <div class="node">VGG (堆深)</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Inception (多尺度+效率)</div>
+          <div class="arrow">→</div>
+          <div class="node">ResNet (残差连接)</div>
+          <div class="arrow">→</div>
+          <div class="node gold">MobileNet (轻量化)</div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:18px;">
+          <table>
+            <thead><tr><th>模型</th><th>深度</th><th>参数量</th><th>Top-5 Error</th><th>核心创新</th></tr></thead>
+            <tbody>
+              <tr><td>AlexNet</td><td>8 层</td><td>~60M</td><td>16.4%</td><td>ReLU, Dropout, GPU 训练</td></tr>
+              <tr><td>VGG-16</td><td>16 层</td><td>~138M</td><td>7.3%</td><td>统一 3×3</td></tr>
+              <tr><td>GoogLeNet</td><td>22 层</td><td>~5M</td><td>6.7%</td><td>Inception + 1×1 bottleneck</td></tr>
+              <tr><td>ResNet-152</td><td>152 层</td><td>~60M</td><td>3.57%</td><td>Residual connection</td></tr>
+              <tr><td>MobileNet v1</td><td>28 层</td><td>~4.2M</td><td>—</td><td>Depthwise separable conv</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -1016,7 +1548,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td>Arithmetic intensity</td><td>每搬一单位数据，做了多少运算</td></tr>
+              <tr><td>Arithmetic intensity</td><td>每搬一单位数据，做了多少运算（FLOPs/Byte）</td></tr>
               <tr><td>Memory-bound</td><td>性能主要被带宽或访存拖住</td></tr>
               <tr><td>Compute-bound</td><td>性能主要被峰值算力限制</td></tr>
               <tr><td>Reuse</td><td>一份数据能不能被用很多次</td></tr>
@@ -1024,6 +1556,38 @@
             </tbody>
           </table>
         </div>
+
+        <h3 style="margin-top:22px;">Roofline Model 详解</h3>
+        <div class="equation">
+          <strong>Roofline Model 核心公式：</strong><br>
+          Attainable Performance = min(Peak Compute, Peak Bandwidth × Arithmetic Intensity)<br><br>
+          <strong>Arithmetic Intensity (AI):</strong><br>
+          AI = FLOPs / Bytes Accessed　　(单位: FLOP/Byte)<br><br>
+          <strong>Ridge Point（转折点）:</strong><br>
+          AI* = Peak Compute / Peak Bandwidth<br>
+          当 AI &lt; AI* → Memory-bound（瓶颈在带宽）<br>
+          当 AI &gt; AI* → Compute-bound（瓶颈在算力）
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">🔢 数值示例</span>
+            <h3>判断 Memory-bound 还是 Compute-bound</h3>
+            <p>假设 GPU：峰值 10 TFLOPS，带宽 900 GB/s<br>
+              Ridge Point = 10T / 900G ≈ 11.1 FLOP/Byte<br>
+              一个操作 AI = 4 FLOP/Byte → <strong>Memory-bound</strong><br>
+              一个操作 AI = 50 FLOP/Byte → <strong>Compute-bound</strong></p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">常见操作的 AI</span>
+            <h3>不同算子的 Arithmetic Intensity</h3>
+            <p><strong>元素级操作</strong>（ReLU, add）: AI ≈ 1，非常 memory-bound<br>
+              <strong>GEMM/矩阵乘法</strong>: AI 可以很高（~数百），尤其矩阵大时<br>
+              <strong>卷积 via img2col+GEMM</strong>: AI 取决于矩阵大小和复用</p>
+          </div>
+        </div>
+
+        <div class="callout"><strong>Tiling 为什么能提高 AI：</strong>把大矩阵切成小块放进 cache/shared memory，每个块被多次使用，减少从慢速内存取数据的次数，等效提高了 Arithmetic Intensity。这是从 Memory-bound 区域移向 Compute-bound 区域的关键手段。</div>
       </section>
 
       <section class="section" id="gemm">
@@ -1051,6 +1615,26 @@
           <span class="tag">一句话总结</span>
           <h3>性能不只是乘法次数</h3>
           <p>真正决定速度的，往往是数据有没有以正确顺序被访问和复用。</p>
+        </div>
+
+        <h3 style="margin-top:22px;">Loop Ordering 对性能的影响</h3>
+        <div class="equation">
+          <strong>矩阵乘法 C = A × B 的三重循环：</strong><br>
+          for i: for j: for k:  C[i][j] += A[i][k] * B[k][j]<br><br>
+          <strong>共有 6 种循环排列（ijk, ikj, jik, jki, kij, kji）</strong><br>
+          不同排列的 cache 行为差异巨大：<br>
+          • ijk / jik：B 按列访问（stride 大，cache miss 多）<br>
+          • ikj / kij：B 按行访问（stride 1，cache 友好！）<br>
+          • 最佳：<strong>ikj</strong> 或 <strong>kij</strong>，因为内层循环连续访问内存
+        </div>
+
+        <h3 style="margin-top:22px;">Tiling 策略详解</h3>
+        <div class="callout">
+          <strong>基本思想：</strong>把 N×N 矩阵分成 T×T 的小块，每个小块能放进 cache<br>
+          <strong>Cache miss 估算：</strong><br>
+          • 无 tiling：O(N³) cache miss<br>
+          • 有 tiling (块大小 B)：O(N³ / (B√M)) cache miss，其中 M = cache 大小<br>
+          <strong>为什么有效：</strong>每个小块在 cache 里被多次使用（用于计算输出块的多个元素），大幅减少从主存取数据的次数。
         </div>
       </section>
 
@@ -1099,6 +1683,24 @@
         <h2>Strassen 和 Winograd</h2>
         <p class="lead">考试不要求你背长公式，但一定会默认你知道它们的概念和 trade-off。</p>
 
+        <h3>Strassen 算法详解</h3>
+        <div class="equation">
+          <strong>标准 2×2 矩阵乘法：</strong>8 次乘法 + 4 次加法<br>
+          <strong>Strassen 2×2 矩阵乘法：</strong>7 次乘法 + 18 次加法<br><br>
+          <strong>递归应用到 N×N：</strong><br>
+          标准：O(N³)　　Strassen：O(N^{log₂7}) ≈ O(N^{2.807})<br><br>
+          <strong>Strassen 的 7 次乘法 (M₁ ~ M₇)：</strong><br>
+          将 A, B 各分为四个子矩阵 A₁₁,A₁₂,A₂₁,A₂₂ 和 B₁₁,B₁₂,B₂₁,B₂₂<br>
+          M₁ = (A₁₁ + A₂₂)(B₁₁ + B₂₂)<br>
+          M₂ = (A₂₁ + A₂₂)(B₁₁)<br>
+          M₃ = (A₁₁)(B₁₂ − B₂₂)<br>
+          M₄ = (A₂₂)(B₂₁ − B₁₁)<br>
+          M₅ = (A₁₁ + A₁₂)(B₂₂)<br>
+          M₆ = (A₂₁ − A₁₁)(B₁₁ + B₁₂)<br>
+          M₇ = (A₁₂ − A₂₂)(B₂₁ + B₂₂)<br><br>
+          然后：C₁₁ = M₁+M₄−M₅+M₇, C₁₂ = M₃+M₅, C₂₁ = M₂+M₄, C₂₂ = M₁−M₂+M₃+M₆
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
@@ -1114,19 +1716,50 @@
               <tr>
                 <td>Strassen</td>
                 <td>矩阵乘法</td>
-                <td>减少 block matrix multiplication 中的乘法次数</td>
-                <td>理论复杂度更好</td>
-                <td>实现复杂，内存和精度问题</td>
+                <td>减少 block matrix multiplication 中的乘法次数（8→7）</td>
+                <td>理论复杂度更好 O(N^2.807)</td>
+                <td>更多加法、实现复杂、数值精度下降、递归带来额外内存</td>
               </tr>
               <tr>
                 <td>Winograd</td>
                 <td>小卷积</td>
-                <td>用变换减少小卷积核的乘法</td>
-                <td>3x3 等小核常很有效</td>
-                <td>有变换开销和数值稳定性代价</td>
+                <td>用变换域减少小卷积核的乘法</td>
+                <td>3×3 等小核常很有效</td>
+                <td>有变换开销、数值稳定性代价、大 kernel 不划算</td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <h3 style="margin-top:22px;">Winograd 变换详解</h3>
+        <div class="equation">
+          <strong>核心公式：F(m, r)</strong><br>
+          输入 tile 大小 = m + r − 1，其中 m = 输出大小, r = 卷积核大小<br><br>
+          <strong>最常用的 F(2, 3)：</strong>2 个输出，3×3 卷积核<br>
+          输入 tile 大小 = 2 + 3 − 1 = 4<br>
+          标准卷积需要 2×3 = 6 次乘法<br>
+          Winograd F(2,3) 只需要 <strong>4 次乘法</strong>（减少 33%）<br><br>
+          <strong>F(4, 3)：</strong>4 个输出，3×3 卷积核<br>
+          输入 tile 大小 = 4 + 3 − 1 = 6<br>
+          标准需要 4×3 = 12 次乘法<br>
+          Winograd 只需要 <strong>6 次乘法</strong>（减少 50%）<br><br>
+          <strong>变换公式：</strong> Y = Aᵀ[(GgGᵀ) ⊙ (BᵀdB)]A<br>
+          G, B, A 是预定义的变换矩阵（不需要学习）<br>
+          g = 卷积核, d = 输入 tile<br>
+          ⊙ = 逐元素乘法（这里才是"乘法"的来源）
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">为什么 Winograd 能省乘法</span>
+            <h3>变换域 vs 空间域</h3>
+            <p>把卷积转到变换域后，原来需要滑动做的多次乘法变成了更少的逐元素乘法。代价是多了一些加法（变换和反变换），但乘法在硬件上通常比加法贵，所以总体上是划算的。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">什么时候 Winograd 不划算</span>
+            <h3>大 kernel 或大 tile 的问题</h3>
+            <p>当 F(m,r) 中 m+r 增大时，变换矩阵变大，数值精度下降，额外加法开销增加。实践中 F(2,3) 和 F(4,3) 最常用，更大的不太实用。</p>
+          </div>
         </div>
       </section>
 
@@ -2031,6 +2664,283 @@
         </div>
       </section>
 
+      <section class="section" id="formulas">
+        <h2>📐 All Formulas Reference 公式速查手册</h2>
+        <p class="lead">闭卷考试最需要的就是公式记忆。这里把所有关键公式集中整理。</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>类别</th><th>公式</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>Softmax</td><td>pⱼ = exp(sⱼ) / Σₖ exp(sₖ)</td><td>logits → 概率分布</td></tr>
+              <tr><td>Cross-Entropy</td><td>L = −log(p_{正确类})</td><td>one-hot 时的简化形式</td></tr>
+              <tr><td>Softmax+CE 梯度</td><td>∂L/∂sⱼ = pⱼ − yⱼ</td><td>预测概率 − 真实标签</td></tr>
+              <tr><td>MSE</td><td>L = (1/n) Σ(yᵢ − ŷᵢ)²</td><td>回归用</td></tr>
+              <tr><td>Hinge Loss</td><td>Lᵢ = Σ_{j≠yᵢ} max(0, sⱼ − s_{yᵢ} + 1)</td><td>SVM 多分类</td></tr>
+              <tr><td>SGD 更新</td><td>θ = θ − η∇L</td><td>基本梯度下降</td></tr>
+              <tr><td>Momentum</td><td>v = βv + ∇L; θ = θ − ηv</td><td>带惯性的更新</td></tr>
+              <tr><td>Adam</td><td>m, v 更新 + 偏差修正 → θ 更新</td><td>自适应学习率</td></tr>
+              <tr><td>Conv 输出大小</td><td>O = ⌊(W−K+2P)/S⌋ + 1</td><td>宽/高方向</td></tr>
+              <tr><td>Conv 参数量</td><td>N_filters × (K × K × C_in + 1)</td><td>+1 是 bias</td></tr>
+              <tr><td>Conv MACs</td><td>O_h × O_w × N_filters × K × K × C_in</td><td>每个输出位置的乘加</td></tr>
+              <tr><td>Sigmoid</td><td>σ(x) = 1/(1+e⁻ˣ)</td><td>输出 (0,1)</td></tr>
+              <tr><td>Sigmoid 导数</td><td>σ'(x) = σ(x)(1−σ(x))</td><td>最大值 0.25</td></tr>
+              <tr><td>ReLU</td><td>f(x) = max(0, x)</td><td>导数: x>0→1, x≤0→0</td></tr>
+              <tr><td>BatchNorm</td><td>y = γ · (x−μ)/√(σ²+ε) + β</td><td>γ, β 可学习</td></tr>
+              <tr><td>L2 正则化</td><td>L_total = L_data + λ/2 · ||W||²</td><td>Weight decay</td></tr>
+              <tr><td>Dropout (inverted)</td><td>训练: mask & scale by 1/(1−p)</td><td>测试: 不 drop</td></tr>
+              <tr><td>Xavier Init</td><td>Var(W) = 2/(n_in + n_out)</td><td>适合 sigmoid/tanh</td></tr>
+              <tr><td>He Init</td><td>Var(W) = 2/n_in</td><td>适合 ReLU</td></tr>
+              <tr><td>Depthwise Sep.</td><td>K²·C_in + C_in·C_out</td><td>vs 标准 K²·C_in·C_out</td></tr>
+              <tr><td>Roofline</td><td>Perf = min(π, β·AI)</td><td>π=峰值算力, β=带宽</td></tr>
+              <tr><td>Arithmetic Intensity</td><td>AI = FLOPs / Bytes</td><td>越高越偏 compute-bound</td></tr>
+              <tr><td>Thread ID (GPU)</td><td>gid = blockIdx.x × blockDim.x + threadIdx.x</td><td>全局线程编号</td></tr>
+              <tr><td>Strassen</td><td>O(N^{2.807}) vs O(N³)</td><td>7 次乘法代替 8 次</td></tr>
+              <tr><td>Winograd F(m,r)</td><td>tile = m+r−1, 乘法=m+r−1</td><td>vs 标准 m×r 次乘法</td></tr>
+              <tr><td>ResNet 残差</td><td>y = F(x) + x</td><td>学残差，不学完整映射</td></tr>
+              <tr><td>Backprop (FC)</td><td>∂L/∂W = Xᵀδ, ∂L/∂X = δWᵀ</td><td>上游梯度乘转置</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="worked-examples">
+        <h2>🧮 Worked Examples 完整计算示例</h2>
+        <p class="lead">这些是考试可能出现的计算题类型。练熟每一步的推导过程。</p>
+
+        <div class="detail-block">
+          <h3>Example 1: Cross-Entropy Loss 手算</h3>
+          <div class="callout">
+            <strong>题目：</strong>3 分类问题，logits = [2.0, 1.0, 0.1]，正确类别 = 0<br><br>
+            <strong>Step 1 — Softmax：</strong><br>
+            exp([2.0, 1.0, 0.1]) = [7.389, 2.718, 1.105]<br>
+            sum = 7.389 + 2.718 + 1.105 = 11.212<br>
+            p = [7.389/11.212, 2.718/11.212, 1.105/11.212] = [0.659, 0.242, 0.099]<br><br>
+            <strong>Step 2 — Cross-Entropy：</strong><br>
+            L = −log(p₀) = −log(0.659) = <strong>0.417</strong><br><br>
+            <strong>Step 3 — 梯度：</strong><br>
+            ∂L/∂s = p − y = [0.659−1, 0.242−0, 0.099−0] = <strong>[−0.341, 0.242, 0.099]</strong><br>
+            含义：正确类别需要增大 logit（梯度为负），其他类别需要减小 logit（梯度为正）。
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Example 2: 完整 CNN 参数量和 FLOPs 计算</h3>
+          <div class="callout">
+            <strong>网络：</strong>Input 224×224×3 → Conv1 → Pool → Conv2 → Pool → FC → Output<br><br>
+            <strong>Conv1：</strong>64 个 7×7 filter, stride=2, padding=3<br>
+            输出大小: (224−7+6)/2+1 = 112, 即 112×112×64<br>
+            参数量: 64×(7×7×3+1) = 64×148 = <strong>9,472</strong><br>
+            MACs: 112×112×64×7×7×3 = <strong>116,949,504</strong><br><br>
+            <strong>Pool (MaxPool 2×2, stride 2)：</strong><br>
+            输出: 56×56×64, 参数: <strong>0</strong><br><br>
+            <strong>Conv2：</strong>128 个 3×3 filter, stride=1, padding=1<br>
+            输出: 56×56×128<br>
+            参数量: 128×(3×3×64+1) = 128×577 = <strong>73,856</strong><br>
+            MACs: 56×56×128×3×3×64 = <strong>231,211,008</strong><br><br>
+            <strong>Pool：</strong><br>
+            输出: 28×28×128<br><br>
+            <strong>FC (flatten → 1000 classes)：</strong><br>
+            输入维度: 28×28×128 = 100,352<br>
+            参数量: 100,352×1000 + 1000 = <strong>100,353,000</strong><br><br>
+            <strong>观察：</strong>FC 层占了绝大部分参数！这就是为什么后来的网络（如 ResNet）用 Global Average Pooling 替代 FC。
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Example 3: Batch Normalization 计算</h3>
+          <div class="callout">
+            <strong>Mini-batch (4 个值)：</strong>x = [1, 2, 3, 4]<br><br>
+            μ_B = (1+2+3+4)/4 = 2.5<br>
+            σ²_B = [(1-2.5)²+(2-2.5)²+(3-2.5)²+(4-2.5)²]/4 = [2.25+0.25+0.25+2.25]/4 = 1.25<br>
+            x̂ = (x − 2.5) / √(1.25 + 1e-5) ≈ [−1.342, −0.447, 0.447, 1.342]<br><br>
+            假设 γ=1, β=0（初始值）：y = x̂<br>
+            假设 γ=2, β=0.5：y = 2 × x̂ + 0.5 = [−2.184, −0.394, 1.394, 3.184]
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Example 4: Backpropagation 手算（小网络）</h3>
+          <div class="callout">
+            <strong>网络：</strong>单个神经元 z = w₁x₁ + w₂x₂ + b → a = ReLU(z) → L = (a − y)²<br>
+            设 x=[1, 2], w=[0.5, −0.3], b=0.1, y=1<br><br>
+            <strong>Forward：</strong><br>
+            z = 0.5×1 + (−0.3)×2 + 0.1 = 0.5 − 0.6 + 0.1 = 0<br>
+            a = ReLU(0) = 0<br>
+            L = (0 − 1)² = 1<br><br>
+            <strong>Backward：</strong><br>
+            ∂L/∂a = 2(a − y) = 2(0−1) = −2<br>
+            ∂a/∂z = ReLU'(0) = 0（边界情况，通常取 0）<br>
+            ∂L/∂z = −2 × 0 = 0　　→ 梯度为 0！<br><br>
+            <strong>结论：</strong>ReLU 在 z≤0 时"杀死"梯度。这就是 Dead ReLU 问题的具体例子。如果改用 Leaky ReLU (α=0.01)：∂a/∂z = 0.01，则 ∂L/∂z = −0.02，仍然有梯度信号。
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Example 5: img2col 步骤演示</h3>
+          <div class="callout">
+            <strong>输入 (4×4, 单通道)：</strong><br>
+            1 2 3 4<br>
+            5 6 7 8<br>
+            9 10 11 12<br>
+            13 14 15 16<br><br>
+            <strong>Filter (2×2)：</strong>[a b; c d]，stride=1，padding=0<br>
+            输出大小：(4−2)/1+1 = 3，即 3×3<br><br>
+            <strong>img2col 展开 — 每个滑动窗口拉平为一列：</strong><br>
+            位置(0,0): [1,2,5,6] <br>
+            位置(0,1): [2,3,6,7] <br>
+            位置(0,2): [3,4,7,8] <br>
+            位置(1,0): [5,6,9,10] <br>
+            ... 共 9 个位置<br><br>
+            展开矩阵 X_col (4×9)：每列是一个 patch 的展平<br>
+            Filter 也展平为行向量：W_row = [a,b,c,d]<br><br>
+            <strong>卷积 = 矩阵乘法：</strong>Output_row = W_row × X_col　(1×4 · 4×9 = 1×9)<br>
+            再 reshape 回 3×3 即为输出 feature map。<br><br>
+            <strong>注意重叠：</strong>相邻 patch 共享元素（如 2,6 出现在多个列中），这是 img2col 内存膨胀的来源。
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Example 6: Strassen vs 标准矩阵乘法</h3>
+          <div class="callout">
+            <strong>矩阵大小 N = 1024：</strong><br>
+            标准乘法：N³ = 1024³ = 1,073,741,824 次乘法<br>
+            Strassen (递归到 N=64 停)：≈ 7^{log₂(1024/64)} × 64³ ≈ 7⁴ × 262,144 = 2401 × 262,144 ≈ 629,407,744<br>
+            节省约 <strong>41%</strong> 的乘法<br><br>
+            <strong>但要注意：</strong>加法从 ~N³ 增加到 ~18/8 × N³ × 7/8...，且递归带来额外开销。实践中 Strassen 往往只在 N 很大且精度要求不极端时才有收益。
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="hw-deep">
+        <h2>🔧 Hardware Deep Dive 硬件详细补充</h2>
+        <p class="lead">这一部分补充 Eyeriss、TPU、GPU 的更多技术细节，帮助你在考试中给出更有深度的答案。</p>
+
+        <h3>能耗层次结构</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>操作</th><th>相对能耗</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>INT8 MAC</td><td>1×</td><td>基准</td></tr>
+              <tr><td>FP16 MAC</td><td>~4×</td><td>浮点比整数贵</td></tr>
+              <tr><td>FP32 MAC</td><td>~16×</td><td>更贵</td></tr>
+              <tr><td>SRAM 读取 (片上)</td><td>~5×</td><td>比 MAC 贵</td></tr>
+              <tr><td>DRAM 读取 (片外)</td><td>~200×</td><td>比 MAC 贵 200 倍！</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout"><strong>这就是为什么 dataflow 如此重要：</strong>一次 DRAM 访问的能耗 ≈ 200 次 MAC 运算。如果 dataflow 设计不好，大量能耗浪费在搬数据上而非计算上。Eyeriss 的核心优化目标就是最小化 DRAM 访问次数。</div>
+
+        <h3 style="margin-top:22px;">Systolic Array 脉动阵列详解（TPU 核心）</h3>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">工作原理</span>
+            <h3>数据像脉搏一样流动</h3>
+            <p><strong>Weight Stationary 模式：</strong><br>
+              1. 预加载：权重被提前载入每个 PE 的寄存器<br>
+              2. 输入流动：输入数据从左侧逐拍流入<br>
+              3. 就地计算：每个 PE 做 MAC（乘加），结果向下传递<br>
+              4. 输出收集：最终结果从底部或侧面流出<br>
+              每个时钟周期，数据"脉动"前进一步，所有 PE 同时工作。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag green">为什么 Systolic 高效</span>
+            <h3>局部数据流 = 低功耗</h3>
+            <p><strong>无需全局广播：</strong>数据只在相邻 PE 之间传递<br>
+              <strong>高复用率：</strong>一个输入被多个 PE 使用<br>
+              <strong>简单控制：</strong>不需要复杂的调度逻辑<br>
+              <strong>高吞吐：</strong>N×N 阵列每周期做 N² 次 MAC</p>
+          </div>
+        </div>
+
+        <div class="equation">
+          <strong>TPU v1 Systolic Array 规格：</strong><br>
+          256 × 256 PE 阵列 = 每周期 65,536 次 MAC<br>
+          运行在 700 MHz：峰值 ~92 TOPS (INT8)<br>
+          片上内存：28 MiB unified buffer<br>
+          Activation buffer + Weight FIFO + 控制逻辑
+        </div>
+
+        <h3 style="margin-top:22px;">Eyeriss 架构细节补充</h3>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>组件</th><th>规格 (Eyeriss v1)</th><th>作用</th></tr></thead>
+            <tbody>
+              <tr><td>PE Array</td><td>12 × 14 = 168 PEs</td><td>并行乘加</td></tr>
+              <tr><td>每个 PE scratchpad</td><td>~0.5 kB</td><td>存储局部 filter/ifmap/psum</td></tr>
+              <tr><td>Global Buffer</td><td>108 kB SRAM</td><td>片上共享缓冲，减少 DRAM 访问</td></tr>
+              <tr><td>NoC (Network on Chip)</td><td>Multicast + unicast</td><td>灵活数据分配到各 PE</td></tr>
+              <tr><td>Off-chip</td><td>DRAM</td><td>存储完整权重和激活</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <strong>Row Stationary 的具体操作：</strong><br>
+          1. 将一行卷积核权重存入 PE 的 scratchpad（不动 = stationary）<br>
+          2. 输入 feature map 的一行数据流过这些 PE<br>
+          3. 每个 PE 做乘加后，partial sum 在 PE 之间传递累加<br>
+          4. 通过这种方式同时获得：<br>
+          　• <strong>Weight reuse：</strong>同一权重被不同输入使用<br>
+          　• <strong>Input reuse：</strong>同一输入被不同输出位置使用<br>
+          　• <strong>Psum reuse：</strong>partial sum 就地累加，不写回全局<br>
+          这比纯 WS 或纯 OS 更均衡。
+        </div>
+
+        <h3 style="margin-top:22px;">GPU 性能优化细节</h3>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Memory Coalescing 合并访存</span>
+            <h3>让一个 warp 的内存请求合并为一次事务</h3>
+            <p>如果 warp 中 32 个线程访问连续的内存地址，硬件可以把 32 次请求合并为 1-2 次内存事务。<br>
+              <strong>不合并的后果：</strong>32 次独立事务，带宽利用率降至 1/32。<br>
+              <strong>编程原则：</strong>让相邻线程访问相邻地址（stride-1 访问模式）。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag green">Occupancy 占用率</span>
+            <h3>SM 上活跃 warp 数 / 最大可容纳 warp 数</h3>
+            <p>高 occupancy 不保证高性能，但低 occupancy 意味着 GPU 可能无法有效隐藏访存延迟。<br>
+              受限因素：寄存器用量、shared memory 用量、block 大小。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">Warp Divergence 分支分歧</span>
+            <h3>同一 warp 走不同分支 = 串行化</h3>
+            <p>如果 warp 内的 32 个线程因 if-else 走不同路径，GPU 必须串行执行两个分支（先执行 then，再执行 else），浪费一半算力。<br>
+              <strong>优化原则：</strong>尽量让 warp 内线程走同一分支。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">GPU Memory Hierarchy</span>
+            <h3>从快到慢</h3>
+            <p><strong>Register</strong> (~1 cycle) → <strong>Shared Memory</strong> (~5 cycles) → <strong>L1/L2 Cache</strong> (~30-100 cycles) → <strong>Global Memory/DRAM</strong> (~400-800 cycles)<br>
+              Shared memory 是程序员可控的最快共享存储，是 tiling 的物理载体。</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;">GPU vs TPU vs Eyeriss 详细对比</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>维度</th><th>GPU</th><th>TPU</th><th>Eyeriss</th></tr></thead>
+            <tbody>
+              <tr><td>类型</td><td>通用并行处理器</td><td>ML 专用 ASIC</td><td>CNN 专用加速器</td></tr>
+              <tr><td>核心计算单元</td><td>CUDA cores / Tensor cores</td><td>Systolic array</td><td>PE array (168 PEs)</td></tr>
+              <tr><td>编程模型</td><td>CUDA/OpenCL (灵活)</td><td>XLA 编译器 (受限)</td><td>固定 dataflow</td></tr>
+              <tr><td>优化目标</td><td>吞吐 + 通用性</td><td>矩阵吞吐 + 能效</td><td>能效最优</td></tr>
+              <tr><td>Dataflow</td><td>由程序员/编译器决定</td><td>Weight stationary 倾向</td><td>Row stationary</td></tr>
+              <tr><td>灵活性</td><td>高（支持各种算子）</td><td>中（主要针对矩阵）</td><td>低（针对CNN）</td></tr>
+              <tr><td>适用场景</td><td>训练 + 推理 + 研究</td><td>大规模推理 + 训练</td><td>边缘端推理</td></tr>
+              <tr><td>片上存储</td><td>Shared memory + L1/L2</td><td>28 MiB unified buffer</td><td>108 kB global buffer</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout"><strong>考试高频问法："为什么同样做矩阵乘法，不同硬件设计不同？"</strong><br>
+          因为它们面对的约束不同。GPU 追求通用性和编程灵活性；TPU 牺牲通用性换取矩阵运算的极致吞吐；Eyeriss 牺牲规模换取能效，特别针对 CNN 的数据复用模式做了定制。核心思想都是一样的：<strong>减少数据移动，增加数据复用</strong>。</div>
+      </section>
+
       <section class="section" id="compare">
         <h2>High-Frequency Comparison Questions</h2>
         <div class="table-wrap">
@@ -2051,6 +2961,17 @@
               <tr><td>Weight stationary vs Output stationary</td><td>固定权重 vs 固定 partial sum</td></tr>
               <tr><td>TPU vs Eyeriss</td><td>矩阵吞吐 vs CNN dataflow 能效</td></tr>
               <tr><td>Thread vs Warp vs Block</td><td>逻辑线程 vs 硬件执行组 vs 线程组</td></tr>
+              <tr><td>Sigmoid vs ReLU</td><td>饱和+计算贵 vs 不饱和+简单快</td></tr>
+              <tr><td>Batch Norm vs Layer Norm</td><td>在 batch 维度 normalize vs 在 feature 维度 normalize</td></tr>
+              <tr><td>L1 vs L2 Regularization</td><td>稀疏解（特征选择） vs 小权重（平滑）</td></tr>
+              <tr><td>Dropout vs BN 正则化</td><td>随机丢弃 vs batch 统计噪声</td></tr>
+              <tr><td>Xavier vs He Init</td><td>sigmoid/tanh vs ReLU</td></tr>
+              <tr><td>Vanishing vs Exploding Gradient</td><td>梯度连乘<1 vs 连乘>1</td></tr>
+              <tr><td>Max Pool vs Average Pool</td><td>保最强激活 vs 保整体趋势</td></tr>
+              <tr><td>VGG vs GoogLeNet</td><td>单路径堆深 vs 多分支并行多尺度</td></tr>
+              <tr><td>1×1 Conv 的作用</td><td>通道维度线性组合 + 降/升维</td></tr>
+              <tr><td>Memory-bound vs Compute-bound</td><td>瓶颈在带宽 vs 瓶颈在算力</td></tr>
+              <tr><td>Forward pass vs Backward pass</td><td>计算输出+缓存 vs 用缓存求梯度</td></tr>
             </tbody>
           </table>
         </div>
@@ -2092,6 +3013,21 @@
           <div class="qa-card"><h3>8</h3><p>什么叫 memory-bound，什么叫 compute-bound？</p></div>
           <div class="qa-card"><h3>9</h3><p>为什么 tiling 常常能提升性能？</p></div>
           <div class="qa-card"><h3>10</h3><p>如果老师问你整门课最核心的一句话，你会怎么答？</p></div>
+          <div class="qa-card"><h3>11</h3><p>Softmax 的输入和输出分别是什么？梯度 ∂L/∂s 怎么算？</p></div>
+          <div class="qa-card"><h3>12</h3><p>BatchNorm 训练和测试时有什么区别？为什么？</p></div>
+          <div class="qa-card"><h3>13</h3><p>ReLU 相比 sigmoid 的三个主要优势是什么？</p></div>
+          <div class="qa-card"><h3>14</h3><p>ResNet 的 skip connection 为什么能解决退化问题？</p></div>
+          <div class="qa-card"><h3>15</h3><p>手算：输入 32×32×3，用 16 个 5×5 filter, stride=1, padding=2，输出大小和参数量是多少？</p></div>
+          <div class="qa-card"><h3>16</h3><p>Dropout 和 Inverted Dropout 的区别是什么？</p></div>
+          <div class="qa-card"><h3>17</h3><p>Xavier init 和 He init 分别适合什么激活函数？为什么？</p></div>
+          <div class="qa-card"><h3>18</h3><p>一次 DRAM 读取大约等于多少次 MAC 的能耗？</p></div>
+          <div class="qa-card"><h3>19</h3><p>画出 backprop 中 add gate、multiply gate、max gate 的梯度流向。</p></div>
+          <div class="qa-card"><h3>20</h3><p>GPU 的 Memory Coalescing 是什么？为什么重要？</p></div>
+          <div class="qa-card"><h3>21</h3><p>Winograd F(2,3) 怎么从 6 次乘法减少到 4 次？</p></div>
+          <div class="qa-card"><h3>22</h3><p>Depthwise Separable Conv 如何减少计算量？给出参数量对比公式。</p></div>
+          <div class="qa-card"><h3>23</h3><p>Adam 为什么需要 bias correction？如果不做会怎样？</p></div>
+          <div class="qa-card"><h3>24</h3><p>Row Stationary dataflow 和 Weight Stationary 相比，优势在哪？</p></div>
+          <div class="qa-card"><h3>25</h3><p>解释 Roofline model 中 ridge point 的含义。</p></div>
         </div>
 
         <div class="footer-note">

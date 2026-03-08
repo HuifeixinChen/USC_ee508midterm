@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSCI 566 Midterm Practice v2 — 50 Multi-Select Questions</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#222;line-height:1.5;padding:12px}
+.container{max-width:900px;margin:0 auto}
+h1{text-align:center;margin:10px 0 4px;font-size:1.5em}
+.subtitle{text-align:center;color:#555;font-size:0.85em;margin-bottom:12px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px;position:sticky;top:0;background:#f5f5f5;padding:8px 0;z-index:10;border-bottom:2px solid #ddd}
+button{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:0.9em;font-weight:600;transition:background .2s}
+.btn-primary{background:#2563eb;color:#fff}.btn-primary:hover{background:#1d4ed8}
+.btn-warn{background:#f59e0b;color:#fff}.btn-warn:hover{background:#d97706}
+.btn-danger{background:#ef4444;color:#fff}.btn-danger:hover{background:#dc2626}
+.btn-outline{background:#fff;color:#333;border:1.5px solid #ccc}.btn-outline:hover{background:#eee}
+.scoreboard{text-align:center;font-size:1.1em;margin:10px 0;padding:10px;background:#fff;border-radius:8px;border:1px solid #ddd;display:none}
+.scoreboard.show{display:block}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;margin:6px 0 10px;overflow:hidden}
+.progress-fill{height:100%;background:#2563eb;transition:width .3s;border-radius:3px}
+.q-card{background:#fff;border-radius:10px;padding:16px 18px;margin-bottom:12px;border:1.5px solid #e5e7eb;transition:border-color .3s}
+.q-card.correct{border-color:#22c55e;background:#f0fdf4}
+.q-card.wrong{border-color:#ef4444;background:#fef2f2}
+.q-card.unanswered{border-color:#f59e0b;background:#fffbeb}
+.q-num{font-weight:700;font-size:1em;color:#2563eb;margin-bottom:4px}
+.q-text{font-size:0.95em;margin-bottom:10px;white-space:pre-wrap}
+.q-hint{font-size:0.8em;color:#888;margin-bottom:6px;font-style:italic}
+.options{display:flex;flex-direction:column;gap:5px}
+.opt{display:flex;align-items:flex-start;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;border:1.5px solid #e5e7eb;transition:all .2s;font-size:0.92em}
+.opt:hover{background:#f0f4ff;border-color:#93b5fd}
+.opt.selected{background:#dbeafe;border-color:#3b82f6}
+.opt input{margin-top:3px;accent-color:#2563eb}
+.explanation{margin-top:10px;padding:10px;background:#f8f8f8;border-left:3px solid #666;font-size:0.87em;display:none;border-radius:0 6px 6px 0}
+.explanation.show{display:block}
+.tag{display:inline-block;font-size:0.7em;padding:2px 6px;border-radius:3px;margin-left:6px;font-weight:600}
+.tag-easy{background:#dcfce7;color:#166534}
+.tag-medium{background:#fef9c3;color:#854d0e}
+.tag-hard{background:#fee2e2;color:#991b1b}
+.stat-row{display:flex;justify-content:center;gap:20px;font-size:0.9em;margin:4px 0}
+.stat-correct{color:#16a34a;font-weight:600}
+.stat-wrong{color:#dc2626;font-weight:600}
+.stat-skip{color:#d97706;font-weight:600}
+.analysis{margin-top:10px;padding:10px;border:1px solid #d1d5db;border-radius:8px;background:#fcfcfd;text-align:left}
+.analysis h3{font-size:0.95em;margin-bottom:6px}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.analysis table{width:100%;border-collapse:collapse;font-size:0.82em}
+.analysis th,.analysis td{border:1px solid #e5e7eb;padding:4px 6px;text-align:left}
+.analysis th{background:#f3f4f6}
+.weak-list{font-size:0.85em;line-height:1.4}
+@media(max-width:600px){body{padding:6px}.q-card{padding:12px}.controls{gap:4px}button{padding:6px 10px;font-size:0.8em}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>CSCI 566 Midterm Practice v2</h1>
+<p class="subtitle">50 High-Quality Multi-Select Questions &bull; Select ALL correct answers &bull; Calculator Allowed<br>Focused on NN, CNN, RNN/LSTM, GNN, GAN/VAE, backprop, unsupervised learning, training tricks, and regularization</p>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="controls">
+<button class="btn-primary" onclick="grade()">Submit &amp; Grade</button>
+<button class="btn-warn" onclick="showWrong()">Show Wrong Only</button>
+<button class="btn-outline" onclick="showAll()">Show All</button>
+<button class="btn-danger" onclick="resetQuiz()">Reset</button>
+<button class="btn-outline" onclick="toggleExplanations()">Toggle Explanations</button>
+</div>
+<div class="scoreboard" id="scoreboard"></div>
+<div id="quiz"></div>
+</div>
+
+<script>
+const questions = [
+{id:1,text:'Which of the following are supervised learning tasks?',opts:['(A) Predicting a continuous target from labeled examples','(B) Classifying samples into fixed categories using labels','(C) Grouping unlabeled samples into clusters','(D) Predicting labels for nodes when labeled training nodes are provided'],ans:[0,1,3],topic:'W1: ML Basics',diff:'easy',expl:'Supervised learning uses labeled targets. Clustering unlabeled samples is unsupervised.'},
+{id:2,text:'Which of the following are usually treated as unsupervised or self-supervised representation-learning problems?',opts:['(A) Clustering unlabeled samples or embeddings','(B) Learning low-dimensional structure from unlabeled data','(C) Modeling the data distribution with density estimation','(D) Classifying inputs into fixed labels'],ans:[0,1,2],topic:'W1: ML Basics',diff:'easy',expl:'Clustering, dimensionality reduction, and density estimation do not require class labels; ordinary classification does.'},
+{id:3,text:'For a linear classifier f(x)=Wx+b with input dimension D and C classes, which statements are correct?',opts:['(A) W has shape C x D','(B) b has length C','(C) The scores are linear functions of x','(D) Stacking linear layers without nonlinearities still gives a linear map'],ans:[0,1,2,3],topic:'W1: ML Basics',diff:'medium',expl:'All four are standard facts about linear models and compositions of linear transformations.'},
+{id:4,text:'A model has very low training error but much higher validation error. Which are reasonable conclusions or fixes?',opts:['(A) The model is overfitting','(B) Stronger regularization or augmentation may help','(C) Early stopping based on validation performance may help','(D) The first fix should be to increase capacity further'],ans:[0,1,2],topic:'W1: Generalization',diff:'medium',expl:'This is the classic overfitting pattern. Regularization, augmentation, and early stopping are standard responses.'},
+{id:5,text:'A model has high training error and high validation error. Which statements are reasonable?',opts:['(A) The model is likely underfitting','(B) Increasing model capacity may help','(C) Reducing overly strong regularization may help','(D) The main problem must be data leakage'],ans:[0,1,2],topic:'W1: Generalization',diff:'medium',expl:'High training and validation error usually indicates underfitting rather than leakage.'},
+{id:6,text:'Which statements about common GNN prediction settings are correct?',opts:['(A) Node classification predicts labels for nodes','(B) Link prediction predicts whether an edge should exist between two nodes','(C) Graph classification predicts one label for an entire graph','(D) GNN output should change arbitrarily when the same graph nodes are merely reordered'],ans:[0,1,2],topic:'W8: GNN',diff:'easy',expl:'Node-, link-, and graph-level prediction are standard GNN tasks. Reordering nodes should not arbitrarily change predictions.'},
+{id:7,text:'Which are important drawbacks of sigmoid as a hidden-layer activation?',opts:['(A) It can saturate and cause vanishing gradients','(B) It is not zero-centered','(C) It is typically more expensive than ReLU','(D) Its output range is [-1,1]'],ans:[0,1,2],topic:'W3: Activations',diff:'medium',expl:'Sigmoid outputs lie in (0,1), not [-1,1].'},
+{id:8,text:'Which statements correctly compare tanh and ReLU-family activations?',opts:['(A) Tanh is zero-centered','(B) Tanh outputs lie in [-1,1]','(C) ReLU avoids positive-side saturation','(D) Standard ReLU is zero-centered'],ans:[0,1,2],topic:'W3: Activations',diff:'medium',expl:'Tanh is zero-centered, while standard ReLU is not.'},
+{id:9,text:'Which activation and output-layer pairings are appropriate?',opts:['(A) Sigmoid for binary classification output','(B) Softmax for multi-class classification output','(C) Linear output for regression','(D) Softmax for ordinary regression output'],ans:[0,1,2],topic:'W3: Activations',diff:'easy',expl:'Softmax is used for class probabilities, not standard regression outputs.'},
+{id:10,text:'For sigmoid sigma(z)=1/(1+e^{-z}), which statements are correct?',opts:['(A) sigma(0)=0.5','(B) sigma\'(z)=sigma(z)(1-sigma(z))','(C) sigma\'(0)=0.25','(D) sigma(2)<0.5'],ans:[0,1,2],topic:'W3: Activations',diff:'medium',expl:'Sigmoid is increasing, so sigma(2) is greater than 0.5.'},
+{id:11,text:'Why are nonlinear activations important in neural networks?',opts:['(A) Without nonlinearities, stacking linear layers still gives only a linear map','(B) Nonlinearities allow networks to represent nonlinear decision boundaries','(C) Nonlinear activations increase expressiveness beyond plain linear classifiers','(D) Once nonlinearities are added, initialization no longer matters'],ans:[0,1,2],topic:'W3: Activations',diff:'medium',expl:'Nonlinearities are essential because stacked linear layers collapse to a linear map. They increase expressiveness, but training details like initialization still matter.'},
+{id:12,text:'Which statements about leaky ReLU and related variants are correct?',opts:['(A) They keep a non-zero slope on the negative side','(B) They are designed to reduce the dying-ReLU problem','(C) PReLU learns the negative-side slope parameter','(D) They make nonlinearities unnecessary in the rest of the network'],ans:[0,1,2],topic:'W3: Activations',diff:'medium',expl:'Leaky ReLU and PReLU preserve negative-side gradient flow; they do not eliminate the need for nonlinear networks.'},
+{id:13,text:'Which statements about the chain rule in backpropagation are correct?',opts:['(A) It allows gradients to be computed efficiently through composed functions','(B) It combines local derivatives with upstream gradients','(C) It underlies layer-by-layer backward propagation','(D) It avoids taking derivatives altogether'],ans:[0,1,2],topic:'W4: Backprop',diff:'easy',expl:'Backpropagation is repeated application of the chain rule; derivatives are still essential.'},
+{id:14,text:'For the add gate f(x,y)=x+y, which statements are correct?',opts:['(A) The local derivative with respect to x is 1','(B) The local derivative with respect to y is 1','(C) The upstream gradient is copied to both inputs','(D) The gate must cache x and y because its local derivatives depend on them'],ans:[0,1,2],topic:'W4: Backprop',diff:'easy',expl:'Add-gate derivatives are constants, so the forward inputs are not needed to compute them.'},
+{id:15,text:'For the multiply gate f(x,y)=xy, which statements are correct?',opts:['(A) The derivative with respect to x is y','(B) The derivative with respect to y is x','(C) The forward values must be cached for backward pass','(D) The gradient through the gate is always unchanged in magnitude'],ans:[0,1,2],topic:'W4: Backprop',diff:'medium',expl:'Multiply gates can amplify or shrink gradients depending on the other input value.'},
+{id:16,text:'For the max gate f(x,y)=max(x,y), which statements are correct?',opts:['(A) The upstream gradient flows to the larger input','(B) The forward pass must record which branch won','(C) The losing branch receives zero gradient','(D) Both branches receive half of the upstream gradient'],ans:[0,1,2],topic:'W4: Backprop',diff:'easy',expl:'A max gate routes gradient only to the winning branch.'},
+{id:17,text:'For Y = XW + b with X of shape N x D and W of shape D x M, which vectorized gradients are correct?',opts:['(A) dW = X^T dY','(B) dX = dY W^T','(C) db is the batch-wise sum of dY','(D) dW has shape N x M'],ans:[0,1,2],topic:'W4: Backprop',diff:'medium',expl:'The standard vectorized formulas are dW = X^T dY, dX = dY W^T, and db = sum over the batch axis.'},
+{id:18,text:'Why do we cache intermediate values during the forward pass?',opts:['(A) Some local gradients depend on forward-pass values','(B) Backward pass through multiply or max gates needs saved inputs or winners','(C) Caching is needed to compute many activation derivatives efficiently','(D) Caching removes the need to store model parameters'],ans:[0,1,2],topic:'W4: Backprop',diff:'medium',expl:'Many backward computations depend on forward values, but caching does not replace parameter storage.'},
+{id:19,text:'Which statements about vanishing gradients are correct?',opts:['(A) Repeated multiplication by terms smaller than 1 can shrink gradients','(B) Early layers may receive very small updates','(C) Proper initialization and activation choice can help mitigate the issue','(D) Vanishing gradients imply the loss must already be zero'],ans:[0,1,2],topic:'W4: Backprop',diff:'medium',expl:'Vanishing gradients are an optimization issue, not proof that the loss is zero.'},
+{id:20,text:'Which formulas correctly give the convolution output width or height?',opts:['(A) (W - F + 2P)/S + 1','(B) (W + 2P - F)/S + 1','(C) W - F + P','(D) W/S - F + 1'],ans:[0,1],topic:'W4: CNN',diff:'easy',expl:'The first two are algebraically identical standard convolution-arithmetic formulas.'},
+{id:21,text:'Suppose a convolution layer takes a 4x6 image with 3 channels as input and outputs a 3x4x10 volume. Which statements must be correct?',opts:['(A) The layer uses 10 filters','(B) Each filter has depth 3','(C) One valid configuration is 2x2 filters, stride 2, padding 1','(D) A 1x1 filter with stride 2 and no padding can produce the same spatial output'],ans:[0,1,2],topic:'W4: CNN',diff:'medium',expl:'To produce 3x4x10, the layer needs 10 filters spanning the input depth. A 1x1 stride-2 no-padding setup would not match the target shape.'},
+{id:22,text:'A 32x32x3 input is convolved with six 5x5 filters, stride 1, padding 0. Which statements are correct?',opts:['(A) The output spatial size is 28x28','(B) The output depth is 6','(C) Each filter spans all 3 input channels','(D) The output is 32x32x6'],ans:[0,1,2],topic:'W4: CNN',diff:'medium',expl:'Without padding, 32 becomes 28 after a 5x5 stride-1 convolution.'},
+{id:23,text:'A convolution layer uses ten 5x5 filters on a 3-channel input, with one bias per filter. Which statements are correct?',opts:['(A) Each filter has 75 weights','(B) Each filter has 76 trainable parameters including bias','(C) The total trainable parameter count is 760','(D) The total trainable parameter count is 750'],ans:[0,1,2],topic:'W4: CNN',diff:'medium',expl:'Each filter has 5x5x3 weights plus one bias, so total parameters are 10 x 76 = 760.'},
+{id:24,text:'Which statements about pooling layers are correct?',opts:['(A) Max pooling typically has no learnable parameters','(B) Average pooling also typically has no learnable parameters','(C) Pooling often reduces spatial resolution','(D) Max pooling increases the channel count by default'],ans:[0,1,2],topic:'W4: CNN',diff:'easy',expl:'Pooling usually changes spatial size, not the channel count.'},
+{id:25,text:'Why can two 3x3 convolution layers be preferable to one 5x5 convolution layer?',opts:['(A) They can achieve a similar receptive field','(B) They can use fewer parameters','(C) They introduce an additional nonlinearity','(D) A single 5x5 layer always uses fewer parameters'],ans:[0,1,2],topic:'W4: CNN',diff:'medium',expl:'Two 3x3 layers can match the effective receptive field of a 5x5 while using fewer parameters and adding an extra activation.'},
+{id:26,text:'Which statements about padding are correct?',opts:['(A) Padding can preserve spatial size when stride is 1','(B) Padding helps retain boundary information','(C) Padding changes the convolution arithmetic','(D) Padding increases the number of filters'],ans:[0,1,2],topic:'W4: CNN',diff:'easy',expl:'Padding affects output-size computation but does not change the number of filters.'},
+{id:27,text:'Bonus-quiz style: for input width 9, filter size 3, stride 2, and desired output width 9, which statements are correct?',opts:['(A) We solve (9 - 3 + 2P)/2 + 1 = 9','(B) The required padding is P = 5','(C) The required padding is P = 1','(D) This is a direct application of the standard convolution output-size formula'],ans:[0,1,3],topic:'W4: CNN',diff:'medium',expl:'Solving the standard formula gives P = 5, exactly as in the bonus-quiz-style arithmetic question.'},
+{id:28,text:'Why do residual connections help in very deep networks?',opts:['(A) They provide shortcut paths for information flow','(B) They provide shortcut paths for gradient flow','(C) They make it easier for blocks to learn residual corrections around identity','(D) They remove the need for nonlinear activations'],ans:[0,1,2],topic:'W4: CNN',diff:'medium',expl:'Residual connections ease optimization by supporting identity-like behavior and more direct gradient flow.'},
+{id:29,text:'For a vanilla RNN with h_t = tanh(W_hh h_{t-1} + W_xh x_t + b), input dimension d_x=10 and hidden dimension d_h=20, which statements are correct?',opts:['(A) W_hh contributes 400 parameters','(B) W_xh contributes 200 parameters','(C) The bias contributes 20 parameters','(D) The total parameter count is 420'],ans:[0,1,2],topic:'W5: RNN',diff:'medium',expl:'The total is 400 + 200 + 20 = 620, not 420.'},
+{id:30,text:'An RNN processes a sequence of length T with the same recurrent cell at every step. Which statements are correct?',opts:['(A) The same weights are reused at each time step','(B) Increasing T increases the amount of computation','(C) Increasing T changes the number of trainable parameters in the cell','(D) Gradients can flow backward through multiple time steps during training'],ans:[0,1,3],topic:'W5: RNN',diff:'medium',expl:'RNN parameters are shared across time, so longer sequences increase compute and backprop path length but do not change the number of trainable parameters.'},
+{id:31,text:'Suppose an RNN is unrolled for 4 time steps and the loss depends on the final hidden state h_4. Which statements are correct?',opts:['(A) Gradient can flow from h_4 back to h_3, h_2, and h_1','(B) BPTT applies the chain rule through the unrolled graph','(C) Earlier hidden states can influence the final loss','(D) Only the parameters used at time step 4 receive gradient'],ans:[0,1,2],topic:'W5: RNN',diff:'medium',expl:'When the loss depends on the final hidden state, gradient can propagate through the whole unrolled chain, and shared parameters accumulate contributions from multiple time steps.'},
+{id:32,text:'Which statements about vanishing and exploding gradients in recurrent networks are correct?',opts:['(A) Gradient clipping is mainly used to prevent exploding gradients','(B) LSTM gating helps with long-range gradient flow','(C) Vanishing gradients make long-term dependencies hard to learn','(D) Bidirectional recurrence is the standard fix for exploding gradients'],ans:[0,1,2],topic:'W5: RNN',diff:'medium',expl:'Clipping addresses exploding gradients, while LSTM gating helps preserve information and gradients over time.'},
+{id:33,text:'Which statements best describe the key architectural difference that lets LSTMs handle longer dependencies better than vanilla RNNs?',opts:['(A) LSTMs use a memory cell with additive updates','(B) Input, forget, and output gates control information flow','(C) The additive cell path helps gradients flow more easily through time','(D) LSTMs remove nonlinearities from the recurrent computation'],ans:[0,1,2],topic:'W5: LSTM',diff:'medium',expl:'LSTMs keep nonlinearities but add a gated cell-state pathway with additive updates.'},
+{id:34,text:'Which statements about LSTM gate activations are correct?',opts:['(A) Forget gate commonly uses sigmoid','(B) Input gate commonly uses sigmoid','(C) Candidate cell update commonly uses tanh','(D) Output gate commonly uses ReLU'],ans:[0,1,2],topic:'W5: LSTM',diff:'medium',expl:'The forget, input, and output gates commonly use sigmoid; the candidate update uses tanh.'},
+{id:35,text:'Which statements about autoregressive generation are correct?',opts:['(A) Generation proceeds token by token','(B) Previous outputs can be fed into later steps','(C) Future tokens are available during standard left-to-right generation','(D) Bidirectional RNNs are inappropriate for standard autoregressive generation because they use future context'],ans:[0,1,3],topic:'W5: Sequence Modeling',diff:'medium',expl:'Autoregressive generation does not have access to future tokens at generation time.'},
+{id:36,text:'Which sequence-model mappings are correct?',opts:['(A) Sentiment classification is typically many-to-one','(B) Image captioning is typically one-to-many','(C) Machine translation is usually sequence-to-sequence','(D) Autoregressive text generation is many-to-one'],ans:[0,1,2],topic:'W5: Sequence Modeling',diff:'medium',expl:'Autoregressive generation produces a sequence rather than a single output label.'},
+{id:37,text:'A vocabulary has size V=10,000 and embedding dimension d=300. Which statements are correct?',opts:['(A) The embedding matrix can be stored as 10000 x 300','(B) Each token index maps to a dense 300-dimensional vector','(C) Embeddings are typically much lower-dimensional than one-hot vectors','(D) Using embeddings means sequence models no longer need to learn anything else'],ans:[0,1,2],topic:'W5: Sequence Modeling',diff:'medium',expl:'An embedding layer maps token indices to dense learned vectors, typically far smaller than one-hot representations. It does not remove the need to learn the rest of the model.'},
+{id:38,text:'At random initialization, a K-class softmax classifier often predicts roughly uniform probabilities. Which statements are correct?',opts:['(A) Each class probability is often near 1/K','(B) The initial cross-entropy loss for the correct class is often near -log(1/K)=log K','(C) For K=10, a plausible initial loss is around 2.3','(D) A near-uniform output at initialization proves the model is already well trained'],ans:[0,1,2],topic:'W7: Training Basics',diff:'medium',expl:'With near-uniform predictions, the expected correct-class probability is about 1/K, so cross-entropy is near log K. For 10 classes this is about 2.3026.'},
+{id:39,text:'Which statements about batch normalization are correct?',opts:['(A) During training, it uses batch statistics','(B) During test time, it typically uses running statistics accumulated during training','(C) It is commonly placed before the nonlinearity','(D) At test time it is conceptually disabled so no normalization occurs'],ans:[0,1,2],topic:'W7: Batch Norm',diff:'medium',expl:'BN still normalizes at test time, but uses running estimates rather than current-batch statistics.'},
+{id:40,text:'Which statements about batch normalization train-vs-test behavior are correct?',opts:['(A) During training, normalization usually uses the current mini-batch mean and variance','(B) During test time, running mean and variance are typically used','(C) Using current test-batch statistics is the standard default inference behavior','(D) Batch normalization can make optimization more stable even though train and test statistics are handled differently'],ans:[0,1,3],topic:'W7: Batch Norm',diff:'medium',expl:'BN uses mini-batch statistics during training and stored running statistics during inference. This difference is part of standard BN behavior.'},
+{id:41,text:'Which statements about gradient clipping are correct?',opts:['(A) It is mainly used to control exploding gradients','(B) It can stabilize training when gradient norms spike','(C) It is not a direct fix for vanishing gradients','(D) It guarantees convex optimization behavior'],ans:[0,1,2],topic:'W7: Optimization',diff:'medium',expl:'Clipping is a practical stability tool, not a cure for vanishing gradients or nonconvexity.'},
+{id:42,text:'Which statements about Xavier and He initialization are correct?',opts:['(A) Xavier initialization is commonly associated with tanh-like activations','(B) He initialization is commonly associated with ReLU-like activations','(C) Zero initialization is usually a good substitute for both','(D) He uses larger variance scaling because ReLU discards part of the signal'],ans:[0,1,3],topic:'W7: Initialization',diff:'medium',expl:'Zero initialization fails because it does not break symmetry across neurons.'},
+{id:43,text:'Why is initializing all weights in a layer to the same value a bad idea?',opts:['(A) All neurons receive identical gradient updates','(B) Symmetry between neurons is not broken','(C) The layer behaves like many copies of the same neuron','(D) It guarantees sparse solutions automatically'],ans:[0,1,2],topic:'W7: Initialization',diff:'medium',expl:'Identical initialization prevents neurons from learning distinct features.'},
+{id:44,text:'Which statements about dropout and inverted dropout are correct?',opts:['(A) Dropout randomly zeros activations during training','(B) In inverted dropout, surviving activations are scaled during training','(C) With inverted dropout, no extra scaling is needed at test time','(D) At test time, units should still be randomly dropped with smaller probability'],ans:[0,1,2],topic:'W7: Regularization',diff:'medium',expl:'Inverted dropout performs the compensation during training; inference uses the full network directly.'},
+{id:45,text:'Which sanity checks are most useful when debugging a new neural-network implementation?',opts:['(A) Verify that the initial loss is in a plausible range','(B) Try to overfit a very small dataset','(C) Monitor validation performance instead of only training loss','(D) If training loss decreases once, further checks are unnecessary'],ans:[0,1,2],topic:'W7: Training Practice',diff:'medium',expl:'A plausible initial loss, the ability to overfit a tiny set, and validation monitoring are all standard debugging checks. One drop in training loss does not prove the implementation is correct.'},
+{id:46,text:'Which statements about Adam bias correction are correct?',opts:['(A) Adam keeps moving averages of gradients and squared gradients','(B) Because these moving averages start at zero, early estimates are biased toward zero','(C) Bias correction compensates for this early-stage underestimation','(D) Bias correction is used to clip exploding gradients'],ans:[0,1,2],topic:'W7: Optimization',diff:'medium',expl:'Adam uses first- and second-moment moving averages. Since they are initialized at zero, early values are biased low, and bias correction compensates for that. It is not gradient clipping.'},
+{id:47,text:'Why do many training schedules include a warm-up phase for the learning rate?',opts:['(A) To reduce early training instability','(B) To let parameters adapt before large updates are applied','(C) To make optimization more stable when early gradients are poorly scaled','(D) To guarantee immediate convergence to a low-loss region'],ans:[0,1,2],topic:'W7: Optimization',diff:'medium',expl:'Warm-up stabilizes early optimization, but it does not guarantee immediate convergence.'},
+{id:48,text:'Which statements about message-passing GNNs are correct?',opts:['(A) A node representation is updated using information from its neighbors','(B) The same update or aggregation rule is usually shared across nodes of the same layer','(C) Symmetric aggregators like sum, mean, or max help handle arbitrary node ordering','(D) A valid GNN should depend on the arbitrary indexing of nodes in the adjacency matrix'],ans:[0,1,2],topic:'W8: GNN',diff:'medium',expl:'Message passing updates node features from neighborhoods. Shared rules and symmetric aggregation help ensure permutation-equivariant or invariant behavior.'},
+{id:49,text:'Why is the non-saturating generator loss often preferred in GAN training?',opts:['(A) When the discriminator is very confident, the original generator loss can give very small gradients','(B) Maximizing log D(G(z)) can provide stronger gradients early in training','(C) The change keeps the same adversarial equilibrium idea even though gradients differ','(D) It turns GAN training into maximum-likelihood estimation'],ans:[0,1,2],topic:'W8: GAN',diff:'medium',expl:'The non-saturating objective is preferred because the original minimax generator loss can saturate when the discriminator is strong, while the modified objective gives stronger learning signal without turning GAN into likelihood-based training.'},
+{id:50,text:'Which statements about VAEs and GANs are correct?',opts:['(A) In a VAE, the ELBO includes a reconstruction term and a KL term','(B) The reparameterization trick can be written as z = mu + sigma * epsilon with epsilon sampled from N(0,1)','(C) Mode collapse in GANs means the generator repeatedly produces only a small set of outputs that fool the discriminator','(D) Removing the KL term from a VAE preserves the same latent-space regularization effect'],ans:[0,1,2],topic:'W8: GAN / VAE',diff:'hard',expl:'ELBO and reparameterization are core VAE ideas, and mode collapse is a classic GAN failure mode. Removing the KL term removes the prior-matching regularization.'}];
+
+
+// ===== Quiz Logic =====
+const quizEl=document.getElementById('quiz'),scoreEl=document.getElementById('scoreboard'),progressEl=document.getElementById('progressFill');
+let graded=false,showOnlyWrong=false,showExpl=false;
+
+function weekOf(topic){
+const m=(topic||'').match(/^W\d+/);
+return m?m[0]:'Other';
+}
+
+function coverageTag(q){
+return 'Core Coverage';
+}
+
+function pct(a,b){return b===0?'0.0':(100*a/b).toFixed(1);}
+
+function buildAnalysisHtml(){
+const byWeek={};
+const byCoverage={'Core Coverage':{total:0,correct:0}};
+questions.forEach(q=>{
+const wk=weekOf(q.topic);
+if(!byWeek[wk])byWeek[wk]={total:0,correct:0,wrong:0,skip:0};
+byWeek[wk].total++;
+if(q._result==='correct')byWeek[wk].correct++;
+else if(q._result==='wrong')byWeek[wk].wrong++;
+else byWeek[wk].skip++;
+
+const tag=coverageTag(q);
+byCoverage[tag].total++;
+if(q._result==='correct')byCoverage[tag].correct++;
+});
+
+const weekRows=Object.keys(byWeek)
+.sort((a,b)=>parseInt(a.slice(1)||999)-parseInt(b.slice(1)||999))
+.map(w=>`<tr><td>${w}</td><td>${byWeek[w].correct}/${byWeek[w].total}</td><td>${pct(byWeek[w].correct,byWeek[w].total)}%</td></tr>`)
+.join('');
+
+const covRows=Object.keys(byCoverage)
+.map(k=>`<tr><td>${k}</td><td>${byCoverage[k].correct}/${byCoverage[k].total}</td><td>${pct(byCoverage[k].correct,byCoverage[k].total)}%</td></tr>`)
+.join('');
+
+const weakWeeks=Object.keys(byWeek)
+.map(w=>({w,acc:byWeek[w].correct/byWeek[w].total}))
+.sort((a,b)=>a.acc-b.acc)
+.slice(0,3)
+.map(x=>`${x.w} (${(x.acc*100).toFixed(1)}%)`);
+
+const weakQuestions=questions
+.filter(q=>q._result==='wrong'||q._result==='unanswered')
+.slice(0,8)
+.map(q=>`Q${q.id} [${q.topic}]`)
+.join(', ');
+
+return `<div class="analysis"><h3>Attempt Analysis</h3>
+<div class="analysis-grid">
+<div><table><thead><tr><th>Week</th><th>Correct</th><th>Accuracy</th></tr></thead><tbody>${weekRows}</tbody></table></div>
+<div><table><thead><tr><th>Coverage Group</th><th>Correct</th><th>Accuracy</th></tr></thead><tbody>${covRows}</tbody></table></div>
+</div>
+<div class="weak-list" style="margin-top:8px"><b>Weakest Weeks:</b> ${weakWeeks.join(' | ')||'N/A'}</div>
+<div class="weak-list" style="margin-top:4px"><b>Review First:</b> ${weakQuestions||'None'}</div>
+</div>`;
+}
+
+function render(){
+quizEl.innerHTML='';let answered=0;
+questions.forEach((q,qi)=>{
+const card=document.createElement('div');
+card.className='q-card'+(q._result==='correct'?' correct':q._result==='wrong'?' wrong':q._result==='unanswered'?' unanswered':'');
+card.id='q'+q.id;
+if(showOnlyWrong&&q._result==='correct'){card.style.display='none';}
+const dt=q.diff==='easy'?'<span class="tag tag-easy">Easy</span>':q.diff==='medium'?'<span class="tag tag-medium">Medium</span>':'<span class="tag tag-hard">Hard</span>';
+card.innerHTML=`<div class="q-num">Q${q.id}. <span style="color:#555;font-weight:400;font-size:0.85em">[${q.topic}]</span>${dt}</div>
+<div class="q-hint">Select ALL that apply (one or more correct answers)</div>
+<div class="q-text">${q.text}</div>
+<div class="options">${q.opts.map((o,oi)=>{
+const sel=(q._sel||[]).includes(oi);let cls='opt'+(sel?' selected':'');
+if(graded){if(q.ans.includes(oi)&&sel)cls+=' correct-opt';else if(q.ans.includes(oi)&&!sel)cls+=' missed-opt';else if(!q.ans.includes(oi)&&sel)cls+=' wrong-opt';}
+return`<label class="${cls}"><input type="checkbox" ${graded?'disabled':''}${sel?' checked':''} onchange="toggle(${qi},${oi})"><span>${o}</span></label>`;}).join('')}</div>
+<div class="explanation${(showExpl||(graded&&q._result!=='correct'))?' show':''}">${graded?(q._result==='correct'?'✅ ':q._result==='wrong'?'❌ ':'⚠️ '):''}${q.expl}${graded?'<br><b>Correct: '+q.ans.map(i=>String.fromCharCode(65+i)).join(', ')+'</b>':''}</div>`;
+quizEl.appendChild(card);if((q._sel||[]).length>0)answered++;});
+progressEl.style.width=(answered/questions.length*100)+'%';}
+function toggle(qi,oi){if(graded)return;const q=questions[qi];if(!q._sel)q._sel=[];const idx=q._sel.indexOf(oi);if(idx>=0)q._sel.splice(idx,1);else q._sel.push(oi);render();}
+function grade(){graded=true;let c=0,w=0,u=0;
+questions.forEach(q=>{const sel=(q._sel||[]).sort(),ans=[...q.ans].sort();
+if(sel.length===0){q._result='unanswered';u++;}
+else if(JSON.stringify(sel)===JSON.stringify(ans)){q._result='correct';c++;}
+else{q._result='wrong';w++;}});
+scoreEl.className='scoreboard show';
+scoreEl.innerHTML=`<b>Score: ${c}/${questions.length}</b> (${(c/questions.length*100).toFixed(1)}%)<div class="stat-row"><span class="stat-correct">✅ Correct: ${c}</span><span class="stat-wrong">❌ Wrong: ${w}</span><span class="stat-skip">⚠️ Skipped: ${u}</span></div>${buildAnalysisHtml()}`;
+render();const s=document.createElement('style');s.textContent=`.correct-opt{background:#dcfce7!important;border-color:#22c55e!important}.wrong-opt{background:#fee2e2!important;border-color:#ef4444!important}.missed-opt{background:#fef9c3!important;border-color:#eab308!important}`;document.head.appendChild(s);
+window.scrollTo({top:0,behavior:'smooth'});}
+function showWrong(){showOnlyWrong=true;render();}
+function showAll(){showOnlyWrong=false;render();}
+function resetQuiz(){graded=false;showOnlyWrong=false;showExpl=false;questions.forEach(q=>{delete q._sel;delete q._result;});scoreEl.className='scoreboard';render();window.scrollTo({top:0,behavior:'smooth'});}
+function toggleExplanations(){showExpl=!showExpl;render();}
+render();
+</script>
+</body>
+</html>
