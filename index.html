@@ -475,7 +475,16 @@
         max-width: none;
       }
     }
+    /* KaTeX overrides */
+    .katex { font-size: 1.08em !important; }
+    .katex-display { margin: 0.6em 0 !important; text-align: left !important; }
+    .katex-display > .katex { text-align: left !important; }
+    .equation .katex-display { overflow-x: auto; overflow-y: hidden; }
   </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
 </head>
 <body>
   <div class="layout">
@@ -674,13 +683,13 @@
         <h2>Machine Learning Fundamentals</h2>
         <p class="lead">先别着急看神经网络。你要先理解模型、输入、输出、参数和任务类型。</p>
 
-        <div class="equation">ŷ = f(x; θ)</div>
+        <div class="equation">$$\hat{y} = f(\mathbf{x};\,\boldsymbol{\theta})$$</div>
 
         <div class="card-grid">
           <div class="mini-card">
             <span class="tag green">机器学习是什么</span>
             <h3>学一个从输入到输出的函数</h3>
-            <p><span class="math-inline">x</span> 是输入，<span class="math-inline">ŷ</span> 是预测，<span class="math-inline">θ</span> 是参数。训练就是调整参数，让预测更接近真实答案。</p>
+            <p>$\mathbf{x}$ 是输入，$\hat{y}$ 是预测，$\boldsymbol{\theta}$ 是参数。训练就是调整参数，让预测更接近真实答案。</p>
           </div>
           <div class="mini-card">
             <span class="tag">你必须会的判断</span>
@@ -694,10 +703,10 @@
           <table>
             <thead><tr><th>指标</th><th>公式</th><th>含义</th><th>什么时候用</th></tr></thead>
             <tbody>
-              <tr><td>Accuracy</td><td>(TP+TN) / (TP+TN+FP+FN)</td><td>总体预测对了多少</td><td>类别平衡时很直观</td></tr>
-              <tr><td>Precision</td><td>TP / (TP + FP)</td><td>"预测为正的"里有多少真正的正</td><td>关注误报时（如垃圾邮件检测）</td></tr>
-              <tr><td>Recall</td><td>TP / (TP + FN)</td><td>"真实为正的"有多少被检出</td><td>关注漏检时（如疾病筛查）</td></tr>
-              <tr><td>F1 Score</td><td>2 × P × R / (P + R)</td><td>Precision 和 Recall 的调和平均</td><td>需要同时关注精确率和召回率</td></tr>
+              <tr><td>Accuracy</td><td>$\dfrac{\mathrm{TP}+\mathrm{TN}}{\mathrm{TP}+\mathrm{TN}+\mathrm{FP}+\mathrm{FN}}$</td><td>总体预测对了多少</td><td>类别平衡时很直观</td></tr>
+              <tr><td>Precision</td><td>$\dfrac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}$</td><td>"预测为正的"里有多少真正的正</td><td>关注误报时（如垃圾邮件检测）</td></tr>
+              <tr><td>Recall</td><td>$\dfrac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}$</td><td>"真实为正的"有多少被检出</td><td>关注漏检时（如疾病筛查）</td></tr>
+              <tr><td>F1 Score</td><td>$\dfrac{2PR}{P+R}$</td><td>Precision 和 Recall 的调和平均</td><td>需要同时关注精确率和召回率</td></tr>
             </tbody>
           </table>
         </div>
@@ -719,7 +728,7 @@
         </div>
 
         <div class="equation">
-          <strong>Error = Bias² + Variance + Irreducible Noise</strong><br>
+          $$\text{Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise}$$
           好的模型是在 bias 和 variance 之间找到平衡点。
         </div>
 
@@ -843,24 +852,32 @@
         <h3 style="margin-top:22px;">Loss 函数数学公式详解</h3>
 
         <div class="equation">
-          <strong>MSE (Mean Squared Error):</strong><br>
-          L = (1/n) Σᵢ (yᵢ − ŷᵢ)²<br><br>
-          <strong>MAE (Mean Absolute Error):</strong><br>
-          L = (1/n) Σᵢ |yᵢ − ŷᵢ|<br><br>
-          <strong>0/1 Loss:</strong><br>
-          L = 𝟙(ŷ ≠ y)，即预测错了就是 1，对了就是 0<br><br>
-          <strong>Hinge Loss (SVM margin loss):</strong><br>
-          L = max(0, 1 − y · f(x))，其中 y ∈ {−1, +1}<br>
-          多分类版本 (Multiclass SVM): Lᵢ = Σ_{j≠yᵢ} max(0, sⱼ − s_{yᵢ} + Δ)，Δ 通常取 1<br><br>
-          <strong>Logistic Loss (Binary Cross-Entropy):</strong><br>
-          L = −[y log(σ(z)) + (1−y) log(1−σ(z))]<br>
-          其中 σ(z) = 1/(1 + e⁻ᶻ) 是 sigmoid 函数<br><br>
-          <strong>Cross-Entropy Loss (多分类):</strong><br>
-          L = −Σ_{c=1}^{C} yc log(pc)<br>
-          对于 one-hot 编码简化为: L = −log(p_{正确类别})<br><br>
-          <strong>Softmax → Cross-Entropy 完整链:</strong><br>
-          先 Softmax: pⱼ = exp(sⱼ) / Σₖ exp(sₖ)<br>
-          再 Cross-Entropy: L = −log(p_{正确类别}) = −s_{正确类别} + log(Σₖ exp(sₖ))
+          <strong>MSE (Mean Squared Error):</strong>
+          $$L = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2$$
+
+          <strong>MAE (Mean Absolute Error):</strong>
+          $$L = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i|$$
+
+          <strong>0/1 Loss:</strong>
+          $$L = \mathbb{1}(\hat{y} \neq y)$$
+          即预测错了就是 1，对了就是 0<br><br>
+
+          <strong>Hinge Loss (SVM margin loss):</strong>
+          $$L = \max(0,\;1 - y \cdot f(x)), \quad y \in \{-1, +1\}$$
+          多分类版本 (Multiclass SVM):
+          $$L_i = \sum_{j \neq y_i} \max\!\bigl(0,\; s_j - s_{y_i} + \Delta\bigr), \quad \Delta = 1$$
+
+          <strong>Logistic Loss (Binary Cross-Entropy):</strong>
+          $$L = -\bigl[y\log\sigma(z) + (1-y)\log(1-\sigma(z))\bigr]$$
+          其中 $\sigma(z) = \dfrac{1}{1+e^{-z}}$ 是 sigmoid 函数<br><br>
+
+          <strong>Cross-Entropy Loss (多分类):</strong>
+          $$L = -\sum_{c=1}^{C} y_c \log p_c$$
+          对于 one-hot 编码简化为: $L = -\log p_{\text{correct}}$<br><br>
+
+          <strong>Softmax → Cross-Entropy 完整链:</strong>
+          $$p_j = \frac{e^{s_j}}{\sum_k e^{s_k}}$$
+          $$L = -\log p_{\text{correct}} = -s_{\text{correct}} + \log\!\Bigl(\sum_k e^{s_k}\Bigr)$$
         </div>
 
         <div class="callout">
@@ -872,19 +889,19 @@
           <div class="mini-card">
             <span class="tag green">梯度性质</span>
             <h3>Softmax + CE 的梯度非常简洁</h3>
-            <p>对 logits sⱼ 的梯度: ∂L/∂sⱼ = pⱼ − yⱼ，即"预测概率减去真实标签"。这使得实现和计算都很高效。</p>
+            <p>对 logits $s_j$ 的梯度: $\dfrac{\partial L}{\partial s_j} = p_j - y_j$，即"预测概率减去真实标签"。这使得实现和计算都很高效。</p>
           </div>
           <div class="mini-card">
             <span class="tag alt">数值稳定性</span>
             <h3>Log-Sum-Exp Trick</h3>
-            <p>实际计算时先减去 max(s)：log Σexp(sₖ) = M + log Σexp(sₖ − M)，其中 M = max(s)。这防止 exp 溢出。</p>
+            <p>实际计算时先减去 $M = \max(s)$：$\log\sum e^{s_k} = M + \log\sum e^{s_k - M}$。这防止 exp 溢出。</p>
           </div>
         </div>
       </section>
 
       <section class="section" id="gd">
         <h2>Gradient Descent 和变体</h2>
-        <div class="equation">θ<sub>t+1</sub> = θ<sub>t</sub> − η∇L(θ<sub>t</sub>)</div>
+        <div class="equation">$$\theta_{t+1} = \theta_t - \eta\,\nabla L(\theta_t)$$</div>
 
         <div class="table-wrap">
           <table>
@@ -895,10 +912,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td><span class="math-inline">θ</span></td><td>模型参数</td></tr>
-              <tr><td><span class="math-inline">L</span></td><td>loss</td></tr>
-              <tr><td><span class="math-inline">∇L</span></td><td>梯度，表示 loss 上升最快方向</td></tr>
-              <tr><td><span class="math-inline">η</span></td><td>learning rate</td></tr>
+              <tr><td>$\theta$</td><td>模型参数</td></tr>
+              <tr><td>$L$</td><td>loss</td></tr>
+              <tr><td>$\nabla L$</td><td>梯度，表示 loss 上升最快方向</td></tr>
+              <tr><td>$\eta$</td><td>learning rate</td></tr>
             </tbody>
           </table>
         </div>
@@ -964,45 +981,49 @@
         <h3 style="margin-top:22px;">优化器数学公式详解</h3>
 
         <div class="equation">
-          <strong>Vanilla SGD:</strong><br>
-          θ_{t+1} = θ_t − η · ∇L(θ_t)<br><br>
-          <strong>SGD with Momentum:</strong><br>
-          v_t = β · v_{t-1} + ∇L(θ_t)　　（β 通常取 0.9）<br>
-          θ_{t+1} = θ_t − η · v_t<br>
-          直觉：v 像一个有惯性的球，即使当前梯度变化，也会保留之前的方向<br><br>
-          <strong>Nesterov Momentum (NAG):</strong><br>
-          v_t = β · v_{t-1} + ∇L(θ_t − η · β · v_{t-1})<br>
-          θ_{t+1} = θ_t − η · v_t<br>
+          <strong>Vanilla SGD:</strong>
+          $$\theta_{t+1} = \theta_t - \eta \cdot \nabla L(\theta_t)$$
+
+          <strong>SGD with Momentum:</strong>（$\beta$ 通常取 0.9）
+          $$v_t = \beta \, v_{t-1} + \nabla L(\theta_t)$$
+          $$\theta_{t+1} = \theta_t - \eta \, v_t$$
+          直觉：$v$ 像一个有惯性的球，即使当前梯度变化，也会保留之前的方向<br><br>
+
+          <strong>Nesterov Momentum (NAG):</strong>
+          $$v_t = \beta \, v_{t-1} + \nabla L\!\bigl(\theta_t - \eta \beta \, v_{t-1}\bigr)$$
+          $$\theta_{t+1} = \theta_t - \eta \, v_t$$
           直觉：先"往前看一步"再计算梯度，通常比标准 momentum 收敛更好<br><br>
-          <strong>AdaGrad:</strong><br>
-          G_t = G_{t-1} + (∇L)²　　（逐元素累积平方梯度）<br>
-          θ_{t+1} = θ_t − η / (√G_t + ε) · ∇L<br>
-          问题：G 只增不降，后期学习率可能太小<br><br>
-          <strong>RMSProp:</strong><br>
-          E[g²]_t = γ · E[g²]_{t-1} + (1−γ) · (∇L)²<br>
-          θ_{t+1} = θ_t − η / (√E[g²]_t + ε) · ∇L<br>
+
+          <strong>AdaGrad:</strong>
+          $$G_t = G_{t-1} + (\nabla L)^2 \quad\text{（逐元素累积平方梯度）}$$
+          $$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{G_t} + \varepsilon} \cdot \nabla L$$
+          问题：$G$ 只增不降，后期学习率可能太小<br><br>
+
+          <strong>RMSProp:</strong>
+          $$\mathbb{E}[g^2]_t = \gamma \, \mathbb{E}[g^2]_{t-1} + (1-\gamma)(\nabla L)^2$$
+          $$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\mathbb{E}[g^2]_t} + \varepsilon} \cdot \nabla L$$
           改进：用滑动平均代替累积，解决学习率过度衰减<br><br>
-          <strong>Adam (Adaptive Moment Estimation):</strong><br>
-          m_t = β₁ · m_{t-1} + (1−β₁) · ∇L　　（一阶矩 / 均值估计）<br>
-          v_t = β₂ · v_{t-1} + (1−β₂) · (∇L)²　　（二阶矩 / 方差估计）<br>
-          m̂_t = m_t / (1 − β₁ᵗ)　　（偏差修正）<br>
-          v̂_t = v_t / (1 − β₂ᵗ)　　（偏差修正）<br>
-          θ_{t+1} = θ_t − η · m̂_t / (√v̂_t + ε)<br>
-          常见默认值：β₁=0.9，β₂=0.999，ε=1e-8
+
+          <strong>Adam (Adaptive Moment Estimation):</strong>
+          $$m_t = \beta_1 \, m_{t-1} + (1-\beta_1)\nabla L \quad\text{（一阶矩 / 均值估计）}$$
+          $$v_t = \beta_2 \, v_{t-1} + (1-\beta_2)(\nabla L)^2 \quad\text{（二阶矩 / 方差估计）}$$
+          $$\hat{m}_t = \frac{m_t}{1 - \beta_1^t} \qquad \hat{v}_t = \frac{v_t}{1 - \beta_2^t} \quad\text{（偏差修正）}$$
+          $$\theta_{t+1} = \theta_t - \frac{\eta \, \hat{m}_t}{\sqrt{\hat{v}_t} + \varepsilon}$$
+          常见默认值：$\beta_1=0.9$，$\beta_2=0.999$，$\varepsilon=10^{-8}$
         </div>
 
         <div class="card-grid">
           <div class="mini-card">
             <span class="tag green">为什么 Adam 需要偏差修正</span>
             <h3>Bias Correction</h3>
-            <p>因为 m 和 v 初始化为 0，前几步估计值偏低。除以 (1 − βᵗ) 补偿这种初始偏差，使得前几步的更新方向和大小更准确。</p>
+            <p>因为 $m$ 和 $v$ 初始化为 0，前几步估计值偏低。除以 $(1 - \beta^t)$ 补偿这种初始偏差，使得前几步的更新方向和大小更准确。</p>
           </div>
           <div class="mini-card">
             <span class="tag">Learning Rate Schedule</span>
             <h3>学习率衰减策略</h3>
-            <p><strong>Step decay:</strong> 每隔 N 个 epoch 乘以 γ（通常 0.1）<br>
-               <strong>Cosine annealing:</strong> η_t = η_min + ½(η_max − η_min)(1 + cos(πt/T))<br>
-               <strong>Warm-up:</strong> 前几百步线性增大 η，然后再衰减，防止初始阶段大梯度造成不稳定</p>
+            <p><strong>Step decay:</strong> 每隔 N 个 epoch 乘以 $\gamma$（通常 0.1）<br>
+               <strong>Cosine annealing:</strong> $\eta_t = \eta_{\min} + \tfrac{1}{2}(\eta_{\max}-\eta_{\min})\bigl(1+\cos\tfrac{\pi t}{T}\bigr)$<br>
+               <strong>Warm-up:</strong> 前几百步线性增大 $\eta$，然后再衰减，防止初始阶段大梯度造成不稳定</p>
           </div>
         </div>
       </section>
@@ -1022,14 +1043,15 @@
         </div>
 
         <div class="equation">
-          <strong>Chain Rule（链式法则）:</strong><br>
-          如果 y = f(g(x))，则 dy/dx = (df/dg) · (dg/dx)<br><br>
+          <strong>Chain Rule（链式法则）:</strong>
+          $$\text{如果 } y = f(g(x)), \quad \frac{dy}{dx} = \frac{df}{dg}\cdot\frac{dg}{dx}$$
+
           <strong>多层神经网络的反向传播:</strong><br>
-          设 z = Wx + b，a = σ(z)（激活后输出），L = loss(a, y)<br>
-          ∂L/∂W = ∂L/∂a · ∂a/∂z · ∂z/∂W = δ · xᵀ<br>
-          ∂L/∂b = δ<br>
-          ∂L/∂x = Wᵀ · δ　　（传给上一层的梯度）<br>
-          其中 δ = ∂L/∂z = ∂L/∂a · σ'(z)
+          设 $z = Wx + b$，$a = \sigma(z)$（激活后输出），$L = \text{loss}(a, y)$
+          $$\frac{\partial L}{\partial W} = \frac{\partial L}{\partial a}\cdot\frac{\partial a}{\partial z}\cdot\frac{\partial z}{\partial W} = \delta \cdot x^\top$$
+          $$\frac{\partial L}{\partial b} = \delta$$
+          $$\frac{\partial L}{\partial x} = W^\top \delta \quad\text{（传给上一层的梯度）}$$
+          其中 $\delta = \dfrac{\partial L}{\partial z} = \dfrac{\partial L}{\partial a}\cdot\sigma'(z)$
         </div>
 
         <div class="card-grid">
@@ -1057,12 +1079,12 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td>Add: f = x + y</td><td>z = x + y</td><td>∂z/∂x = 1, ∂z/∂y = 1</td><td>梯度直接复制给两个输入</td></tr>
-              <tr><td>Multiply: f = x · y</td><td>z = xy</td><td>∂z/∂x = y, ∂z/∂y = x</td><td>梯度被另一个输入缩放（交换）</td></tr>
-              <tr><td>Max: f = max(x, y)</td><td>z = max(x,y)</td><td>赢家得 1, 输家得 0</td><td>梯度只流向较大的那个</td></tr>
-              <tr><td>ReLU: f = max(0, x)</td><td>z = max(0,x)</td><td>x>0 时为 1, x≤0 时为 0</td><td>正区间传梯度，负区间拦截</td></tr>
-              <tr><td>Sigmoid: f = σ(x)</td><td>z = σ(x)</td><td>σ(x)(1−σ(x))</td><td>最大值 0.25（在 x=0），容易饱和</td></tr>
-              <tr><td>矩阵乘法: Y = XW</td><td>Y = XW</td><td>∂L/∂X = (∂L/∂Y)Wᵀ，∂L/∂W = Xᵀ(∂L/∂Y)</td><td>转置并乘上游梯度</td></tr>
+              <tr><td>Add: $f=x+y$</td><td>$z=x+y$</td><td>$\frac{\partial z}{\partial x}=1,\;\frac{\partial z}{\partial y}=1$</td><td>梯度直接复制给两个输入</td></tr>
+              <tr><td>Multiply: $f=xy$</td><td>$z=xy$</td><td>$\frac{\partial z}{\partial x}=y,\;\frac{\partial z}{\partial y}=x$</td><td>梯度被另一个输入缩放（交换）</td></tr>
+              <tr><td>Max: $f=\max(x,y)$</td><td>$z=\max(x,y)$</td><td>赢家得 1, 输家得 0</td><td>梯度只流向较大的那个</td></tr>
+              <tr><td>ReLU: $f=\max(0,x)$</td><td>$z=\max(0,x)$</td><td>$x>0$ 时为 1, $x\le0$ 时为 0</td><td>正区间传梯度，负区间拦截</td></tr>
+              <tr><td>Sigmoid: $f=\sigma(x)$</td><td>$z=\sigma(x)$</td><td>$\sigma(x)(1-\sigma(x))$</td><td>最大值 0.25（在 $x=0$），容易饱和</td></tr>
+              <tr><td>矩阵乘法: $Y=XW$</td><td>$Y=XW$</td><td>$\frac{\partial L}{\partial X}=\frac{\partial L}{\partial Y}W^\top$，$\frac{\partial L}{\partial W}=X^\top\frac{\partial L}{\partial Y}$</td><td>转置并乘上游梯度</td></tr>
             </tbody>
           </table>
         </div>
@@ -1105,56 +1127,56 @@
             <tbody>
               <tr>
                 <td>Sigmoid</td>
-                <td>σ(x) = 1/(1+e⁻ˣ)</td>
-                <td>(0, 1)</td>
-                <td>σ(x)(1−σ(x))</td>
+                <td>$\sigma(x)=\dfrac{1}{1+e^{-x}}$</td>
+                <td>$(0,1)$</td>
+                <td>$\sigma(x)(1-\sigma(x))$</td>
                 <td>输出可解释为概率</td>
                 <td>饱和区梯度消失、非零中心、计算 exp 较贵</td>
               </tr>
               <tr>
                 <td>Tanh</td>
-                <td>tanh(x) = (eˣ−e⁻ˣ)/(eˣ+e⁻ˣ)</td>
-                <td>(−1, 1)</td>
-                <td>1 − tanh²(x)</td>
+                <td>$\tanh(x)=\dfrac{e^x-e^{-x}}{e^x+e^{-x}}$</td>
+                <td>$(-1,1)$</td>
+                <td>$1-\tanh^2(x)$</td>
                 <td>零中心</td>
                 <td>饱和区仍有梯度消失</td>
               </tr>
               <tr>
                 <td>ReLU</td>
-                <td>f(x) = max(0, x)</td>
-                <td>[0, ∞)</td>
-                <td>x>0 时 1，x≤0 时 0</td>
+                <td>$f(x)=\max(0,x)$</td>
+                <td>$[0,\infty)$</td>
+                <td>$x>0$: 1，$x\le0$: 0</td>
                 <td>计算简单、不会正区间饱和、收敛快</td>
                 <td>Dead ReLU（负半轴永久为 0），非零中心</td>
               </tr>
               <tr>
                 <td>Leaky ReLU</td>
-                <td>f(x) = max(αx, x)，α≈0.01</td>
-                <td>(−∞, ∞)</td>
-                <td>x>0 时 1，x≤0 时 α</td>
+                <td>$f(x)=\max(\alpha x,\,x),\;\alpha\!\approx\!0.01$</td>
+                <td>$(-\infty,\infty)$</td>
+                <td>$x>0$: 1，$x\le0$: $\alpha$</td>
                 <td>解决 dead ReLU</td>
-                <td>多一个超参数 α</td>
+                <td>多一个超参数 $\alpha$</td>
               </tr>
               <tr>
                 <td>PReLU</td>
-                <td>同 Leaky ReLU，但 α 可学习</td>
-                <td>(−∞, ∞)</td>
+                <td>同 Leaky ReLU，但 $\alpha$ 可学习</td>
+                <td>$(-\infty,\infty)$</td>
                 <td>同上</td>
-                <td>α 由网络自动调整</td>
+                <td>$\alpha$ 由网络自动调整</td>
                 <td>增加参数量</td>
               </tr>
               <tr>
                 <td>ELU</td>
-                <td>x>0 时 x，x≤0 时 α(eˣ−1)</td>
-                <td>(−α, ∞)</td>
-                <td>x>0 时 1，x≤0 时 f(x)+α</td>
+                <td>$x>0$: $x$，$x\le0$: $\alpha(e^x-1)$</td>
+                <td>$(-\alpha,\infty)$</td>
+                <td>$x>0$: 1，$x\le0$: $f(x)+\alpha$</td>
                 <td>接近零中心、负区间平滑</td>
                 <td>计算 exp 较贵</td>
               </tr>
               <tr>
                 <td>GELU</td>
-                <td>x · Φ(x)，Φ 是标准正态 CDF</td>
-                <td>≈(−0.17, ∞)</td>
+                <td>$x\cdot\Phi(x)$，$\Phi$ 是标准正态 CDF</td>
+                <td>$\approx(-0.17,\infty)$</td>
                 <td>—</td>
                 <td>Transformer 中常用、平滑</td>
                 <td>计算相对复杂</td>
@@ -1273,43 +1295,43 @@
 
         <h3>输出尺寸公式</h3>
         <div class="equation">
-          O = ⌊(W − K + 2P) / S⌋ + 1<br>
-          W = 输入宽/高，K = 卷积核大小，P = padding，S = stride
+          $$O = \left\lfloor\frac{W - K + 2P}{S}\right\rfloor + 1$$
+          $W$ = 输入宽/高，$K$ = 卷积核大小，$P$ = padding，$S$ = stride
         </div>
 
         <h3 style="margin-top:22px;">🔢 数值示例 1：基本卷积</h3>
         <div class="callout">
-          <strong>题目：</strong>输入 32×32×3，用 64 个 5×5 的 filter，stride=1，padding=2<br><br>
+          <strong>题目：</strong>输入 $32\times32\times3$，用 64 个 $5\times5$ 的 filter，stride=1，padding=2<br><br>
           <strong>Step 1 — 空间输出：</strong><br>
-          O = (32 − 5 + 2×2) / 1 + 1 = (32 − 5 + 4) / 1 + 1 = 32<br>
-          所以输出空间尺寸 = 32×32（padding=2 保持了尺寸）<br><br>
+          $O = \dfrac{32 - 5 + 2\times2}{1} + 1 = \dfrac{32 - 5 + 4}{1} + 1 = 32$<br>
+          所以输出空间尺寸 = $32\times32$（padding=2 保持了尺寸）<br><br>
           <strong>Step 2 — 输出深度：</strong><br>
           使用 64 个 filter → 输出深度 = 64<br>
-          <strong>最终输出体积：32 × 32 × 64</strong><br><br>
+          <strong>最终输出体积：$32 \times 32 \times 64$</strong><br><br>
           <strong>Step 3 — 参数量：</strong><br>
-          每个 filter: 5 × 5 × 3 = 75 个权重 + 1 个 bias = 76<br>
-          总参数: 64 × 76 = <strong>4,864</strong><br><br>
+          每个 filter: $5 \times 5 \times 3 = 75$ 个权重 $+ 1$ 个 bias $= 76$<br>
+          总参数: $64 \times 76 = \mathbf{4{,}864}$<br><br>
           <strong>Step 4 — FLOPs（乘加次数）：</strong><br>
-          每个输出位置做 5×5×3 = 75 次乘法和 75 次加法<br>
-          输出位置数: 32 × 32 × 64 = 65,536<br>
-          总 MACs: 65,536 × 75 = <strong>4,915,200</strong>
+          每个输出位置做 $5\times5\times3 = 75$ 次乘法和 75 次加法<br>
+          输出位置数: $32 \times 32 \times 64 = 65{,}536$<br>
+          总 MACs: $65{,}536 \times 75 = \mathbf{4{,}915{,}200}$
         </div>
 
         <h3 style="margin-top:22px;">🔢 数值示例 2：stride 和 no-padding</h3>
         <div class="callout">
-          <strong>题目：</strong>输入 28×28×1，用 16 个 3×3 filter，stride=2，padding=0<br><br>
-          O = (28 − 3 + 0) / 2 + 1 = 25/2 + 1 = 12 + 1 = <strong>13</strong><br>
-          输出：13 × 13 × 16<br>
-          参数：16 × (3×3×1 + 1) = 16 × 10 = <strong>160</strong>
+          <strong>题目：</strong>输入 $28\times28\times1$，用 16 个 $3\times3$ filter，stride=2，padding=0<br><br>
+          $O = \dfrac{28 - 3 + 0}{2} + 1 = \dfrac{25}{2} + 1 = 12 + 1 = \mathbf{13}$<br>
+          输出：$13 \times 13 \times 16$<br>
+          参数：$16 \times (3\times3\times1 + 1) = 16 \times 10 = \mathbf{160}$
         </div>
 
         <h3 style="margin-top:22px;">🔢 数值示例 3：1×1 卷积</h3>
         <div class="callout">
-          <strong>题目：</strong>输入 14×14×512，用 256 个 1×1 filter<br><br>
-          O = (14 − 1 + 0) / 1 + 1 = 14<br>
-          输出：14 × 14 × 256 （空间不变，深度改变）<br>
-          参数：256 × (1×1×512 + 1) = 256 × 513 = <strong>131,328</strong><br><br>
-          <strong>1×1 卷积的作用：</strong>不改变空间尺寸，只做通道间的线性组合。常用于 bottleneck（降维）和 pointwise 融合。
+          <strong>题目：</strong>输入 $14\times14\times512$，用 256 个 $1\times1$ filter<br><br>
+          $O = \dfrac{14 - 1 + 0}{1} + 1 = 14$<br>
+          输出：$14 \times 14 \times 256$ （空间不变，深度改变）<br>
+          参数：$256 \times (1\times1\times512 + 1) = 256 \times 513 = \mathbf{131{,}328}$<br><br>
+          <strong>$1\times1$ 卷积的作用：</strong>不改变空间尺寸，只做通道间的线性组合。常用于 bottleneck（降维）和 pointwise 融合。
         </div>
 
         <h3 style="margin-top:22px;">Receptive Field 感受野</h3>
@@ -1321,8 +1343,8 @@
           </div>
           <div class="mini-card">
             <span class="tag">递推公式</span>
-            <h3>RF_l = RF_{l-1} + (K_l − 1) × ∏ S</h3>
-            <p>每加一层卷积，感受野增大。stride 越大，上层感受野增长越快。两个 3×3 层的感受野 = 一个 5×5 层，但参数更少。</p>
+            <h3>$\mathrm{RF}_l = \mathrm{RF}_{l-1} + (K_l-1)\times\prod S$</h3>
+            <p>每加一层卷积，感受野增大。stride 越大，上层感受野增长越快。两个 $3\times3$ 层的感受野 = 一个 $5\times5$ 层，但参数更少。</p>
           </div>
         </div>
 
@@ -1335,19 +1357,20 @@
               <tr><td>保留什么</td><td>最强激活</td><td>整体分布</td><td>通道级全局统计</td></tr>
               <tr><td>参数</td><td>0</td><td>0</td><td>0</td></tr>
               <tr><td>常见用途</td><td>特征提取阶段下采样</td><td>有时替代 max pool</td><td>替代全连接层（如 ResNet 末尾）</td></tr>
-              <tr><td>输出大小</td><td>⌊(W−K)/S⌋+1</td><td>同上</td><td>1×1×C</td></tr>
+              <tr><td>输出大小</td><td>$\lfloor(W-K)/S\rfloor+1$</td><td>同上</td><td>$1\times1\times C$</td></tr>
             </tbody>
           </table>
         </div>
 
         <h3 style="margin-top:22px;">Depthwise Separable Convolution（MobileNet 核心）</h3>
         <div class="equation">
-          <strong>标准卷积参数：</strong>K × K × C_in × C_out<br>
-          <strong>Depthwise Separable 参数：</strong>K × K × C_in (depthwise) + 1 × 1 × C_in × C_out (pointwise)<br>
-          <strong>计算量比值 ≈ 1/C_out + 1/K²</strong><br><br>
-          例：3×3 filter, C_in=C_out=256<br>
-          标准：3×3×256×256 = 589,824<br>
-          分离式：3×3×256 + 1×1×256×256 = 2,304 + 65,536 = 67,840 （约 <strong>8.7×</strong> 参数减少）
+          <strong>标准卷积参数：</strong>$K^2 \cdot C_{\text{in}} \cdot C_{\text{out}}$<br>
+          <strong>Depthwise Separable 参数：</strong>$K^2 \cdot C_{\text{in}}$ (depthwise) $+ \; 1\times1\times C_{\text{in}}\times C_{\text{out}}$ (pointwise)<br>
+          <strong>计算量比值：</strong>
+          $$\frac{\text{Separable}}{\text{Standard}} \approx \frac{1}{C_{\text{out}}} + \frac{1}{K^2}$$
+          例：$3\times3$ filter, $C_{\text{in}}=C_{\text{out}}=256$<br>
+          标准：$3^2\times256\times256 = 589{,}824$<br>
+          分离式：$3^2\times256 + 1\times256\times256 = 2{,}304 + 65{,}536 = 67{,}840$（约 <strong>8.7×</strong> 参数减少）
         </div>
       </section>
 
@@ -1357,15 +1380,13 @@
 
         <h3>Batch Normalization 公式</h3>
         <div class="equation">
-          <strong>Training（对每个 mini-batch）：</strong><br>
-          μ_B = (1/m) Σᵢ xᵢ　　（batch 均值）<br>
-          σ²_B = (1/m) Σᵢ (xᵢ − μ_B)²　　（batch 方差）<br>
-          x̂ᵢ = (xᵢ − μ_B) / √(σ²_B + ε)　　（标准化）<br>
-          yᵢ = γ · x̂ᵢ + β　　（可学习的缩放和平移）<br><br>
+          <strong>Training（对每个 mini-batch）：</strong>
+          $$\mu_B = \frac{1}{m}\sum_{i=1}^{m} x_i \qquad \sigma_B^2 = \frac{1}{m}\sum_{i=1}^{m}(x_i - \mu_B)^2$$
+          $$\hat{x}_i = \frac{x_i - \mu_B}{\sqrt{\sigma_B^2 + \varepsilon}} \qquad y_i = \gamma\,\hat{x}_i + \beta$$
+
           <strong>Inference（推理时）：</strong><br>
-          使用训练期间累计的 running mean 和 running variance（通常用指数滑动平均）<br>
-          x̂ = (x − μ_running) / √(σ²_running + ε)<br>
-          y = γ · x̂ + β
+          使用训练期间累计的 running mean 和 running variance（通常用指数滑动平均）
+          $$\hat{x} = \frac{x - \mu_{\text{running}}}{\sqrt{\sigma^2_{\text{running}} + \varepsilon}} \qquad y = \gamma\,\hat{x} + \beta$$
         </div>
 
         <div class="card-grid">
@@ -1389,10 +1410,10 @@
           <table>
             <thead><tr><th>BN 参数</th><th>是否可学习</th><th>作用</th></tr></thead>
             <tbody>
-              <tr><td>γ (scale)</td><td>✅ 可学习</td><td>允许网络恢复需要的方差</td></tr>
-              <tr><td>β (shift)</td><td>✅ 可学习</td><td>允许网络恢复需要的均值偏移</td></tr>
-              <tr><td>μ_running</td><td>❌ 不可学习</td><td>训练时用 EMA 自动更新</td></tr>
-              <tr><td>σ²_running</td><td>❌ 不可学习</td><td>训练时用 EMA 自动更新</td></tr>
+              <tr><td>$\gamma$ (scale)</td><td>✅ 可学习</td><td>允许网络恢复需要的方差</td></tr>
+              <tr><td>$\beta$ (shift)</td><td>✅ 可学习</td><td>允许网络恢复需要的均值偏移</td></tr>
+              <tr><td>$\mu_{\text{running}}$</td><td>❌ 不可学习</td><td>训练时用 EMA 自动更新</td></tr>
+              <tr><td>$\sigma^2_{\text{running}}$</td><td>❌ 不可学习</td><td>训练时用 EMA 自动更新</td></tr>
             </tbody>
           </table>
         </div>
@@ -1415,18 +1436,18 @@
         <div class="compare-grid">
           <div class="compare-card">
             <span class="tag green">L2 Regularization (Weight Decay)</span>
-            <h3>L_total = L_data + λ · ½ · ||W||²</h3>
-            <p>惩罚大权重，使权重趋向较小值，模型更平滑。梯度更新变成：W = W − η(∂L/∂W + λW)</p>
+            <h3>$L_{\text{total}} = L_{\text{data}} + \frac{\lambda}{2}\|W\|^2$</h3>
+            <p>惩罚大权重，使权重趋向较小值，模型更平滑。梯度更新变成：$W = W - \eta\bigl(\frac{\partial L}{\partial W} + \lambda W\bigr)$</p>
           </div>
           <div class="compare-card">
             <span class="tag green">L1 Regularization</span>
-            <h3>L_total = L_data + λ · ||W||₁</h3>
+            <h3>$L_{\text{total}} = L_{\text{data}} + \lambda\|W\|_1$</h3>
             <p>倾向于产生稀疏权重（很多权重变 0）。适合特征选择。</p>
           </div>
           <div class="compare-card">
             <span class="tag">Dropout</span>
             <h3>训练时随机置零一部分神经元</h3>
-            <p>每次训练迭代随机以概率 p drop 掉一些神经元的输出。<br><strong>Inverted Dropout：</strong>训练时把存活的激活除以 (1−p)，这样测试时不需要额外缩放。</p>
+            <p>每次训练迭代随机以概率 $p$ drop 掉一些神经元的输出。<br><strong>Inverted Dropout：</strong>训练时把存活的激活除以 $(1-p)$，这样测试时不需要额外缩放。</p>
           </div>
           <div class="compare-card">
             <span class="tag">Data Augmentation</span>
@@ -1441,8 +1462,8 @@
           <div class="compare-card">
             <span class="tag alt">Weight Initialization</span>
             <h3>好的初始化 = 好的开始</h3>
-            <p><strong>Xavier/Glorot：</strong>Var(W) = 2/(n_in + n_out)，适合 sigmoid/tanh<br>
-               <strong>He/Kaiming：</strong>Var(W) = 2/n_in，适合 ReLU<br>
+            <p><strong>Xavier/Glorot：</strong>$\mathrm{Var}(W)=\dfrac{2}{n_{\text{in}}+n_{\text{out}}}$，适合 sigmoid/tanh<br>
+               <strong>He/Kaiming：</strong>$\mathrm{Var}(W)=\dfrac{2}{n_{\text{in}}}$，适合 ReLU<br>
                全零初始化会导致对称性问题（所有神经元学到一样的东西）</p>
           </div>
         </div>
@@ -1471,7 +1492,7 @@
           <div class="model-card">
             <span class="tag green">VGG (2014)</span>
             <h3>统一 3×3 卷积</h3>
-            <p>VGG-16 有 13 Conv + 3 FC。证明了用小 filter 堆深比大 filter 更好。<br>参数 138M，大部分在 FC 层。缺点：计算量大、内存消耗高。<br><strong>关键洞察：</strong>两个 3×3 = 一个 5×5 的感受野，但只用 2×3²=18 vs 5²=25 参数。</p>
+            <p>VGG-16 有 13 Conv + 3 FC。证明了用小 filter 堆深比大 filter 更好。<br>参数 138M，大部分在 FC 层。缺点：计算量大、内存消耗高。<br><strong>关键洞察：</strong>两个 $3\times3$ = 一个 $5\times5$ 的感受野，但只用 $2\times3^2=18$ vs $5^2=25$ 参数。</p>
           </div>
           <div class="model-card">
             <span class="tag">GoogLeNet / Inception (2014)</span>
@@ -1481,12 +1502,12 @@
           <div class="model-card">
             <span class="tag">ResNet (2015)</span>
             <h3>Residual / Skip Connection</h3>
-            <p>y = F(x) + x，学习残差而不是完整映射。<br><strong>Degradation problem：</strong>更深的 plain 网络反而比浅的准确率低，不是因为过拟合而是优化困难。<br><strong>Skip connection 为什么有效：</strong>1. 提供梯度直通路径（缓解梯度消失）2. 最坏情况下 F(x)=0，网络退化为恒等映射。<br>ResNet-50 的 bottleneck 结构：1×1(降维) → 3×3 → 1×1(升维)</p>
+            <p>$y = F(x) + x$，学习残差而不是完整映射。<br><strong>Degradation problem：</strong>更深的 plain 网络反而比浅的准确率低，不是因为过拟合而是优化困难。<br><strong>Skip connection 为什么有效：</strong>1. 提供梯度直通路径（缓解梯度消失）2. 最坏情况下 $F(x)=0$，网络退化为恒等映射。<br>ResNet-50 的 bottleneck 结构：$1\!\times\!1$(降维) → $3\!\times\!3$ → $1\!\times\!1$(升维)</p>
           </div>
           <div class="model-card">
             <span class="tag">MobileNet (2017)</span>
             <h3>轻量化 — Depthwise Separable Conv</h3>
-            <p>标准 Conv 拆成两步：<br>1. Depthwise：每个 channel 单独用一个 K×K filter<br>2. Pointwise：用 1×1 conv 做通道融合<br>计算量约降低 8-9 倍，适合移动端和嵌入式设备。</p>
+            <p>标准 Conv 拆成两步：<br>1. Depthwise：每个 channel 单独用一个 $K\!\times\!K$ filter<br>2. Pointwise：用 $1\!\times\!1$ conv 做通道融合<br>计算量约降低 8-9 倍，适合移动端和嵌入式设备。</p>
           </div>
         </div>
 
@@ -1559,14 +1580,17 @@
 
         <h3 style="margin-top:22px;">Roofline Model 详解</h3>
         <div class="equation">
-          <strong>Roofline Model 核心公式：</strong><br>
-          Attainable Performance = min(Peak Compute, Peak Bandwidth × Arithmetic Intensity)<br><br>
-          <strong>Arithmetic Intensity (AI):</strong><br>
-          AI = FLOPs / Bytes Accessed　　(单位: FLOP/Byte)<br><br>
-          <strong>Ridge Point（转折点）:</strong><br>
-          AI* = Peak Compute / Peak Bandwidth<br>
-          当 AI &lt; AI* → Memory-bound（瓶颈在带宽）<br>
-          当 AI &gt; AI* → Compute-bound（瓶颈在算力）
+          <strong>Roofline Model 核心公式：</strong>
+          $$\text{Perf} = \min\!\bigl(\pi,\;\beta \times \text{AI}\bigr)$$
+          $\pi$ = 峰值算力 (FLOPS)，$\beta$ = 峰值带宽 (Bytes/s)<br><br>
+
+          <strong>Arithmetic Intensity (AI):</strong>
+          $$\text{AI} = \frac{\text{FLOPs}}{\text{Bytes Accessed}} \quad\bigl(\text{单位: FLOP/Byte}\bigr)$$
+
+          <strong>Ridge Point（转折点）:</strong>
+          $$\text{AI}^* = \frac{\pi}{\beta}$$
+          当 $\text{AI} < \text{AI}^*$ → Memory-bound（瓶颈在带宽）<br>
+          当 $\text{AI} > \text{AI}^*$ → Compute-bound（瓶颈在算力）
         </div>
 
         <div class="card-grid">
@@ -1619,8 +1643,8 @@
 
         <h3 style="margin-top:22px;">Loop Ordering 对性能的影响</h3>
         <div class="equation">
-          <strong>矩阵乘法 C = A × B 的三重循环：</strong><br>
-          for i: for j: for k:  C[i][j] += A[i][k] * B[k][j]<br><br>
+          <strong>矩阵乘法 $C = A \times B$ 的三重循环：</strong><br>
+          <code>for i: for j: for k:  C[i][j] += A[i][k] * B[k][j]</code><br><br>
           <strong>共有 6 种循环排列（ijk, ikj, jik, jki, kij, kji）</strong><br>
           不同排列的 cache 行为差异巨大：<br>
           • ijk / jik：B 按列访问（stride 大，cache miss 多）<br>
@@ -1630,10 +1654,10 @@
 
         <h3 style="margin-top:22px;">Tiling 策略详解</h3>
         <div class="callout">
-          <strong>基本思想：</strong>把 N×N 矩阵分成 T×T 的小块，每个小块能放进 cache<br>
+          <strong>基本思想：</strong>把 $N\times N$ 矩阵分成 $T\times T$ 的小块，每个小块能放进 cache<br>
           <strong>Cache miss 估算：</strong><br>
-          • 无 tiling：O(N³) cache miss<br>
-          • 有 tiling (块大小 B)：O(N³ / (B√M)) cache miss，其中 M = cache 大小<br>
+          • 无 tiling：$O(N^3)$ cache miss<br>
+          • 有 tiling (块大小 $B$)：$O\!\bigl(\tfrac{N^3}{B\sqrt{M}}\bigr)$ cache miss，$M$ = cache 大小<br>
           <strong>为什么有效：</strong>每个小块在 cache 里被多次使用（用于计算输出块的多个元素），大幅减少从主存取数据的次数。
         </div>
       </section>
@@ -1685,20 +1709,27 @@
 
         <h3>Strassen 算法详解</h3>
         <div class="equation">
-          <strong>标准 2×2 矩阵乘法：</strong>8 次乘法 + 4 次加法<br>
-          <strong>Strassen 2×2 矩阵乘法：</strong>7 次乘法 + 18 次加法<br><br>
-          <strong>递归应用到 N×N：</strong><br>
-          标准：O(N³)　　Strassen：O(N^{log₂7}) ≈ O(N^{2.807})<br><br>
-          <strong>Strassen 的 7 次乘法 (M₁ ~ M₇)：</strong><br>
-          将 A, B 各分为四个子矩阵 A₁₁,A₁₂,A₂₁,A₂₂ 和 B₁₁,B₁₂,B₂₁,B₂₂<br>
-          M₁ = (A₁₁ + A₂₂)(B₁₁ + B₂₂)<br>
-          M₂ = (A₂₁ + A₂₂)(B₁₁)<br>
-          M₃ = (A₁₁)(B₁₂ − B₂₂)<br>
-          M₄ = (A₂₂)(B₂₁ − B₁₁)<br>
-          M₅ = (A₁₁ + A₁₂)(B₂₂)<br>
-          M₆ = (A₂₁ − A₁₁)(B₁₁ + B₁₂)<br>
-          M₇ = (A₁₂ − A₂₂)(B₂₁ + B₂₂)<br><br>
-          然后：C₁₁ = M₁+M₄−M₅+M₇, C₁₂ = M₃+M₅, C₂₁ = M₂+M₄, C₂₂ = M₁−M₂+M₃+M₆
+          <strong>标准 $2\times2$ 矩阵乘法：</strong>8 次乘法 + 4 次加法<br>
+          <strong>Strassen $2\times2$ 矩阵乘法：</strong>7 次乘法 + 18 次加法<br><br>
+          <strong>递归应用到 $N\times N$：</strong>
+          $$\text{标准: } O(N^3) \qquad \text{Strassen: } O\!\bigl(N^{\log_2 7}\bigr) \approx O(N^{2.807})$$
+
+          <strong>Strassen 的 7 次乘法 ($M_1 \sim M_7$)：</strong><br>
+          将 $A, B$ 各分为四个子矩阵 $A_{11},A_{12},A_{21},A_{22}$ 和 $B_{11},B_{12},B_{21},B_{22}$
+          $$\begin{aligned}
+          M_1 &= (A_{11}+A_{22})(B_{11}+B_{22}) \\
+          M_2 &= (A_{21}+A_{22})\,B_{11} \\
+          M_3 &= A_{11}\,(B_{12}-B_{22}) \\
+          M_4 &= A_{22}\,(B_{21}-B_{11}) \\
+          M_5 &= (A_{11}+A_{12})\,B_{22} \\
+          M_6 &= (A_{21}-A_{11})(B_{11}+B_{12}) \\
+          M_7 &= (A_{12}-A_{22})(B_{21}+B_{22})
+          \end{aligned}$$
+
+          $$\begin{aligned}
+          C_{11} &= M_1+M_4-M_5+M_7 &\quad C_{12} &= M_3+M_5 \\
+          C_{21} &= M_2+M_4 &\quad C_{22} &= M_1-M_2+M_3+M_6
+          \end{aligned}$$
         </div>
 
         <div class="table-wrap">
@@ -1716,8 +1747,8 @@
               <tr>
                 <td>Strassen</td>
                 <td>矩阵乘法</td>
-                <td>减少 block matrix multiplication 中的乘法次数（8→7）</td>
-                <td>理论复杂度更好 O(N^2.807)</td>
+                <td>减少 block matrix multiplication 中的乘法次数（$8\to7$）</td>
+                <td>理论复杂度更好 $O(N^{2.807})$</td>
                 <td>更多加法、实现复杂、数值精度下降、递归带来额外内存</td>
               </tr>
               <tr>
@@ -1733,20 +1764,19 @@
 
         <h3 style="margin-top:22px;">Winograd 变换详解</h3>
         <div class="equation">
-          <strong>核心公式：F(m, r)</strong><br>
-          输入 tile 大小 = m + r − 1，其中 m = 输出大小, r = 卷积核大小<br><br>
-          <strong>最常用的 F(2, 3)：</strong>2 个输出，3×3 卷积核<br>
-          输入 tile 大小 = 2 + 3 − 1 = 4<br>
-          标准卷积需要 2×3 = 6 次乘法<br>
-          Winograd F(2,3) 只需要 <strong>4 次乘法</strong>（减少 33%）<br><br>
-          <strong>F(4, 3)：</strong>4 个输出，3×3 卷积核<br>
-          输入 tile 大小 = 4 + 3 − 1 = 6<br>
-          标准需要 4×3 = 12 次乘法<br>
+          <strong>核心公式：$F(m, r)$</strong><br>
+          输入 tile 大小 $= m + r - 1$，其中 $m$ = 输出大小, $r$ = 卷积核大小<br><br>
+          <strong>最常用的 $F(2, 3)$：</strong>2 个输出，$3\times3$ 卷积核<br>
+          输入 tile 大小 $= 2 + 3 - 1 = 4$<br>
+          标准卷积需要 $2\times3 = 6$ 次乘法<br>
+          Winograd $F(2,3)$ 只需要 <strong>4 次乘法</strong>（减少 33%）<br><br>
+          <strong>$F(4, 3)$：</strong>4 个输出，$3\times3$ 卷积核<br>
+          输入 tile 大小 $= 4 + 3 - 1 = 6$<br>
+          标准需要 $4\times3 = 12$ 次乘法<br>
           Winograd 只需要 <strong>6 次乘法</strong>（减少 50%）<br><br>
-          <strong>变换公式：</strong> Y = Aᵀ[(GgGᵀ) ⊙ (BᵀdB)]A<br>
-          G, B, A 是预定义的变换矩阵（不需要学习）<br>
-          g = 卷积核, d = 输入 tile<br>
-          ⊙ = 逐元素乘法（这里才是"乘法"的来源）
+          <strong>变换公式：</strong>
+          $$Y = A^\top\!\bigl[\bigl(GgG^\top\bigr) \odot \bigl(B^\top d\, B\bigr)\bigr]A$$
+          $G, B, A$ 是预定义的变换矩阵（不需要学习），$g$ = 卷积核, $d$ = 输入 tile，$\odot$ = 逐元素乘法
         </div>
 
         <div class="card-grid">
@@ -1758,7 +1788,7 @@
           <div class="mini-card">
             <span class="tag alt">什么时候 Winograd 不划算</span>
             <h3>大 kernel 或大 tile 的问题</h3>
-            <p>当 F(m,r) 中 m+r 增大时，变换矩阵变大，数值精度下降，额外加法开销增加。实践中 F(2,3) 和 F(4,3) 最常用，更大的不太实用。</p>
+            <p>当 $F(m,r)$ 中 $m+r$ 增大时，变换矩阵变大，数值精度下降，额外加法开销增加。实践中 $F(2,3)$ 和 $F(4,3)$ 最常用，更大的不太实用。</p>
           </div>
         </div>
       </section>
@@ -2039,7 +2069,7 @@
                   <td>Linear model</td>
                   <td>回归或线性判别</td>
                   <td>输出是输入的加权和</td>
-                  <td>最基础模型，常写成 ŷ = Wx + b</td>
+                  <td>最基础模型，常写成 $\hat{y} = Wx + b$</td>
                 </tr>
                 <tr>
                   <td>Logistic regression</td>
@@ -2100,14 +2130,14 @@
           <h3>3. Gradient Descent Algorithm and Variations</h3>
           <p>你可以把 gradient descent 理解成：站在山坡上，想往谷底走。梯度告诉你哪里是“上坡最快方向”，所以你往相反方向迈一步。</p>
 
-          <div class="equation">θ<sub>t+1</sub> = θ<sub>t</sub> − η∇L(θ<sub>t</sub>)</div>
+          <div class="equation">$$\theta_{t+1} = \theta_t - \eta\,\nabla L(\theta_t)$$</div>
 
           <h4>每一项都要会解释</h4>
           <ul class="clean">
-            <li><span class="math-inline">θ</span> 是参数，也就是模型真正会被训练改变的量。</li>
-            <li><span class="math-inline">L</span> 是 loss，代表当前错得多不多。</li>
-            <li><span class="math-inline">∇L</span> 是梯度，表示 loss 增长最快的方向。</li>
-            <li><span class="math-inline">η</span> 是 learning rate，决定每一步走多大。</li>
+            <li>$\theta$ 是参数，也就是模型真正会被训练改变的量。</li>
+            <li>$L$ 是 loss，代表当前错得多不多。</li>
+            <li>$\nabla L$ 是梯度，表示 loss 增长最快的方向。</li>
+            <li>$\eta$ 是 learning rate，决定每一步走多大。</li>
           </ul>
 
           <h4>变体之间怎么比较</h4>
@@ -2672,33 +2702,33 @@
           <table>
             <thead><tr><th>类别</th><th>公式</th><th>说明</th></tr></thead>
             <tbody>
-              <tr><td>Softmax</td><td>pⱼ = exp(sⱼ) / Σₖ exp(sₖ)</td><td>logits → 概率分布</td></tr>
-              <tr><td>Cross-Entropy</td><td>L = −log(p_{正确类})</td><td>one-hot 时的简化形式</td></tr>
-              <tr><td>Softmax+CE 梯度</td><td>∂L/∂sⱼ = pⱼ − yⱼ</td><td>预测概率 − 真实标签</td></tr>
-              <tr><td>MSE</td><td>L = (1/n) Σ(yᵢ − ŷᵢ)²</td><td>回归用</td></tr>
-              <tr><td>Hinge Loss</td><td>Lᵢ = Σ_{j≠yᵢ} max(0, sⱼ − s_{yᵢ} + 1)</td><td>SVM 多分类</td></tr>
-              <tr><td>SGD 更新</td><td>θ = θ − η∇L</td><td>基本梯度下降</td></tr>
-              <tr><td>Momentum</td><td>v = βv + ∇L; θ = θ − ηv</td><td>带惯性的更新</td></tr>
-              <tr><td>Adam</td><td>m, v 更新 + 偏差修正 → θ 更新</td><td>自适应学习率</td></tr>
-              <tr><td>Conv 输出大小</td><td>O = ⌊(W−K+2P)/S⌋ + 1</td><td>宽/高方向</td></tr>
-              <tr><td>Conv 参数量</td><td>N_filters × (K × K × C_in + 1)</td><td>+1 是 bias</td></tr>
-              <tr><td>Conv MACs</td><td>O_h × O_w × N_filters × K × K × C_in</td><td>每个输出位置的乘加</td></tr>
-              <tr><td>Sigmoid</td><td>σ(x) = 1/(1+e⁻ˣ)</td><td>输出 (0,1)</td></tr>
-              <tr><td>Sigmoid 导数</td><td>σ'(x) = σ(x)(1−σ(x))</td><td>最大值 0.25</td></tr>
-              <tr><td>ReLU</td><td>f(x) = max(0, x)</td><td>导数: x>0→1, x≤0→0</td></tr>
-              <tr><td>BatchNorm</td><td>y = γ · (x−μ)/√(σ²+ε) + β</td><td>γ, β 可学习</td></tr>
-              <tr><td>L2 正则化</td><td>L_total = L_data + λ/2 · ||W||²</td><td>Weight decay</td></tr>
-              <tr><td>Dropout (inverted)</td><td>训练: mask & scale by 1/(1−p)</td><td>测试: 不 drop</td></tr>
-              <tr><td>Xavier Init</td><td>Var(W) = 2/(n_in + n_out)</td><td>适合 sigmoid/tanh</td></tr>
-              <tr><td>He Init</td><td>Var(W) = 2/n_in</td><td>适合 ReLU</td></tr>
-              <tr><td>Depthwise Sep.</td><td>K²·C_in + C_in·C_out</td><td>vs 标准 K²·C_in·C_out</td></tr>
-              <tr><td>Roofline</td><td>Perf = min(π, β·AI)</td><td>π=峰值算力, β=带宽</td></tr>
-              <tr><td>Arithmetic Intensity</td><td>AI = FLOPs / Bytes</td><td>越高越偏 compute-bound</td></tr>
-              <tr><td>Thread ID (GPU)</td><td>gid = blockIdx.x × blockDim.x + threadIdx.x</td><td>全局线程编号</td></tr>
-              <tr><td>Strassen</td><td>O(N^{2.807}) vs O(N³)</td><td>7 次乘法代替 8 次</td></tr>
-              <tr><td>Winograd F(m,r)</td><td>tile = m+r−1, 乘法=m+r−1</td><td>vs 标准 m×r 次乘法</td></tr>
-              <tr><td>ResNet 残差</td><td>y = F(x) + x</td><td>学残差，不学完整映射</td></tr>
-              <tr><td>Backprop (FC)</td><td>∂L/∂W = Xᵀδ, ∂L/∂X = δWᵀ</td><td>上游梯度乘转置</td></tr>
+              <tr><td>Softmax</td><td>$p_j = \dfrac{e^{s_j}}{\sum_k e^{s_k}}$</td><td>logits → 概率分布</td></tr>
+              <tr><td>Cross-Entropy</td><td>$L = -\log p_{\text{correct}}$</td><td>one-hot 时的简化形式</td></tr>
+              <tr><td>Softmax+CE 梯度</td><td>$\dfrac{\partial L}{\partial s_j} = p_j - y_j$</td><td>预测概率 − 真实标签</td></tr>
+              <tr><td>MSE</td><td>$L = \dfrac{1}{n}\sum(y_i - \hat{y}_i)^2$</td><td>回归用</td></tr>
+              <tr><td>Hinge Loss</td><td>$L_i = \sum_{j\neq y_i}\max(0,\,s_j - s_{y_i} + 1)$</td><td>SVM 多分类</td></tr>
+              <tr><td>SGD 更新</td><td>$\theta = \theta - \eta\nabla L$</td><td>基本梯度下降</td></tr>
+              <tr><td>Momentum</td><td>$v = \beta v + \nabla L;\;\theta = \theta - \eta v$</td><td>带惯性的更新</td></tr>
+              <tr><td>Adam</td><td>$\hat{m},\hat{v}$ 偏差修正 $\to \theta_{t+1}=\theta_t - \dfrac{\eta\hat{m}_t}{\sqrt{\hat{v}_t}+\varepsilon}$</td><td>自适应学习率</td></tr>
+              <tr><td>Conv 输出大小</td><td>$O = \lfloor(W-K+2P)/S\rfloor + 1$</td><td>宽/高方向</td></tr>
+              <tr><td>Conv 参数量</td><td>$N_f \times (K^2 \cdot C_{\text{in}} + 1)$</td><td>+1 是 bias</td></tr>
+              <tr><td>Conv MACs</td><td>$O_h \times O_w \times N_f \times K^2 \times C_{\text{in}}$</td><td>每个输出位置的乘加</td></tr>
+              <tr><td>Sigmoid</td><td>$\sigma(x)=\dfrac{1}{1+e^{-x}}$</td><td>输出 $(0,1)$</td></tr>
+              <tr><td>Sigmoid 导数</td><td>$\sigma'(x) = \sigma(x)(1-\sigma(x))$</td><td>最大值 0.25</td></tr>
+              <tr><td>ReLU</td><td>$f(x) = \max(0,x)$</td><td>导数: $x>0\to1,\;x\le0\to0$</td></tr>
+              <tr><td>BatchNorm</td><td>$y = \gamma\dfrac{x-\mu}{\sqrt{\sigma^2+\varepsilon}} + \beta$</td><td>$\gamma, \beta$ 可学习</td></tr>
+              <tr><td>L2 正则化</td><td>$L_{\text{total}} = L_{\text{data}} + \dfrac{\lambda}{2}\|W\|^2$</td><td>Weight decay</td></tr>
+              <tr><td>Dropout (inverted)</td><td>训练: mask &amp; scale by $\dfrac{1}{1-p}$</td><td>测试: 不 drop</td></tr>
+              <tr><td>Xavier Init</td><td>$\mathrm{Var}(W) = \dfrac{2}{n_{\text{in}}+n_{\text{out}}}$</td><td>适合 sigmoid/tanh</td></tr>
+              <tr><td>He Init</td><td>$\mathrm{Var}(W) = \dfrac{2}{n_{\text{in}}}$</td><td>适合 ReLU</td></tr>
+              <tr><td>Depthwise Sep.</td><td>$K^2 C_{\text{in}} + C_{\text{in}} C_{\text{out}}$</td><td>vs 标准 $K^2 C_{\text{in}} C_{\text{out}}$</td></tr>
+              <tr><td>Roofline</td><td>$\text{Perf} = \min(\pi,\;\beta\!\cdot\!\text{AI})$</td><td>$\pi$=峰值算力, $\beta$=带宽</td></tr>
+              <tr><td>Arithmetic Intensity</td><td>$\text{AI} = \dfrac{\text{FLOPs}}{\text{Bytes}}$</td><td>越高越偏 compute-bound</td></tr>
+              <tr><td>Thread ID (GPU)</td><td><code>gid = blockIdx.x × blockDim.x + threadIdx.x</code></td><td>全局线程编号</td></tr>
+              <tr><td>Strassen</td><td>$O(N^{2.807})$ vs $O(N^3)$</td><td>7 次乘法代替 8 次</td></tr>
+              <tr><td>Winograd $F(m,r)$</td><td>tile $= m+r-1$, 乘法 $= m+r-1$</td><td>vs 标准 $m\times r$ 次乘法</td></tr>
+              <tr><td>ResNet 残差</td><td>$y = \mathcal{F}(x) + x$</td><td>学残差，不学完整映射</td></tr>
+              <tr><td>Backprop (FC)</td><td>$\dfrac{\partial L}{\partial W}=X^\top\delta,\;\dfrac{\partial L}{\partial X}=\delta W^\top$</td><td>上游梯度乘转置</td></tr>
             </tbody>
           </table>
         </div>
@@ -2711,15 +2741,15 @@
         <div class="detail-block">
           <h3>Example 1: Cross-Entropy Loss 手算</h3>
           <div class="callout">
-            <strong>题目：</strong>3 分类问题，logits = [2.0, 1.0, 0.1]，正确类别 = 0<br><br>
-            <strong>Step 1 — Softmax：</strong><br>
-            exp([2.0, 1.0, 0.1]) = [7.389, 2.718, 1.105]<br>
-            sum = 7.389 + 2.718 + 1.105 = 11.212<br>
-            p = [7.389/11.212, 2.718/11.212, 1.105/11.212] = [0.659, 0.242, 0.099]<br><br>
-            <strong>Step 2 — Cross-Entropy：</strong><br>
-            L = −log(p₀) = −log(0.659) = <strong>0.417</strong><br><br>
-            <strong>Step 3 — 梯度：</strong><br>
-            ∂L/∂s = p − y = [0.659−1, 0.242−0, 0.099−0] = <strong>[−0.341, 0.242, 0.099]</strong><br>
+            <strong>题目：</strong>3 分类问题，$\text{logits} = [2.0,\;1.0,\;0.1]$，正确类别 = 0<br><br>
+            <strong>Step 1 — Softmax：</strong>
+            $$e^{[2.0,\,1.0,\,0.1]} = [7.389,\;2.718,\;1.105]$$
+            $$\text{sum} = 7.389+2.718+1.105 = 11.212$$
+            $$p = \bigl[\tfrac{7.389}{11.212},\;\tfrac{2.718}{11.212},\;\tfrac{1.105}{11.212}\bigr] = [0.659,\;0.242,\;0.099]$$
+            <strong>Step 2 — Cross-Entropy：</strong>
+            $$L = -\log(p_0) = -\log(0.659) = \mathbf{0.417}$$
+            <strong>Step 3 — 梯度：</strong>
+            $$\frac{\partial L}{\partial s} = p - y = [0.659\!-\!1,\;0.242\!-\!0,\;0.099\!-\!0] = \mathbf{[-0.341,\;0.242,\;0.099]}$$
             含义：正确类别需要增大 logit（梯度为负），其他类别需要减小 logit（梯度为正）。
           </div>
         </div>
@@ -2727,22 +2757,22 @@
         <div class="detail-block">
           <h3>Example 2: 完整 CNN 参数量和 FLOPs 计算</h3>
           <div class="callout">
-            <strong>网络：</strong>Input 224×224×3 → Conv1 → Pool → Conv2 → Pool → FC → Output<br><br>
-            <strong>Conv1：</strong>64 个 7×7 filter, stride=2, padding=3<br>
-            输出大小: (224−7+6)/2+1 = 112, 即 112×112×64<br>
-            参数量: 64×(7×7×3+1) = 64×148 = <strong>9,472</strong><br>
-            MACs: 112×112×64×7×7×3 = <strong>116,949,504</strong><br><br>
-            <strong>Pool (MaxPool 2×2, stride 2)：</strong><br>
-            输出: 56×56×64, 参数: <strong>0</strong><br><br>
-            <strong>Conv2：</strong>128 个 3×3 filter, stride=1, padding=1<br>
-            输出: 56×56×128<br>
-            参数量: 128×(3×3×64+1) = 128×577 = <strong>73,856</strong><br>
-            MACs: 56×56×128×3×3×64 = <strong>231,211,008</strong><br><br>
+            <strong>网络：</strong>Input $224\times224\times3$ → Conv1 → Pool → Conv2 → Pool → FC → Output<br><br>
+            <strong>Conv1：</strong>64 个 $7\times7$ filter, stride=2, padding=3<br>
+            输出大小: $\dfrac{224-7+6}{2}+1 = 112$，即 $112\times112\times64$<br>
+            参数量: $64\times(7\times7\times3+1) = 64\times148 = \mathbf{9{,}472}$<br>
+            MACs: $112\times112\times64\times7\times7\times3 = \mathbf{116{,}949{,}504}$<br><br>
+            <strong>Pool (MaxPool $2\times2$, stride 2)：</strong><br>
+            输出: $56\times56\times64$, 参数: $\mathbf{0}$<br><br>
+            <strong>Conv2：</strong>128 个 $3\times3$ filter, stride=1, padding=1<br>
+            输出: $56\times56\times128$<br>
+            参数量: $128\times(3\times3\times64+1) = 128\times577 = \mathbf{73{,}856}$<br>
+            MACs: $56\times56\times128\times3\times3\times64 = \mathbf{231{,}211{,}008}$<br><br>
             <strong>Pool：</strong><br>
-            输出: 28×28×128<br><br>
+            输出: $28\times28\times128$<br><br>
             <strong>FC (flatten → 1000 classes)：</strong><br>
-            输入维度: 28×28×128 = 100,352<br>
-            参数量: 100,352×1000 + 1000 = <strong>100,353,000</strong><br><br>
+            输入维度: $28\times28\times128 = 100{,}352$<br>
+            参数量: $100{,}352\times1000 + 1000 = \mathbf{100{,}353{,}000}$<br><br>
             <strong>观察：</strong>FC 层占了绝大部分参数！这就是为什么后来的网络（如 ResNet）用 Global Average Pooling 替代 FC。
           </div>
         </div>
@@ -2750,52 +2780,52 @@
         <div class="detail-block">
           <h3>Example 3: Batch Normalization 计算</h3>
           <div class="callout">
-            <strong>Mini-batch (4 个值)：</strong>x = [1, 2, 3, 4]<br><br>
-            μ_B = (1+2+3+4)/4 = 2.5<br>
-            σ²_B = [(1-2.5)²+(2-2.5)²+(3-2.5)²+(4-2.5)²]/4 = [2.25+0.25+0.25+2.25]/4 = 1.25<br>
-            x̂ = (x − 2.5) / √(1.25 + 1e-5) ≈ [−1.342, −0.447, 0.447, 1.342]<br><br>
-            假设 γ=1, β=0（初始值）：y = x̂<br>
-            假设 γ=2, β=0.5：y = 2 × x̂ + 0.5 = [−2.184, −0.394, 1.394, 3.184]
+            <strong>Mini-batch (4 个值)：</strong>$x = [1,\;2,\;3,\;4]$<br><br>
+            $$\mu_B = \frac{1+2+3+4}{4} = 2.5$$
+            $$\sigma^2_B = \frac{(1\!-\!2.5)^2+(2\!-\!2.5)^2+(3\!-\!2.5)^2+(4\!-\!2.5)^2}{4} = \frac{2.25+0.25+0.25+2.25}{4} = 1.25$$
+            $$\hat{x} = \frac{x - 2.5}{\sqrt{1.25 + 10^{-5}}} \approx [-1.342,\;-0.447,\;0.447,\;1.342]$$
+            假设 $\gamma=1,\;\beta=0$（初始值）：$y = \hat{x}$<br>
+            假设 $\gamma=2,\;\beta=0.5$：$y = 2\hat{x} + 0.5 = [-2.184,\;-0.394,\;1.394,\;3.184]$
           </div>
         </div>
 
         <div class="detail-block">
           <h3>Example 4: Backpropagation 手算（小网络）</h3>
           <div class="callout">
-            <strong>网络：</strong>单个神经元 z = w₁x₁ + w₂x₂ + b → a = ReLU(z) → L = (a − y)²<br>
-            设 x=[1, 2], w=[0.5, −0.3], b=0.1, y=1<br><br>
+            <strong>网络：</strong>单个神经元 $z = w_1 x_1 + w_2 x_2 + b$ → $a = \text{ReLU}(z)$ → $L = (a - y)^2$<br>
+            设 $x=[1,\,2],\;w=[0.5,\,-0.3],\;b=0.1,\;y=1$<br><br>
             <strong>Forward：</strong><br>
-            z = 0.5×1 + (−0.3)×2 + 0.1 = 0.5 − 0.6 + 0.1 = 0<br>
-            a = ReLU(0) = 0<br>
-            L = (0 − 1)² = 1<br><br>
+            $z = 0.5\times1 + (-0.3)\times2 + 0.1 = 0.5 - 0.6 + 0.1 = 0$<br>
+            $a = \text{ReLU}(0) = 0$<br>
+            $L = (0-1)^2 = 1$<br><br>
             <strong>Backward：</strong><br>
-            ∂L/∂a = 2(a − y) = 2(0−1) = −2<br>
-            ∂a/∂z = ReLU'(0) = 0（边界情况，通常取 0）<br>
-            ∂L/∂z = −2 × 0 = 0　　→ 梯度为 0！<br><br>
-            <strong>结论：</strong>ReLU 在 z≤0 时"杀死"梯度。这就是 Dead ReLU 问题的具体例子。如果改用 Leaky ReLU (α=0.01)：∂a/∂z = 0.01，则 ∂L/∂z = −0.02，仍然有梯度信号。
+            $\dfrac{\partial L}{\partial a} = 2(a-y) = 2(0-1) = -2$<br>
+            $\dfrac{\partial a}{\partial z} = \text{ReLU}'(0) = 0$（边界情况，通常取 0）<br>
+            $\dfrac{\partial L}{\partial z} = -2 \times 0 = 0$　→ 梯度为 0！<br><br>
+            <strong>结论：</strong>ReLU 在 $z\leq0$ 时"杀死"梯度。这就是 Dead ReLU 问题的具体例子。如果改用 Leaky ReLU ($\alpha=0.01$)：$\dfrac{\partial a}{\partial z}=0.01$，则 $\dfrac{\partial L}{\partial z}=-0.02$，仍然有梯度信号。
           </div>
         </div>
 
         <div class="detail-block">
           <h3>Example 5: img2col 步骤演示</h3>
           <div class="callout">
-            <strong>输入 (4×4, 单通道)：</strong><br>
+            <strong>输入 ($4\times4$, 单通道)：</strong><br>
             1 2 3 4<br>
             5 6 7 8<br>
             9 10 11 12<br>
             13 14 15 16<br><br>
-            <strong>Filter (2×2)：</strong>[a b; c d]，stride=1，padding=0<br>
-            输出大小：(4−2)/1+1 = 3，即 3×3<br><br>
+            <strong>Filter ($2\times2$)：</strong>$[a\;b;\;c\;d]$，stride=1，padding=0<br>
+            输出大小：$\dfrac{4-2}{1}+1 = 3$，即 $3\times3$<br><br>
             <strong>img2col 展开 — 每个滑动窗口拉平为一列：</strong><br>
             位置(0,0): [1,2,5,6] <br>
             位置(0,1): [2,3,6,7] <br>
             位置(0,2): [3,4,7,8] <br>
             位置(1,0): [5,6,9,10] <br>
             ... 共 9 个位置<br><br>
-            展开矩阵 X_col (4×9)：每列是一个 patch 的展平<br>
-            Filter 也展平为行向量：W_row = [a,b,c,d]<br><br>
-            <strong>卷积 = 矩阵乘法：</strong>Output_row = W_row × X_col　(1×4 · 4×9 = 1×9)<br>
-            再 reshape 回 3×3 即为输出 feature map。<br><br>
+            展开矩阵 $X_{\text{col}}$ ($4\times9$)：每列是一个 patch 的展平<br>
+            Filter 也展平为行向量：$W_{\text{row}} = [a,b,c,d]$<br><br>
+            <strong>卷积 = 矩阵乘法：</strong>$\text{Output}_{\text{row}} = W_{\text{row}} \times X_{\text{col}}$　($1\times4 \cdot 4\times9 = 1\times9$)<br>
+            再 reshape 回 $3\times3$ 即为输出 feature map。<br><br>
             <strong>注意重叠：</strong>相邻 patch 共享元素（如 2,6 出现在多个列中），这是 img2col 内存膨胀的来源。
           </div>
         </div>
@@ -2803,11 +2833,11 @@
         <div class="detail-block">
           <h3>Example 6: Strassen vs 标准矩阵乘法</h3>
           <div class="callout">
-            <strong>矩阵大小 N = 1024：</strong><br>
-            标准乘法：N³ = 1024³ = 1,073,741,824 次乘法<br>
-            Strassen (递归到 N=64 停)：≈ 7^{log₂(1024/64)} × 64³ ≈ 7⁴ × 262,144 = 2401 × 262,144 ≈ 629,407,744<br>
+            <strong>矩阵大小 $N = 1024$：</strong><br>
+            标准乘法：$N^3 = 1024^3 = 1{,}073{,}741{,}824$ 次乘法<br>
+            Strassen (递归到 $N=64$ 停)：$\approx 7^{\,\log_2(1024/64)} \times 64^3 = 7^4 \times 262{,}144 = 2401 \times 262{,}144 \approx 629{,}407{,}744$<br>
             节省约 <strong>41%</strong> 的乘法<br><br>
-            <strong>但要注意：</strong>加法从 ~N³ 增加到 ~18/8 × N³ × 7/8...，且递归带来额外开销。实践中 Strassen 往往只在 N 很大且精度要求不极端时才有收益。
+            <strong>但要注意：</strong>加法从 $\sim N^3$ 增加到 $\sim\!\tfrac{18}{8}\,N^3\!\cdot\!\tfrac{7}{8}\ldots$，且递归带来额外开销。实践中 Strassen 往往只在 $N$ 很大且精度要求不极端时才有收益。
           </div>
         </div>
       </section>
@@ -2830,7 +2860,7 @@
           </table>
         </div>
 
-        <div class="callout"><strong>这就是为什么 dataflow 如此重要：</strong>一次 DRAM 访问的能耗 ≈ 200 次 MAC 运算。如果 dataflow 设计不好，大量能耗浪费在搬数据上而非计算上。Eyeriss 的核心优化目标就是最小化 DRAM 访问次数。</div>
+        <div class="callout"><strong>这就是为什么 dataflow 如此重要：</strong>一次 DRAM 访问的能耗 $\approx 200$ 次 MAC 运算。如果 dataflow 设计不好，大量能耗浪费在搬数据上而非计算上。Eyeriss 的核心优化目标就是最小化 DRAM 访问次数。</div>
 
         <h3 style="margin-top:22px;">Systolic Array 脉动阵列详解（TPU 核心）</h3>
 
@@ -2851,13 +2881,13 @@
             <p><strong>无需全局广播：</strong>数据只在相邻 PE 之间传递<br>
               <strong>高复用率：</strong>一个输入被多个 PE 使用<br>
               <strong>简单控制：</strong>不需要复杂的调度逻辑<br>
-              <strong>高吞吐：</strong>N×N 阵列每周期做 N² 次 MAC</p>
+              <strong>高吞吐：</strong>$N\!\times\!N$ 阵列每周期做 $N^2$ 次 MAC</p>
           </div>
         </div>
 
         <div class="equation">
           <strong>TPU v1 Systolic Array 规格：</strong><br>
-          256 × 256 PE 阵列 = 每周期 65,536 次 MAC<br>
+          $256 \times 256$ PE 阵列 = 每周期 $65{,}536$ 次 MAC<br>
           运行在 700 MHz：峰值 ~92 TOPS (INT8)<br>
           片上内存：28 MiB unified buffer<br>
           Activation buffer + Weight FIFO + 控制逻辑
@@ -3013,11 +3043,11 @@
           <div class="qa-card"><h3>8</h3><p>什么叫 memory-bound，什么叫 compute-bound？</p></div>
           <div class="qa-card"><h3>9</h3><p>为什么 tiling 常常能提升性能？</p></div>
           <div class="qa-card"><h3>10</h3><p>如果老师问你整门课最核心的一句话，你会怎么答？</p></div>
-          <div class="qa-card"><h3>11</h3><p>Softmax 的输入和输出分别是什么？梯度 ∂L/∂s 怎么算？</p></div>
+          <div class="qa-card"><h3>11</h3><p>Softmax 的输入和输出分别是什么？梯度 $\partial L/\partial s$ 怎么算？</p></div>
           <div class="qa-card"><h3>12</h3><p>BatchNorm 训练和测试时有什么区别？为什么？</p></div>
           <div class="qa-card"><h3>13</h3><p>ReLU 相比 sigmoid 的三个主要优势是什么？</p></div>
           <div class="qa-card"><h3>14</h3><p>ResNet 的 skip connection 为什么能解决退化问题？</p></div>
-          <div class="qa-card"><h3>15</h3><p>手算：输入 32×32×3，用 16 个 5×5 filter, stride=1, padding=2，输出大小和参数量是多少？</p></div>
+          <div class="qa-card"><h3>15</h3><p>手算：输入 $32\times32\times3$，用 16 个 $5\times5$ filter, stride=1, padding=2，输出大小和参数量是多少？</p></div>
           <div class="qa-card"><h3>16</h3><p>Dropout 和 Inverted Dropout 的区别是什么？</p></div>
           <div class="qa-card"><h3>17</h3><p>Xavier init 和 He init 分别适合什么激活函数？为什么？</p></div>
           <div class="qa-card"><h3>18</h3><p>一次 DRAM 读取大约等于多少次 MAC 的能耗？</p></div>
