@@ -1,0 +1,1684 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CSCI 566 Midterm Visual Study Guide</title>
+  <style>
+    :root {
+      --bg: #f7f3ea;
+      --paper: #fffdf8;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d9cfbe;
+      --accent: #115e59;
+      --accent-2: #b45309;
+      --accent-3: #7c2d12;
+      --soft-1: #e6f4f1;
+      --soft-2: #fff0dc;
+      --soft-3: #fbe7e2;
+      --shadow: 0 18px 50px rgba(31, 41, 55, 0.08);
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "SF Pro Display","PingFang SC","Noto Sans SC","Helvetica Neue",sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(180,83,9,0.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(17,94,89,0.12), transparent 30%),
+        linear-gradient(180deg, #f8f4eb 0%, #f5efe4 100%);
+      line-height: 1.65;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0,1fr);
+      gap: 28px;
+      width: min(1440px, calc(100vw - 40px));
+      margin: 24px auto 48px;
+    }
+    .sidebar {
+      position: sticky; top: 24px; align-self: start;
+      background: rgba(255,253,248,0.92);
+      border: 1px solid rgba(217,207,190,0.9);
+      border-radius: 24px; padding: 22px 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      max-height: calc(100vh - 48px); overflow: auto;
+    }
+    .sidebar h1 { font-size: 1.1rem; line-height: 1.35; margin: 0 0 12px; }
+    .sidebar p { color: var(--muted); font-size: 0.93rem; margin: 0 0 16px; }
+    .nav-group { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .nav-group:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+    .nav-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+    .sidebar a { display: block; text-decoration: none; color: var(--ink); padding: 8px 10px; border-radius: 12px; font-size: 0.95rem; transition: background 160ms ease, transform 160ms ease; }
+    .sidebar a:hover { background: var(--soft-1); transform: translateX(2px); }
+    .content { min-width: 0; }
+
+    .hero { background: linear-gradient(135deg, rgba(255,253,248,0.95), rgba(255,246,233,0.95)); border: 1px solid rgba(217,207,190,0.9); border-radius: 30px; padding: 34px; box-shadow: var(--shadow); overflow: hidden; position: relative; }
+    .hero::after { content: ""; position: absolute; width: 280px; height: 280px; border-radius: 50%; right: -80px; top: -80px; background: radial-gradient(circle, rgba(17,94,89,0.16), transparent 65%); pointer-events: none; }
+    .eyebrow { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--soft-1); color: var(--accent); font-weight: 700; font-size: 0.83rem; letter-spacing: 0.04em; margin-bottom: 14px; }
+    .hero h2 { font-size: clamp(2rem,4vw,3.4rem); line-height: 1.06; margin: 0 0 16px; max-width: 16ch; }
+    .hero p { max-width: 70ch; color: var(--muted); margin: 0; font-size: 1.02rem; }
+
+    .hero-grid, .card-grid, .compare-grid, .model-grid, .qa-grid { display: grid; gap: 18px; margin-top: 22px; }
+    .hero-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .compare-grid, .model-grid, .qa-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .panel, .mini-card, .compare-card, .model-card, .qa-card, .table-wrap, .section { background: var(--paper); border: 1px solid rgba(217,207,190,0.95); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .panel, .section, .table-wrap { padding: 24px; margin-top: 22px; }
+    .mini-card, .compare-card, .model-card, .qa-card { padding: 18px; }
+    .mini-card h3, .compare-card h3, .model-card h3, .qa-card h3, .section h3 { margin: 0 0 10px; font-size: 1.05rem; line-height: 1.3; }
+    .mini-card p, .compare-card p, .model-card p, .qa-card p, .section p, .section li { margin: 0; color: var(--muted); }
+    .section h2 { margin: 0 0 14px; font-size: 1.6rem; }
+    .section .lead { margin-bottom: 16px; color: var(--muted); }
+    .tag { display: inline-block; padding: 4px 10px; background: var(--soft-2); color: var(--accent-2); border-radius: 999px; font-size: 0.78rem; font-weight: 700; margin-bottom: 10px; }
+    .tag.alt { background: var(--soft-3); color: var(--accent-3); }
+    .tag.green { background: var(--soft-1); color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.96rem; }
+    th, td { text-align: left; vertical-align: top; padding: 12px 10px; border-bottom: 1px solid var(--line); }
+    th { color: var(--accent); font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    tr:last-child td { border-bottom: 0; }
+    .flow { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+    .flow .node { padding: 12px 16px; border-radius: 16px; background: var(--soft-1); color: var(--ink); font-weight: 700; min-width: 120px; text-align: center; border: 1px solid rgba(17,94,89,0.15); }
+    .flow .node.gold { background: var(--soft-2); border-color: rgba(180,83,9,0.16); }
+    .flow .arrow { color: var(--accent-2); font-size: 1.4rem; font-weight: 800; }
+    .equation { margin-top: 14px; padding: 16px 18px; border-radius: 18px; background: #fbf8f1; border: 1px solid var(--line); overflow-x: auto; font-size: 1.04rem; font-family: "Times New Roman","STIX Two Text",serif; line-height: 1.8; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .pill { padding: 8px 12px; border-radius: 999px; background: #f3eee3; border: 1px solid var(--line); color: var(--ink); font-size: 0.92rem; font-weight: 600; }
+    ul.clean { margin: 12px 0 0; padding-left: 20px; }
+    ul.clean li + li { margin-top: 8px; }
+    .footer-note { margin-top: 26px; padding: 20px 22px; border-radius: 20px; background: linear-gradient(135deg,#efe8d8,#f8f4ea); border: 1px solid var(--line); color: var(--ink); font-weight: 700; }
+    .deep-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; margin-top: 18px; }
+    .detail-block { margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--line); }
+    .detail-block:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+    .detail-block h3 { font-size: 1.18rem; margin: 0 0 10px; }
+    .detail-block h4 { font-size: 1rem; margin: 16px 0 8px; color: var(--accent); }
+    .callout { margin-top: 14px; padding: 16px 18px; border-radius: 18px; background: linear-gradient(135deg,#f4f9f7,#fff7eb); border: 1px solid var(--line); }
+    .callout strong { color: var(--accent-3); }
+    .checklist { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; margin-top: 16px; }
+    .checklist .mini-card { height: 100%; }
+
+    /* Architecture diagrams */
+    .arch-diagram { margin: 18px 0; padding: 20px; border-radius: 18px; background: linear-gradient(135deg, #f8faf9, #fefcf7); border: 1px solid var(--line); text-align: center; overflow-x: auto; }
+    .arch-diagram svg { max-width: 100%; height: auto; }
+    .arch-box { display: inline-flex; flex-direction: column; align-items: center; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 0.88rem; min-width: 80px; }
+    .arch-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; margin: 8px 0; }
+    .arch-arrow { font-size: 1.4rem; color: var(--accent-2); font-weight: 800; }
+    .arch-conv { background: #dbeafe; border: 1px solid #93c5fd; color: #1e40af; }
+    .arch-pool { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; }
+    .arch-fc { background: #e0e7ff; border: 1px solid #a5b4fc; color: #3730a3; }
+    .arch-act { background: #dcfce7; border: 1px solid #86efac; color: #166534; }
+    .arch-gate { background: #fce7f3; border: 1px solid #f9a8d4; color: #9d174d; }
+    .arch-cell { background: #fff1f2; border: 1px solid #fda4af; color: #9f1239; }
+    .arch-embed { background: #f3e8ff; border: 1px solid #c4b5fd; color: #5b21b6; }
+    .arch-gen { background: #ccfbf1; border: 1px solid #5eead4; color: #115e59; }
+    .arch-disc { background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+
+    @media (max-width: 1120px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; max-height: none; }
+      .hero-grid, .card-grid, .deep-grid, .checklist, .compare-grid, .model-grid, .qa-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 760px) {
+      .layout { width: min(100vw - 20px, 100%); margin: 12px auto 28px; }
+      .hero, .panel, .section, .table-wrap { padding: 18px; }
+      .hero-grid, .card-grid, .deep-grid, .checklist, .compare-grid, .model-grid, .qa-grid { grid-template-columns: 1fr; }
+      .hero h2 { max-width: none; }
+    }
+    .katex { font-size: 1.08em !important; }
+    .katex-display { margin: 0.6em 0 !important; text-align: left !important; }
+    .katex-display > .katex { text-align: left !important; }
+    .equation .katex-display { overflow-x: auto; overflow-y: hidden; }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>CSCI 566 Midterm Study Guide</h1>
+      <p>Deep Learning 全知识点复习 · 基于考试题型 · 附模型架构图与对比</p>
+
+      <div class="nav-group">
+        <div class="nav-label">Overview</div>
+        <a href="#overview">Exam Map</a>
+        <a href="#roadmap">Study Roadmap</a>
+        <a href="#cheatsheet">Flash Memory Cards</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Foundations</div>
+        <a href="#ml-basics">ML Basics & Tasks</a>
+        <a href="#loss">Loss Functions</a>
+        <a href="#activations">Activation Functions</a>
+        <a href="#backprop">Backpropagation</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">CNN</div>
+        <a href="#cnn">CNN Fundamentals</a>
+        <a href="#conv-math">Convolution Math</a>
+        <a href="#classic-cnn">Classic CNN Models</a>
+        <a href="#resnet">Residual Connections</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">RNN / LSTM</div>
+        <a href="#rnn">Vanilla RNN</a>
+        <a href="#lstm">LSTM Architecture</a>
+        <a href="#seq-models">Sequence Model Patterns</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Training Tricks</div>
+        <a href="#init">Weight Initialization</a>
+        <a href="#batchnorm">Batch Normalization</a>
+        <a href="#regularization">Regularization & Dropout</a>
+        <a href="#optimizers">Optimizers</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Generative Models</div>
+        <a href="#gan">GAN</a>
+        <a href="#vae">VAE</a>
+        <a href="#gen-compare">GAN vs VAE Comparison</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Graph Networks</div>
+        <a href="#gnn">GNN Fundamentals</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Model Comparisons</div>
+        <a href="#model-compare">All Models Comparison</a>
+        <a href="#exam-tips">Exam Tips & Sanity Checks</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Related Pages</div>
+        <a href="index.html">← EE508 Study Guide</a>
+        <a href="CSCI566_Quiz_v2.html">Practice Quiz (50 Q)</a>
+      </div>
+    </aside>
+
+    <main class="content">
+      <!-- ==================== HERO ==================== -->
+      <section class="hero" id="overview">
+        <span class="eyebrow">Multiple Choice · Cheat Sheet Allowed · Visual Guide</span>
+        <h2>CSCI 566 Deep Learning Midterm</h2>
+        <p>基于考试题型的完整复习指南。涵盖 NN、CNN、RNN/LSTM、GNN、GAN/VAE、Backprop、Training Tricks，配以架构图、数学公式和模型对比。</p>
+
+        <div class="hero-grid">
+          <div class="mini-card">
+            <span class="tag green">Exam Info</span>
+            <h3>Mon 3/9, SGM 123, 5-7pm</h3>
+            <p>In-person, multiple-choice. 允许一张正反 letter size cheat sheet。内容覆盖 Module 1 全部内容。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">Core Topics (W1-W8)</span>
+            <h3>6 大知识模块</h3>
+            <p>ML Basics → NN & Backprop → CNN → RNN/LSTM → Training Tricks → GAN/VAE/GNN</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Exam Strategy</span>
+            <h3>Multi-Select = Every option matters</h3>
+            <p>每题可能有多个正确答案，需要对每个选项独立判断对错。部分选对不得分。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== ROADMAP ==================== -->
+      <section class="panel" id="roadmap">
+        <h2>Deep Learning Full Pipeline</h2>
+        <div class="flow">
+          <div class="node">ML Task</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Loss Function</div>
+          <div class="arrow">→</div>
+          <div class="node">Backprop</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Optimizer</div>
+          <div class="arrow">→</div>
+          <div class="node">Model (CNN/RNN/GNN)</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Training Tricks</div>
+          <div class="arrow">→</div>
+          <div class="node">Generation (GAN/VAE)</div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:18px;padding:0;box-shadow:none;border:0;background:transparent;">
+          <table>
+            <thead><tr><th>Week</th><th>Topic</th><th>关键考点</th></tr></thead>
+            <tbody>
+              <tr><td>W1</td><td>ML Basics, Linear Classifier</td><td>Supervised vs Unsupervised, Overfitting vs Underfitting, Bias-Variance</td></tr>
+              <tr><td>W3</td><td>Neural Networks, Activations</td><td>Sigmoid/Tanh/ReLU 及变体对比，为什么需要非线性</td></tr>
+              <tr><td>W4</td><td>Backprop, CNN</td><td>Chain Rule, 计算图各门梯度, 卷积输出大小公式, 参数计算</td></tr>
+              <tr><td>W5</td><td>RNN, LSTM, Seq Models</td><td>Vanilla RNN 公式, LSTM 三门机制, Seq-to-Seq, Embedding</td></tr>
+              <tr><td>W7</td><td>Training: Init, BN, Dropout, Optim</td><td>Xavier/He Init, BN train vs test, Dropout scaling, Adam bias correction</td></tr>
+              <tr><td>W8</td><td>GAN, VAE, GNN</td><td>Minimax 目标, ELBO, Message Passing, Mode Collapse</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== FLASH CARDS ==================== -->
+      <section class="section" id="cheatsheet">
+        <h2>Flash Memory Cards</h2>
+        <p class="lead">先记住这些 one-liner，再展开详细内容。</p>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag green">Activation</span>
+            <h3>ReLU is king</h3>
+            <p>$\max(0,x)$: 不饱和、计算快、收敛快。Dead ReLU 是唯一缺陷。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">Backprop</span>
+            <h3>Chain Rule 一切</h3>
+            <p>Add gate 复制梯度，Multiply gate 交换缩放，Max gate 路由给赢家。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">CNN</span>
+            <h3>Output Size</h3>
+            <p>$\frac{W - F + 2P}{S} + 1$ 背下来，所有CNN计算题都需要。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">LSTM</span>
+            <h3>Forget-Input-Output</h3>
+            <p>三个 sigmoid 门 + tanh 候选值。Cell state 做加法更新，梯度更容易流动。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">Training</span>
+            <h3>BN: Train ≠ Test</h3>
+            <p>训练用 batch 统计量，推理用 running average。BN 推理时不关掉。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">GAN</span>
+            <h3>Minimax Game</h3>
+            <p>G 想 $D(G(z))→1$, D 想 $D(x)→1$ 且 $D(G(z))→0$。Mode collapse 是主要问题。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">VAE</span>
+            <h3>ELBO = Recon + KL</h3>
+            <p>Reparameterization trick: $z = \mu + \sigma \cdot \epsilon$。优化 ELBO 来逼近 marginal likelihood。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">GNN</span>
+            <h3>Message Passing</h3>
+            <p>节点聚合邻居信息更新自身。Sum/Mean/Max 聚合保证排列不变性。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">Init</span>
+            <h3>Xavier → Tanh, He → ReLU</h3>
+            <p>零初始化 = 对称性不破 = 所有神经元学一样的东西。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== ML BASICS ==================== -->
+      <section class="section" id="ml-basics">
+        <h2>ML Basics & Task Types</h2>
+        <p class="lead">所有深度学习的基础：学一个函数 $\hat{y} = f(\mathbf{x};\theta)$，用数据调参数 $\theta$ 让预测接近真实标签。</p>
+
+        <div class="equation">$$\hat{y} = f(\mathbf{x};\,\boldsymbol{\theta})$$</div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Task</th><th>Classification</th><th>Regression</th><th>Clustering</th></tr></thead>
+            <tbody>
+              <tr><td>学习类型</td><td>监督学习 (Supervised)</td><td>监督学习 (Supervised)</td><td>无监督学习 (Unsupervised)</td></tr>
+              <tr><td>是否有标签</td><td>有 (离散类别)</td><td>有 (连续值)</td><td>没有</td></tr>
+              <tr><td>输出</td><td>Class label / probability</td><td>Continuous value</td><td>Group assignment</td></tr>
+              <tr><td>Loss 例子</td><td>Cross-Entropy</td><td>MSE</td><td>—</td></tr>
+              <tr><td>典型应用</td><td>图像分类、垃圾邮件检测</td><td>房价预测、温度预测</td><td>用户分群、图像压缩</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px;">Linear Classifier</h3>
+        <div class="equation">
+          $$f(\mathbf{x}) = W\mathbf{x} + \mathbf{b}$$
+          输入 $\mathbf{x} \in \mathbb{R}^D$, 权重 $W \in \mathbb{R}^{C \times D}$, 偏置 $\mathbf{b} \in \mathbb{R}^C$, 输出 $C$ 个类的分数。<br>
+          <strong>注意:</strong> 堆叠线性层（不加非线性）仍然等价于一个线性层: $W_2(W_1\mathbf{x}) = W'\mathbf{x}$
+        </div>
+
+        <h3 style="margin-top:22px;">Bias-Variance Tradeoff</h3>
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Underfitting (High Bias)</span>
+            <h3>训练集和测试集都差</h3>
+            <p>模型太简单，学不到数据规律。<br><strong>解决:</strong> 增大模型容量、减少正则化、更多特征。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Overfitting (High Variance)</span>
+            <h3>训练集好、测试集差</h3>
+            <p>模型太复杂，记住了训练数据噪声。<br><strong>解决:</strong> 更多数据、正则化、dropout、early stopping、数据增强。</p>
+          </div>
+        </div>
+        <div class="equation">$$\text{Total Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise}$$</div>
+
+        <div class="callout">
+          <strong>考试高频题型:</strong> 给定 "training error 低 validation error 高" → overfitting；两者都高 → underfitting。问你应该怎么修 — 分别对应增正则化 vs 增容量。
+        </div>
+      </section>
+
+      <!-- ==================== LOSS FUNCTIONS ==================== -->
+      <section class="section" id="loss">
+        <h2>Loss Functions</h2>
+        <p class="lead">Loss 衡量模型预测与真实值的差距。训练 = 最小化 loss。</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Loss</th><th>公式</th><th>用途</th><th>特点</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>MSE</td>
+                <td>$L = \frac{1}{n}\sum(y_i - \hat{y}_i)^2$</td>
+                <td>回归</td>
+                <td>可导，对大误差惩罚重</td>
+              </tr>
+              <tr>
+                <td>Cross-Entropy</td>
+                <td>$L = -\sum_{c=1}^C y_c \log p_c$</td>
+                <td>多分类 (配合 Softmax)</td>
+                <td>对低概率正确类惩罚极强</td>
+              </tr>
+              <tr>
+                <td>Binary CE</td>
+                <td>$L = -[y\log\sigma(z)+(1-y)\log(1-\sigma(z))]$</td>
+                <td>二分类</td>
+                <td>配合 sigmoid 输出</td>
+              </tr>
+              <tr>
+                <td>Hinge Loss</td>
+                <td>$L = \max(0, 1-y\cdot f(x))$</td>
+                <td>SVM margin 分类</td>
+                <td>鼓励 margin 分离</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px;">Softmax + Cross-Entropy 完整链</h3>
+        <div class="equation">
+          <strong>Softmax:</strong>
+          $$p_j = \frac{e^{s_j}}{\sum_k e^{s_k}}$$
+          <strong>Cross-Entropy:</strong>
+          $$L = -\log p_{\text{correct}} = -s_{\text{correct}} + \log\!\Bigl(\sum_k e^{s_k}\Bigr)$$
+          <strong>梯度（非常简洁）:</strong>
+          $$\frac{\partial L}{\partial s_j} = p_j - y_j$$
+          即 "预测概率减去真实标签 (one-hot)"
+        </div>
+
+        <div class="callout">
+          <strong>初始 Loss 验证:</strong> 对 $K$ 分类，随机初始化时每类概率 $\approx 1/K$，初始 loss $\approx \log K$。<br>
+          例如 10 分类: 初始 loss $\approx \log 10 \approx 2.3$。如果你的初始 loss 偏离这个值很多，说明实现有 bug。
+        </div>
+      </section>
+
+      <!-- ==================== ACTIVATIONS ==================== -->
+      <section class="section" id="activations">
+        <h2>Activation Functions 激活函数</h2>
+        <p class="lead">非线性是让 NN 超越线性模型的关键。没有非线性激活，再深的网络也只是一个线性变换。</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>激活</th><th>公式</th><th>范围</th><th>导数</th><th>优点</th><th>缺点</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Sigmoid</strong></td>
+                <td>$\sigma(x)=\frac{1}{1+e^{-x}}$</td>
+                <td>$(0,1)$</td>
+                <td>$\sigma(1-\sigma)$</td>
+                <td>输出可解释为概率</td>
+                <td>饱和梯度消失、非零中心、exp 计算较贵</td>
+              </tr>
+              <tr>
+                <td><strong>Tanh</strong></td>
+                <td>$\tanh(x)$</td>
+                <td>$(-1,1)$</td>
+                <td>$1-\tanh^2(x)$</td>
+                <td>零中心</td>
+                <td>饱和区仍有梯度消失</td>
+              </tr>
+              <tr>
+                <td><strong>ReLU</strong></td>
+                <td>$\max(0,x)$</td>
+                <td>$[0,\infty)$</td>
+                <td>$x>0$: 1, else 0</td>
+                <td>计算简单、收敛快6x、不正区间饱和</td>
+                <td>Dead ReLU、非零中心</td>
+              </tr>
+              <tr>
+                <td><strong>Leaky ReLU</strong></td>
+                <td>$\max(\alpha x, x)$</td>
+                <td>$(-\infty,\infty)$</td>
+                <td>$x>0$: 1, else $\alpha$</td>
+                <td>解决 Dead ReLU</td>
+                <td>多一个超参 $\alpha$</td>
+              </tr>
+              <tr>
+                <td><strong>PReLU</strong></td>
+                <td>同 Leaky, $\alpha$ 可学习</td>
+                <td>$(-\infty,\infty)$</td>
+                <td>同上</td>
+                <td>$\alpha$ 自动调整</td>
+                <td>增加参数量</td>
+              </tr>
+              <tr>
+                <td><strong>GELU</strong></td>
+                <td>$x \cdot \Phi(x)$</td>
+                <td>$\approx(-0.17,\infty)$</td>
+                <td>平滑，非分段</td>
+                <td>Transformer 标配</td>
+                <td>计算复杂</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Architecture: Activation comparison visual -->
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">Activation Functions Visual Comparison</h3>
+          <svg viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg" style="max-width:800px;">
+            <!-- Sigmoid -->
+            <g transform="translate(10,10)">
+              <rect x="0" y="0" width="180" height="200" rx="12" fill="#fff7ed" stroke="#d9cfbe"/>
+              <text x="90" y="25" text-anchor="middle" font-weight="700" font-size="14" fill="#1f2937">Sigmoid</text>
+              <line x1="20" y1="110" x2="160" y2="110" stroke="#ccc" stroke-width="1"/>
+              <line x1="90" y1="40" x2="90" y2="180" stroke="#ccc" stroke-width="1"/>
+              <path d="M20,170 Q50,168 70,150 Q80,135 90,110 Q100,85 110,70 Q130,52 160,50" fill="none" stroke="#b45309" stroke-width="2.5"/>
+              <text x="90" y="195" text-anchor="middle" font-size="11" fill="#5f6b7a">Range: (0, 1)</text>
+            </g>
+            <!-- ReLU -->
+            <g transform="translate(210,10)">
+              <rect x="0" y="0" width="180" height="200" rx="12" fill="#f0fdf4" stroke="#d9cfbe"/>
+              <text x="90" y="25" text-anchor="middle" font-weight="700" font-size="14" fill="#1f2937">ReLU</text>
+              <line x1="20" y1="110" x2="160" y2="110" stroke="#ccc" stroke-width="1"/>
+              <line x1="90" y1="40" x2="90" y2="180" stroke="#ccc" stroke-width="1"/>
+              <path d="M20,110 L90,110 L160,40" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+              <text x="90" y="195" text-anchor="middle" font-size="11" fill="#5f6b7a">Range: [0, ∞)</text>
+            </g>
+            <!-- Tanh -->
+            <g transform="translate(410,10)">
+              <rect x="0" y="0" width="180" height="200" rx="12" fill="#eff6ff" stroke="#d9cfbe"/>
+              <text x="90" y="25" text-anchor="middle" font-weight="700" font-size="14" fill="#1f2937">Tanh</text>
+              <line x1="20" y1="110" x2="160" y2="110" stroke="#ccc" stroke-width="1"/>
+              <line x1="90" y1="40" x2="90" y2="180" stroke="#ccc" stroke-width="1"/>
+              <path d="M20,175 Q50,172 70,155 Q80,135 90,110 Q100,85 110,65 Q130,48 160,45" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+              <text x="90" y="195" text-anchor="middle" font-size="11" fill="#5f6b7a">Range: (-1, 1)</text>
+            </g>
+            <!-- Leaky ReLU -->
+            <g transform="translate(610,10)">
+              <rect x="0" y="0" width="180" height="200" rx="12" fill="#fdf2f8" stroke="#d9cfbe"/>
+              <text x="90" y="25" text-anchor="middle" font-weight="700" font-size="14" fill="#1f2937">Leaky ReLU</text>
+              <line x1="20" y1="110" x2="160" y2="110" stroke="#ccc" stroke-width="1"/>
+              <line x1="90" y1="40" x2="90" y2="180" stroke="#ccc" stroke-width="1"/>
+              <path d="M20,117 L90,110 L160,40" fill="none" stroke="#db2777" stroke-width="2.5"/>
+              <text x="90" y="195" text-anchor="middle" font-size="11" fill="#5f6b7a">Range: (-∞, ∞)</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Key Fact #1</span>
+            <h3>为什么 ReLU 成为现代标准</h3>
+            <p>1. 计算极简（一个 max）；2. 正区间梯度恒为 1，不会饱和梯度消失。AlexNet 用 ReLU 替换 sigmoid/tanh 是深度学习史关键转折。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Key Fact #2</span>
+            <h3>Dead ReLU Problem</h3>
+            <p>如果 ReLU 神经元输入永远为负（大 LR 或差的初始化），永远输出 0、梯度 0，再也学不回来。Leaky/PReLU 就是为此设计。</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Sigmoid 数值考题:</strong> $\sigma(0)=0.5$, $\sigma'(0)=0.25$, $\sigma(z)$ 在 $z>0$ 时 $>0.5$, 在 $z<0$ 时 $<0.5$。这类数值判断经常出现在 multi-select 中。
+        </div>
+
+        <h3 style="margin-top:22px;">输出层 Activation 搭配</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>任务</th><th>输出层激活</th><th>Loss</th></tr></thead>
+            <tbody>
+              <tr><td>Binary Classification</td><td>Sigmoid</td><td>Binary Cross-Entropy</td></tr>
+              <tr><td>Multi-class Classification</td><td>Softmax</td><td>Cross-Entropy</td></tr>
+              <tr><td>Regression</td><td>Linear (无激活)</td><td>MSE</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== BACKPROP ==================== -->
+      <section class="section" id="backprop">
+        <h2>Backpropagation 反向传播</h2>
+        <p class="lead">利用 Chain Rule 从 loss 逆向高效计算每个参数的梯度。</p>
+
+        <!-- Architecture: Computation Graph -->
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">Computational Graph & Backprop Flow</h3>
+          <div class="arch-row">
+            <div class="arch-box arch-embed">Input $\mathbf{x}$</div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-fc">$z = Wx+b$</div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-act">$a = \sigma(z)$</div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-pool">Loss $L$</div>
+          </div>
+          <div style="margin-top:8px;color:var(--accent-3);font-weight:600;">← Backward: $\frac{\partial L}{\partial W} = \frac{\partial L}{\partial a} \cdot \frac{\partial a}{\partial z} \cdot \frac{\partial z}{\partial W}$</div>
+        </div>
+
+        <div class="equation">
+          <strong>Chain Rule:</strong>
+          $$\frac{dy}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx} \quad \text{if } y = f(g(x))$$
+
+          <strong>Fully Connected Layer Backward:</strong><br>
+          设 $z = Wx + b$, $a = \sigma(z)$, $\delta = \frac{\partial L}{\partial z} = \frac{\partial L}{\partial a} \cdot \sigma'(z)$
+          $$\frac{\partial L}{\partial W} = \delta \cdot x^\top, \quad \frac{\partial L}{\partial b} = \delta, \quad \frac{\partial L}{\partial x} = W^\top \delta$$
+
+          <strong>Vectorized (batch):</strong> $Y = XW + b$, $X \in \mathbb{R}^{N \times D}$, $W \in \mathbb{R}^{D \times M}$
+          $$dW = X^\top \, dY, \quad dX = dY \, W^\top, \quad db = \sum_{\text{batch}} dY$$
+        </div>
+
+        <h3 style="margin-top:22px;">常见操作的局部梯度</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Gate</th><th>Forward</th><th>Local Gradient</th><th>直觉</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Add</strong> $f=x+y$</td><td>$z=x+y$</td><td>$\frac{\partial z}{\partial x}=1, \frac{\partial z}{\partial y}=1$</td><td>上游梯度原样复制给两个输入</td></tr>
+              <tr><td><strong>Multiply</strong> $f=xy$</td><td>$z=xy$</td><td>$\frac{\partial z}{\partial x}=y, \frac{\partial z}{\partial y}=x$</td><td>交换: 梯度被对方值缩放（需要缓存前向值）</td></tr>
+              <tr><td><strong>Max</strong> $f=\max(x,y)$</td><td>$z=\max(x,y)$</td><td>赢家得 1, 输家得 0</td><td>梯度只流向较大值（需记录 winner）</td></tr>
+              <tr><td><strong>ReLU</strong> $f=\max(0,x)$</td><td>$z=\max(0,x)$</td><td>$x>0$: 1, else 0</td><td>正区间通过、负区间截断</td></tr>
+              <tr><td><strong>Sigmoid</strong></td><td>$z=\sigma(x)$</td><td>$\sigma(x)(1-\sigma(x))$</td><td>最大值 0.25 (at $x=0$)，饱和时趋 0</td></tr>
+              <tr><td><strong>MatMul</strong> $Y=XW$</td><td>$Y=XW$</td><td>$dX = dY \cdot W^\top$, $dW = X^\top \cdot dY$</td><td>转置 + 乘上游梯度</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag alt">Vanishing Gradient</span>
+            <h3>梯度消失问题</h3>
+            <p>深层网络中如果每层梯度 $< 1$（如 sigmoid 饱和区），连乘后指数衰减，前面的层几乎收不到梯度。<br><strong>解决:</strong> ReLU、ResNet、BatchNorm。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Exploding Gradient</span>
+            <h3>梯度爆炸问题</h3>
+            <p>每层梯度 $> 1$ 时连乘后指数增长，参数更新过大导致发散。<br><strong>解决:</strong> Gradient clipping, 更好的初始化。</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>为什么要缓存前向值 (Forward Cache):</strong> Add gate 不需要缓存（导数是常数），但 Multiply gate、max gate、sigmoid 等都需要前向输入或输出来计算局部梯度。
+        </div>
+      </section>
+
+      <!-- ==================== CNN ==================== -->
+      <section class="section" id="cnn">
+        <h2>Convolutional Neural Networks (CNN)</h2>
+        <p class="lead">利用局部连接 (local connectivity) + 权值共享 (weight sharing) 高效处理图像的空间结构。</p>
+
+        <!-- CNN Architecture Diagram -->
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">Typical CNN Architecture</h3>
+          <div class="arch-row">
+            <div class="arch-box arch-embed">Input Image<br><small>H×W×C</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-conv">Conv + ReLU<br><small>K filters</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-pool">Pooling<br><small>↓ spatial</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-conv">Conv + ReLU<br><small>K' filters</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-pool">Pooling<br><small>↓ spatial</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-fc">Flatten → FC</div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-act">Softmax<br><small>C classes</small></div>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Local Connectivity</span>
+            <h3>为什么 CNN 适合图像</h3>
+            <p>每个 filter 只看一小块区域 (receptive field)，天然符合图像的局部特征结构（边缘、纹理、角点）。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag green">Weight Sharing</span>
+            <h3>参数效率极高</h3>
+            <p>同一个 filter 滑过整图所有位置，共享同一组权重。例: $5\times5\times3$ filter 只有 75 个参数，不管图多大。</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;">卷积层详细过程</h3>
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 10px;">Convolution Operation</h3>
+          <div style="text-align:left;padding:0 10px;">
+            <svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;">
+              <!-- Input volume -->
+              <rect x="10" y="20" width="130" height="130" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+              <rect x="20" y="30" width="130" height="130" rx="8" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+              <rect x="30" y="40" width="130" height="130" rx="8" fill="#93c5fd" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="95" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">Input</text>
+              <text x="95" y="135" text-anchor="middle" font-size="11" fill="#1e40af">H × W × C</text>
+
+              <!-- Filter -->
+              <rect x="220" y="50" width="60" height="60" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="226" y="56" width="60" height="60" rx="6" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
+              <text x="256" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">Filter</text>
+              <text x="256" y="110" text-anchor="middle" font-size="10" fill="#92400e">F×F×C</text>
+
+              <!-- Arrow + dot product -->
+              <text x="190" y="95" text-anchor="middle" font-size="20" font-weight="800" fill="#b45309">⊛</text>
+
+              <!-- Arrow -->
+              <line x1="300" y1="85" x2="360" y2="85" stroke="#b45309" stroke-width="2" marker-end="url(#arrowhead)"/>
+              <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#b45309"/></marker></defs>
+
+              <!-- Output (activation map) -->
+              <rect x="380" y="35" width="100" height="100" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+              <text x="430" y="85" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">Activation</text>
+              <text x="430" y="102" text-anchor="middle" font-size="10" fill="#166534">Map</text>
+              <text x="430" y="117" text-anchor="middle" font-size="10" fill="#166534">H'×W'×1</text>
+
+              <!-- K filters -->
+              <text x="520" y="75" font-size="12" fill="#5f6b7a">×K filters</text>
+              <text x="520" y="95" font-size="12" fill="#5f6b7a">→ H'×W'×K</text>
+
+              <!-- + bias -->
+              <text x="380" y="160" font-size="11" fill="#5f6b7a">每个 filter 输出一个 activation map</text>
+              <text x="380" y="176" font-size="11" fill="#5f6b7a">K 个 filter → K 个 channel 的输出</text>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== CONV MATH ==================== -->
+      <section class="section" id="conv-math">
+        <h2>Convolution Math & Parameter Counting</h2>
+
+        <div class="equation">
+          <strong>Output Size Formula:</strong>
+          $$\text{Output} = \frac{W - F + 2P}{S} + 1$$
+          $W$ = input width/height, $F$ = filter size, $P$ = padding, $S$ = stride
+        </div>
+
+        <h3 style="margin-top:22px;">Worked Examples (高频考题类型)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Problem</th><th>Setup</th><th>Answer</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Example 1</strong></td>
+                <td>Input: $32\times32\times3$, Filter: $5\times5$, 6 filters, S=1, P=0</td>
+                <td>Output: $(32-5+0)/1+1 = 28$, so $28\times28\times6$</td>
+              </tr>
+              <tr>
+                <td><strong>Example 2</strong></td>
+                <td>Input: $4\times6\times3$, Output: $3\times4\times10$</td>
+                <td>10 filters, each depth 3. 可验证: $2\times2$ filter, S=2, P=1</td>
+              </tr>
+              <tr>
+                <td><strong>Bonus Quiz</strong></td>
+                <td>Input W=9, F=3, S=2, desired output W=9</td>
+                <td>$(9-3+2P)/2+1=9 \Rightarrow P=5$</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px;">Parameter Counting</h3>
+        <div class="equation">
+          <strong>每个 filter 的参数:</strong> $F \times F \times C_{\text{in}}$ weights $+ 1$ bias $= F^2 C_{\text{in}} + 1$<br>
+          <strong>总参数:</strong> $K \times (F^2 C_{\text{in}} + 1)$<br><br>
+
+          <strong>Example:</strong> 10 个 $5\times5$ filter, 3-channel input<br>
+          每个 filter: $5\times5\times3 = 75$ weights $+ 1$ bias $= 76$<br>
+          总参数: $10 \times 76 = 760$
+        </div>
+
+        <h3 style="margin-top:22px;">Pooling Layer</h3>
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Max Pooling</span>
+            <h3>取区域最大值</h3>
+            <p>减小空间分辨率，<strong>无可学习参数</strong>。反向传播时梯度只流向最大值位置。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">Avg Pooling</span>
+            <h3>取区域平均值</h3>
+            <p>同样<strong>无可学习参数</strong>。梯度均匀分配给区域内所有位置。</p>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Padding 的作用:</strong> 1) 保持空间大小 (when S=1, P=(F-1)/2); 2) 保留边界信息不被丢弃。Padding 不改变 filter 数量。
+        </div>
+      </section>
+
+      <!-- ==================== CLASSIC CNN MODELS ==================== -->
+      <section class="section" id="classic-cnn">
+        <h2>Classic CNN Models</h2>
+
+        <!-- LeNet -->
+        <div class="detail-block">
+          <h3>LeNet-5 (1998)</h3>
+          <div class="arch-diagram">
+            <div class="arch-row">
+              <div class="arch-box arch-embed">Input<br><small>32×32×1</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-conv">Conv 5×5<br><small>6 filters</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-pool">AvgPool<br><small>2×2</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-conv">Conv 5×5<br><small>16 filters</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-pool">AvgPool<br><small>2×2</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-fc">FC 120→84→10</div>
+            </div>
+          </div>
+          <p style="color:var(--muted);">CNN 的开山之作。用于手写数字识别。首次展示 Conv+Pool 堆叠的 sandwich 结构。</p>
+        </div>
+
+        <!-- AlexNet -->
+        <div class="detail-block">
+          <h3>AlexNet (2012) — 深度学习复兴标志</h3>
+          <div class="arch-diagram">
+            <div class="arch-row">
+              <div class="arch-box arch-embed">Input<br><small>227×227×3</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-conv">Conv 11×11<br><small>96, S=4</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-pool">MaxPool</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-conv">Conv 5×5<br><small>256</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-pool">MaxPool</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-conv">Conv×3</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-fc">FC 4096→1000</div>
+            </div>
+          </div>
+          <p style="color:var(--muted);"><strong>关键创新:</strong> 首次使用 ReLU (代替 sigmoid/tanh)、使用 GPU 训练、Dropout 正则化、Data Augmentation。ImageNet 错误率从 26% 降到 15.3%。</p>
+        </div>
+
+        <!-- VGGNet -->
+        <div class="detail-block">
+          <h3>VGGNet (2014) — 深度 + 小 filter</h3>
+          <div class="arch-diagram">
+            <div class="arch-row">
+              <div class="arch-box arch-conv">3×3 Conv<br><small>×2, 64</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-pool">Pool</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-conv">3×3 Conv<br><small>×2, 128</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-pool">Pool</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-conv">3×3 Conv<br><small>×3, 256</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-pool">Pool</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-conv">3×3 Conv<br><small>×3, 512</small></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box arch-fc">FC</div>
+            </div>
+          </div>
+          <p style="color:var(--muted);"><strong>核心思想:</strong> 只用 3×3 conv！两个 3×3 的有效感受野 = 一个 5×5，但参数更少 ($2 \times 3^2C^2 = 18C^2$ vs $25C^2$)，且多一个非线性。</p>
+        </div>
+
+        <h3 style="margin-top:22px;">Classic CNN Models Comparison</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>Year</th><th>Depth</th><th>Key Innovation</th><th>Filter Sizes</th></tr></thead>
+            <tbody>
+              <tr><td>LeNet-5</td><td>1998</td><td>5</td><td>CNN 原型, sandwich arch</td><td>5×5</td></tr>
+              <tr><td>AlexNet</td><td>2012</td><td>8</td><td>ReLU, GPU, Dropout</td><td>11×11, 5×5, 3×3</td></tr>
+              <tr><td>VGGNet</td><td>2014</td><td>16-19</td><td>只用 3×3 conv, deeper is better</td><td>3×3 only</td></tr>
+              <tr><td>GoogLeNet</td><td>2014</td><td>22</td><td>Inception module, 1×1 conv</td><td>1×1, 3×3, 5×5</td></tr>
+              <tr><td>ResNet</td><td>2015</td><td>152+</td><td>Residual connections (skip)</td><td>3×3, 1×1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== RESNET ==================== -->
+      <section class="section" id="resnet">
+        <h2>Residual Connections (ResNet)</h2>
+
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">Residual Block Architecture</h3>
+          <svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg" style="max-width:520px;">
+            <!-- Main path -->
+            <rect x="30" y="70" width="80" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+            <text x="70" y="95" text-anchor="middle" font-size="12" font-weight="600" fill="#1e40af">Input x</text>
+
+            <line x1="110" y1="90" x2="150" y2="90" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ah2)"/>
+
+            <rect x="150" y="70" width="80" height="40" rx="8" fill="#e0e7ff" stroke="#818cf8" stroke-width="1.5"/>
+            <text x="190" y="88" text-anchor="middle" font-size="11" font-weight="600" fill="#3730a3">Conv+BN</text>
+            <text x="190" y="102" text-anchor="middle" font-size="10" fill="#3730a3">+ReLU</text>
+
+            <line x1="230" y1="90" x2="270" y2="90" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ah2)"/>
+
+            <rect x="270" y="70" width="80" height="40" rx="8" fill="#e0e7ff" stroke="#818cf8" stroke-width="1.5"/>
+            <text x="310" y="88" text-anchor="middle" font-size="11" font-weight="600" fill="#3730a3">Conv+BN</text>
+
+            <line x1="350" y1="90" x2="390" y2="90" stroke="#6b7280" stroke-width="1.5"/>
+
+            <!-- Addition circle -->
+            <circle cx="405" cy="90" r="16" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="405" y="95" text-anchor="middle" font-size="16" font-weight="800" fill="#92400e">+</text>
+
+            <line x1="421" y1="90" x2="460" y2="90" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ah2)"/>
+
+            <rect x="460" y="70" width="50" height="40" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="485" y="93" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">ReLU</text>
+
+            <!-- Skip connection -->
+            <path d="M70,70 L70,30 L405,30 L405,74" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="6,3"/>
+            <text x="240" y="23" text-anchor="middle" font-size="11" font-weight="600" fill="#dc2626">Identity shortcut (skip connection)</text>
+
+            <!-- Label -->
+            <text x="310" y="160" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">Output = F(x) + x → ReLU</text>
+
+            <defs><marker id="ah2" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#6b7280"/></marker></defs>
+          </svg>
+        </div>
+
+        <div class="equation">
+          $$\mathbf{y} = \mathcal{F}(\mathbf{x}, \{W_i\}) + \mathbf{x}$$
+          Block 只需要学习 <strong>残差 $\mathcal{F}(\mathbf{x})$</strong>（偏离 identity 的部分），而不是从头学整个映射。<br>
+          当最优映射接近 identity 时，残差接近 0，比从头学 identity 更容易。
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">为什么有效</span>
+            <h3>Three Benefits</h3>
+            <p>1. <strong>信息高速公路:</strong> 输入直接到输出，信息不被层层扭曲。<br>2. <strong>梯度高速公路:</strong> 梯度通过 skip 直接传到浅层。<br>3. <strong>学残差更容易:</strong> 学"什么要改"比学"完整映射"简单。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">注意</span>
+            <h3>ResNet 不移除非线性</h3>
+            <p>Skip connection 是加法捷径，并不取消了每个 block 里的非线性激活。ReLU 仍然存在于 residual branch 中。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== RNN ==================== -->
+      <section class="section" id="rnn">
+        <h2>Recurrent Neural Networks (RNN)</h2>
+        <p class="lead">处理序列数据的核心架构。每个时间步共享相同的权重，隐藏状态 $h_t$ 携带历史信息。</p>
+
+        <!-- RNN Architecture Diagram -->
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">Vanilla RNN Unrolled</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:center;">
+            <div style="text-align:center;">
+              <div class="arch-box arch-embed" style="margin-bottom:4px;">$x_1$</div>
+              <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+              <div class="arch-box arch-gate" style="margin:4px 0;">$f_W$</div>
+              <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+              <div class="arch-box arch-act" style="margin-top:4px;">$y_1$</div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div style="text-align:center;">
+              <div class="arch-box arch-embed" style="margin-bottom:4px;">$x_2$</div>
+              <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+              <div class="arch-box arch-gate" style="margin:4px 0;">$f_W$</div>
+              <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+              <div class="arch-box arch-act" style="margin-top:4px;">$y_2$</div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div style="text-align:center;">
+              <div class="arch-box arch-embed" style="margin-bottom:4px;">$x_3$</div>
+              <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+              <div class="arch-box arch-gate" style="margin:4px 0;">$f_W$</div>
+              <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+              <div class="arch-box arch-act" style="margin-top:4px;">$y_3$</div>
+            </div>
+            <div class="arch-arrow">→ ⋯</div>
+            <div style="text-align:center;">
+              <div class="arch-box arch-embed" style="margin-bottom:4px;">$x_T$</div>
+              <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+              <div class="arch-box arch-gate" style="margin:4px 0;">$f_W$</div>
+              <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+              <div class="arch-box arch-act" style="margin-top:4px;">$y_T$</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;color:var(--accent);font-weight:600;font-size:0.9rem;">
+            隐藏状态 $h_t$ 在相邻时间步之间传递 · 所有时间步共享权重 $W$
+          </div>
+        </div>
+
+        <div class="equation">
+          <strong>Vanilla RNN:</strong>
+          $$h_t = \tanh(W_{hh}\,h_{t-1} + W_{xh}\,x_t + b)$$
+          $$y_t = W_{hy}\,h_t$$
+        </div>
+
+        <h3 style="margin-top:22px;">RNN Parameter Counting</h3>
+        <div class="equation">
+          设 input dim $= d_x$, hidden dim $= d_h$:<br>
+          $$W_{hh}: d_h \times d_h = d_h^2 \text{ params}$$
+          $$W_{xh}: d_h \times d_x \text{ params}$$
+          $$b: d_h \text{ params}$$
+          <strong>Example:</strong> $d_x=10, d_h=20$: total $= 400 + 200 + 20 = 620$ params (不是 420！)
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Weight Sharing</span>
+            <h3>增加 T 不增加参数</h3>
+            <p>序列长度 T 增加只增加计算量和 BPTT 路径长度，不改变可训练参数数量。同一个 cell 重复使用。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">BPTT</span>
+            <h3>Backpropagation Through Time</h3>
+            <p>展开整个序列计算 loss，然后沿时间反向传播梯度。Truncated BPTT: 只反向传播有限步数，降低计算开销。</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Vanilla RNN 的核心问题:</strong> 反向传播时 $\frac{\partial h_t}{\partial h_{t-1}}$ 包含 $W_{hh}^\top$ 的连乘。Largest singular value > 1 → 梯度爆炸; < 1 → 梯度消失。这就是为什么需要 LSTM。
+        </div>
+      </section>
+
+      <!-- ==================== LSTM ==================== -->
+      <section class="section" id="lstm">
+        <h2>Long Short-Term Memory (LSTM)</h2>
+        <p class="lead">通过引入 cell state 和三个 gate 来解决 vanilla RNN 的梯度消失问题，能学习长距离依赖。</p>
+
+        <!-- LSTM Architecture Diagram -->
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">LSTM Cell Internal Structure</h3>
+          <svg viewBox="0 0 640 320" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;">
+            <!-- Cell state highway -->
+            <line x1="30" y1="50" x2="610" y2="50" stroke="#ef4444" stroke-width="3"/>
+            <text x="320" y="35" text-anchor="middle" font-size="14" font-weight="700" fill="#dc2626">Cell State $c_t$ (信息高速公路)</text>
+
+            <!-- Forget gate -->
+            <rect x="60" y="100" width="110" height="80" rx="12" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1.5"/>
+            <text x="115" y="130" text-anchor="middle" font-size="12" font-weight="700" fill="#9d174d">Forget Gate</text>
+            <text x="115" y="148" text-anchor="middle" font-size="11" fill="#9d174d">$f_t = \sigma(W_f[h_{t-1},x_t])$</text>
+            <text x="115" y="168" text-anchor="middle" font-size="10" fill="#9d174d">决定丢弃什么信息</text>
+            <!-- Connection to cell state -->
+            <line x1="115" y1="100" x2="115" y2="50" stroke="#f9a8d4" stroke-width="1.5"/>
+            <circle cx="115" cy="50" r="8" fill="#fef3c7" stroke="#f59e0b"/>
+            <text x="115" y="54" text-anchor="middle" font-size="12" font-weight="800" fill="#92400e">×</text>
+
+            <!-- Input gate -->
+            <rect x="210" y="100" width="110" height="80" rx="12" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+            <text x="265" y="125" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">Input Gate</text>
+            <text x="265" y="143" text-anchor="middle" font-size="11" fill="#1e40af">$i_t = \sigma(W_i[h_{t-1},x_t])$</text>
+            <text x="265" y="158" text-anchor="middle" font-size="11" fill="#1e40af">$\tilde{c}_t = \tanh(W_c[h_{t-1},x_t])$</text>
+            <text x="265" y="173" text-anchor="middle" font-size="10" fill="#1e40af">决定写入什么新信息</text>
+            <!-- Connection to cell state -->
+            <line x1="265" y1="100" x2="265" y2="50" stroke="#93c5fd" stroke-width="1.5"/>
+            <circle cx="265" cy="50" r="8" fill="#fef3c7" stroke="#f59e0b"/>
+            <text x="265" y="54" text-anchor="middle" font-size="12" font-weight="800" fill="#92400e">+</text>
+
+            <!-- Cell update formula -->
+            <rect x="170" y="210" width="260" height="36" rx="10" fill="#fff1f2" stroke="#fda4af" stroke-width="1.5"/>
+            <text x="300" y="233" text-anchor="middle" font-size="13" font-weight="700" fill="#9f1239">$c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t$</text>
+
+            <!-- Output gate -->
+            <rect x="400" y="100" width="110" height="80" rx="12" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+            <text x="455" y="130" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">Output Gate</text>
+            <text x="455" y="148" text-anchor="middle" font-size="11" fill="#166534">$o_t = \sigma(W_o[h_{t-1},x_t])$</text>
+            <text x="455" y="168" text-anchor="middle" font-size="10" fill="#166534">决定输出什么</text>
+
+            <!-- Hidden state output -->
+            <rect x="400" y="260" width="200" height="36" rx="10" fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.5"/>
+            <text x="500" y="283" text-anchor="middle" font-size="13" font-weight="700" fill="#3730a3">$h_t = o_t \odot \tanh(c_t)$</text>
+
+            <!-- Inputs -->
+            <rect x="40" y="270" width="110" height="36" rx="10" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1.5"/>
+            <text x="95" y="293" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">$h_{t-1}$, $x_t$ (inputs)</text>
+          </svg>
+        </div>
+
+        <div class="equation">
+          <strong>LSTM 完整公式:</strong>
+          $$f_t = \sigma\bigl(W_f [h_{t-1}, x_t] + b_f\bigr) \quad \text{(Forget Gate — sigmoid)}$$
+          $$i_t = \sigma\bigl(W_i [h_{t-1}, x_t] + b_i\bigr) \quad \text{(Input Gate — sigmoid)}$$
+          $$\tilde{c}_t = \tanh\bigl(W_c [h_{t-1}, x_t] + b_c\bigr) \quad \text{(Candidate — tanh)}$$
+          $$c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t \quad \text{(Cell State Update — 加法!)}$$
+          $$o_t = \sigma\bigl(W_o [h_{t-1}, x_t] + b_o\bigr) \quad \text{(Output Gate — sigmoid)}$$
+          $$h_t = o_t \odot \tanh(c_t) \quad \text{(Hidden State Output)}$$
+        </div>
+
+        <h3 style="margin-top:22px;">LSTM vs Vanilla RNN</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>Vanilla RNN</th><th>LSTM</th></tr></thead>
+            <tbody>
+              <tr><td>Hidden State Update</td><td>$h_t = \tanh(Wh_{t-1} + Wx_t)$</td><td>Cell 加法 + gate 机制</td></tr>
+              <tr><td>Long-term Memory</td><td>差 (梯度消失)</td><td>好 (additive cell state path)</td></tr>
+              <tr><td>Gateway Mechanism</td><td>无</td><td>Forget, Input, Output 三个门</td></tr>
+              <tr><td>Gate Activations</td><td>N/A</td><td>三个门: σ; Candidate: tanh</td></tr>
+              <tr><td>梯度流动</td><td>$W_{hh}$ 连乘 → 衰减/爆炸</td><td>Cell state 加法路径 → 梯度更容易流通</td></tr>
+              <tr><td>参数量</td><td>较少</td><td>约 4× vanilla RNN</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <strong>LSTM 为什么解决梯度消失:</strong> Cell state 更新是<strong>加法</strong> ($c_t = f \odot c_{t-1} + i \odot \tilde{c}$)，不是乘法。加法路径让梯度可以不衰减地直接流过多个时间步，类似 ResNet 的 skip connection。
+        </div>
+      </section>
+
+      <!-- ==================== SEQUENCE MODELS ==================== -->
+      <section class="section" id="seq-models">
+        <h2>Sequence Model Patterns</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pattern</th><th>架构</th><th>典型应用</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Many-to-One</strong></td><td>序列输入 → 最终 $h_T$ → 单一输出</td><td>Sentiment Classification</td></tr>
+              <tr><td><strong>One-to-Many</strong></td><td>单一输入 → 逐步生成序列</td><td>Image Captioning</td></tr>
+              <tr><td><strong>Many-to-Many</strong></td><td>每步都有输入和输出</td><td>Video Labeling (per frame)</td></tr>
+              <tr><td><strong>Seq-to-Seq</strong></td><td>Encoder (Many-to-One) + Decoder (One-to-Many)</td><td>Machine Translation</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Embedding Layer</span>
+            <h3>From one-hot to dense</h3>
+            <p>V=10000 词表 → $10000 \times 300$ 矩阵。每个 token 映射到 300 维稠密向量。比 one-hot 高效得多。矩阵乘 one-hot = 取出一列。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Autoregressive Generation</span>
+            <h3>逐 token 生成</h3>
+            <p>前面的输出 feed 回来作为下一步输入。未来 token 在生成时不可见 → Bidirectional RNN 不适合标准自回归生成。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== WEIGHT INIT ==================== -->
+      <section class="section" id="init">
+        <h2>Weight Initialization</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>方法</th><th>方差</th><th>适用激活</th><th>为什么</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Zero Init</strong></td>
+                <td>0</td>
+                <td>❌ 不要用</td>
+                <td>所有神经元对称 → 梯度相同 → 学到同样的东西</td>
+              </tr>
+              <tr>
+                <td><strong>Small Random</strong></td>
+                <td>~0.01</td>
+                <td>浅层可用</td>
+                <td>深层会衰减到 0 (activations → 0)</td>
+              </tr>
+              <tr>
+                <td><strong>Xavier</strong></td>
+                <td>$\text{Var}(w) = \frac{1}{D_{\text{in}}}$</td>
+                <td>Tanh, Sigmoid</td>
+                <td>保持输入输出方差一致</td>
+              </tr>
+              <tr>
+                <td><strong>He (Kaiming)</strong></td>
+                <td>$\text{Var}(w) = \frac{2}{D_{\text{in}}}$</td>
+                <td>ReLU</td>
+                <td>ReLU 丢弃一半信号（负半轴），所以要 ×2 补偿</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="equation">
+          <strong>Xavier 推导直觉:</strong><br>
+          设 $y = \sum_{i=1}^{D_{\text{in}}} x_i w_i$, 要求 $\text{Var}(y) = \text{Var}(x_i)$<br>
+          $$\text{Var}(y) = D_{\text{in}} \cdot \text{Var}(x_i) \cdot \text{Var}(w_i)$$
+          令 $\text{Var}(w_i) = \frac{1}{D_{\text{in}}}$ 即可保持方差不变
+        </div>
+
+        <div class="callout">
+          <strong>考试高频:</strong> 零初始化为什么不行？→ "对称性不破" (symmetry not broken) → 所有 neurons 收到相同梯度 → 等于一个神经元。
+        </div>
+      </section>
+
+      <!-- ==================== BATCH NORM ==================== -->
+      <section class="section" id="batchnorm">
+        <h2>Batch Normalization</h2>
+
+        <div class="equation">
+          <strong>Training:</strong>
+          $$\hat{x}_i = \frac{x_i - \mu_B}{\sqrt{\sigma_B^2 + \varepsilon}}$$
+          $$y_i = \gamma \hat{x}_i + \beta$$
+          其中 $\mu_B, \sigma_B^2$ 是当前 mini-batch 的均值和方差，$\gamma, \beta$ 是可学习参数<br><br>
+
+          <strong>Inference:</strong> 使用训练时累积的 running mean 和 running variance（不用当前 batch 统计量）
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">BN 的好处</span>
+            <h3>Multiple Benefits</h3>
+            <p>1. 改善梯度流 (让梯度不那么依赖 scale)<br>2. 允许更大学习率<br>3. 减少对初始化的敏感度<br>4. 有轻微正则化效果</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Train vs Test 区别</span>
+            <h3>⚠️ 考试高频考点</h3>
+            <p><strong>Training:</strong> 用 mini-batch 的 $\mu_B, \sigma_B^2$<br><strong>Test:</strong> 用训练时累积的 running statistics<br><strong>BN 推理时并不关掉</strong>，只是统计量来源不同。</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>BN 位置:</strong> 通常放在 Conv/FC 之后、非线性激活之前。即: Conv → BN → ReLU。
+        </div>
+      </section>
+
+      <!-- ==================== REGULARIZATION ==================== -->
+      <section class="section" id="regularization">
+        <h2>Regularization & Dropout</h2>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">L2 Regularization (Weight Decay)</span>
+            <h3>$L_{\text{total}} = L + \lambda \|W\|^2$</h3>
+            <p>惩罚大权重，鼓励模型使用更小更分散的权重。防止过拟合。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag green">L1 Regularization</span>
+            <h3>$L_{\text{total}} = L + \lambda \|W\|_1$</h3>
+            <p>鼓励稀疏权重（很多权重趋向 0）。可用于特征选择。</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;">Dropout</h3>
+
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">Dropout: Training vs Test</h3>
+          <div style="display:flex; gap:40px; justify-content:center; flex-wrap:wrap;">
+            <div style="text-align:center;">
+              <div style="font-weight:700;margin-bottom:8px;color:var(--accent);">Training (p=0.5)</div>
+              <svg viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg" style="width:180px;">
+                <circle cx="30" cy="30" r="12" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+                <circle cx="90" cy="30" r="12" fill="#d1d5db" stroke="#9ca3af" stroke-width="1.5"/>
+                <line x1="90" y1="18" x2="90" y2="42" stroke="#ef4444" stroke-width="2"/>
+                <line x1="78" y1="30" x2="102" y2="30" stroke="#ef4444" stroke-width="2"/>
+                <circle cx="150" cy="30" r="12" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+                <circle cx="60" cy="90" r="12" fill="#d1d5db" stroke="#9ca3af" stroke-width="1.5"/>
+                <line x1="60" y1="78" x2="60" y2="102" stroke="#ef4444" stroke-width="2"/>
+                <line x1="48" y1="90" x2="72" y2="90" stroke="#ef4444" stroke-width="2"/>
+                <circle cx="120" cy="90" r="12" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+                <text x="90" y="115" text-anchor="middle" font-size="9" fill="#5f6b7a">随机 drop + scale ÷p</text>
+              </svg>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-weight:700;margin-bottom:8px;color:var(--accent-2);">Test (全部使用)</div>
+              <svg viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg" style="width:180px;">
+                <circle cx="30" cy="30" r="12" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+                <circle cx="90" cy="30" r="12" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+                <circle cx="150" cy="30" r="12" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+                <circle cx="60" cy="90" r="12" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+                <circle cx="120" cy="90" r="12" fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+                <text x="90" y="115" text-anchor="middle" font-size="9" fill="#5f6b7a">全网络，无 scaling</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="equation">
+          <strong>Standard Dropout:</strong> Training 时随机将 neuron 输出置 0 (概率 $p$)，Test 时全部使用但乘以 $(1-p)$<br><br>
+          <strong>Inverted Dropout (更常用):</strong> Training 时 drop 后立即除以 $(1-p)$ 补偿，Test 时<strong>不需要任何额外 scaling</strong>
+        </div>
+
+        <div class="callout">
+          <strong>Inverted Dropout 是考试重点:</strong> Training scale up (÷ (1-p))，Test 不改变。Test 时不再 drop units。
+        </div>
+      </section>
+
+      <!-- ==================== OPTIMIZERS ==================== -->
+      <section class="section" id="optimizers">
+        <h2>Optimizers</h2>
+
+        <div class="equation">
+          <strong>SGD:</strong>
+          $$\theta_{t+1} = \theta_t - \eta \nabla L(\theta_t)$$
+
+          <strong>SGD + Momentum:</strong> ($\beta$ 通常 0.9)
+          $$v_t = \beta v_{t-1} + \nabla L(\theta_t)$$
+          $$\theta_{t+1} = \theta_t - \eta v_t$$
+
+          <strong>Adam:</strong>
+          $$m_t = \beta_1 m_{t-1} + (1-\beta_1)\nabla L \quad \text{(一阶矩)}$$
+          $$v_t = \beta_2 v_{t-1} + (1-\beta_2)(\nabla L)^2 \quad \text{(二阶矩)}$$
+          $$\hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t} \quad \text{(偏差修正)}$$
+          $$\theta_{t+1} = \theta_t - \frac{\eta \hat{m}_t}{\sqrt{\hat{v}_t}+\varepsilon}$$
+          常见默认: $\beta_1=0.9, \beta_2=0.999, \varepsilon=10^{-8}$
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Optimizer</th><th>Key Feature</th><th>Pros</th><th>Cons</th></tr></thead>
+            <tbody>
+              <tr><td><strong>SGD</strong></td><td>最简单</td><td>直接、理论性质好</td><td>震荡大、收敛慢</td></tr>
+              <tr><td><strong>Momentum</strong></td><td>累积历史梯度方向</td><td>减少震荡、加速收敛</td><td>多一个超参</td></tr>
+              <tr><td><strong>AdaGrad</strong></td><td>累积 $g^2$，自适应 LR</td><td>稀疏梯度友好</td><td>LR 只降不升</td></tr>
+              <tr><td><strong>RMSProp</strong></td><td>滑动平均代替累积</td><td>解决 AdaGrad LR 衰减</td><td>仍需调参</td></tr>
+              <tr><td><strong>Adam</strong></td><td>Momentum + RMSProp + bias correction</td><td>常用首选、适应性强</td><td>泛化有时不如 SGD+M</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Adam Bias Correction</span>
+            <h3>为什么需要偏差修正？</h3>
+            <p>$m,v$ 初始化为 0 → 前几步估计值偏低。除以 $(1-\beta^t)$ 补偿初始偏差。<strong>注意:</strong> 这不是 gradient clipping！</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">Learning Rate Warm-up</span>
+            <h3>前几百步线性增大 $\eta$</h3>
+            <p>防止初始阶段大梯度导致不稳定更新。之后再用 cosine annealing 或 step decay 衰减。<strong>不保证立即收敛。</strong></p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Gradient Clipping:</strong> 主要用于防止<strong>梯度爆炸</strong>（特别是 RNN），不能修复梯度消失。当 $\|\nabla L\| > \text{threshold}$ 时缩放梯度。
+        </div>
+      </section>
+
+      <!-- ==================== GAN ==================== -->
+      <section class="section" id="gan">
+        <h2>Generative Adversarial Networks (GAN)</h2>
+        <p class="lead">通过 Generator 和 Discriminator 的对抗博弈，学习从噪声生成真实数据。</p>
+
+        <!-- GAN Architecture -->
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">GAN Architecture</h3>
+          <svg viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;">
+            <!-- Noise input -->
+            <rect x="10" y="80" width="80" height="50" rx="10" fill="#f3e8ff" stroke="#c4b5fd" stroke-width="1.5"/>
+            <text x="50" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">Noise $z$</text>
+            <text x="50" y="118" text-anchor="middle" font-size="10" fill="#5b21b6">$\sim \mathcal{N}(0,I)$</text>
+
+            <!-- Arrow -->
+            <line x1="90" y1="105" x2="130" y2="105" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ah3)"/>
+
+            <!-- Generator -->
+            <rect x="130" y="75" width="130" height="60" rx="14" fill="#ccfbf1" stroke="#5eead4" stroke-width="2"/>
+            <text x="195" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Generator G</text>
+            <text x="195" y="120" text-anchor="middle" font-size="10" fill="#115e59">Neural Network</text>
+
+            <!-- Arrow -->
+            <line x1="260" y1="105" x2="300" y2="105" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ah3)"/>
+
+            <!-- Fake image -->
+            <rect x="300" y="80" width="80" height="50" rx="10" fill="#fef3c7" stroke="#fcd34d" stroke-width="1.5"/>
+            <text x="340" y="100" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">Fake</text>
+            <text x="340" y="116" text-anchor="middle" font-size="10" fill="#92400e">$G(z)$</text>
+
+            <!-- Arrow to Discriminator -->
+            <line x1="380" y1="105" x2="430" y2="105" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ah3)"/>
+
+            <!-- Discriminator -->
+            <rect x="430" y="60" width="130" height="90" rx="14" fill="#fee2e2" stroke="#fca5a5" stroke-width="2"/>
+            <text x="495" y="90" text-anchor="middle" font-size="14" font-weight="700" fill="#991b1b">Discriminator D</text>
+            <text x="495" y="110" text-anchor="middle" font-size="10" fill="#991b1b">Neural Network</text>
+            <text x="495" y="138" text-anchor="middle" font-size="10" fill="#991b1b">$D(x) \in (0,1)$</text>
+
+            <!-- Real image input -->
+            <rect x="430" y="180" width="80" height="40" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+            <text x="470" y="200" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">Real $x$</text>
+            <text x="470" y="216" text-anchor="middle" font-size="10" fill="#166534">训练数据</text>
+            <line x1="470" y1="180" x2="470" y2="150" stroke="#86efac" stroke-width="1.5" marker-end="url(#ah3)"/>
+
+            <!-- Output -->
+            <line x1="560" y1="105" x2="610" y2="80" stroke="#6b7280" stroke-width="1.5"/>
+            <text x="630" y="75" text-anchor="middle" font-size="12" font-weight="700" fill="#16a34a">Real</text>
+            <line x1="560" y1="105" x2="610" y2="130" stroke="#6b7280" stroke-width="1.5"/>
+            <text x="630" y="135" text-anchor="middle" font-size="12" font-weight="700" fill="#dc2626">Fake</text>
+
+            <!-- Training directions -->
+            <text x="195" y="160" text-anchor="middle" font-size="10" font-weight="600" fill="#115e59">↑ Gradient Descent on G</text>
+            <text x="495" y="38" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">↑ Gradient Ascent on D</text>
+
+            <defs><marker id="ah3" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#6b7280"/></marker></defs>
+          </svg>
+        </div>
+
+        <div class="equation">
+          <strong>Minimax 目标函数:</strong>
+          $$\min_G \max_D \; V(D,G) = \mathbb{E}_{x \sim p_{\text{data}}}[\log D(x)] + \mathbb{E}_{z \sim p_z}[\log(1-D(G(z)))]$$
+
+          <strong>Discriminator (最大化):</strong> 让 $D(x) \to 1$ (真的判真)，$D(G(z)) \to 0$ (假的判假)<br>
+          <strong>Generator (最小化):</strong> 让 $D(G(z)) \to 1$ (假的骗过 D)
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag alt">Non-Saturating Loss</span>
+            <h3>为什么改目标函数</h3>
+            <p>原始 G 目标 $\min \log(1-D(G(z)))$：当 D 很强时梯度趋 0 (饱和)。<br>改为 $\max \log D(G(z))$：提供更强的梯度信号。保持相同的均衡思想。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Mode Collapse</span>
+            <h3>GAN 最大的问题</h3>
+            <p>Generator 只生成少数几种能骗过 D 的样本，多样性丧失。生成的图像高度重复。</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Conditional GAN (cGAN):</strong> Generator 输入不仅是噪声 $z$，还包括条件信息（如类别标签、图像），从而控制生成内容。例: pix2pix 用图像作条件做图像翻译。
+        </div>
+      </section>
+
+      <!-- ==================== VAE ==================== -->
+      <section class="section" id="vae">
+        <h2>Variational Autoencoder (VAE)</h2>
+        <p class="lead">通过约束隐空间为概率分布来实现生成能力。先学 Autoencoder，再理解 VAE。</p>
+
+        <!-- VAE Architecture -->
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">VAE Architecture</h3>
+          <div class="arch-row">
+            <div class="arch-box arch-embed">Input $x$</div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-gen">Encoder<br><small>$q_\phi(z|x)$</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-gate">$\mu, \sigma$<br><small>Parameters</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-cell">Sample $z$<br><small>$\mu+\sigma\cdot\epsilon$</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-disc">Decoder<br><small>$p_\theta(x|z)$</small></div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box arch-embed">$\hat{x}$</div>
+          </div>
+          <div style="margin-top:10px;color:var(--accent-3);font-weight:600;font-size:0.9rem;">
+            Reparameterization Trick: $z = \mu + \sigma \odot \epsilon, \; \epsilon \sim \mathcal{N}(0,I)$
+          </div>
+        </div>
+
+        <div class="equation">
+          <strong>Autoencoder vs VAE:</strong><br>
+          Autoencoder: 学确定性映射 $z = f(x)$, $\hat{x} = g(z)$ — 不能采样生成新数据<br>
+          VAE: 学概率映射 — 隐空间有结构（Gaussian prior），可以采样 $z \sim \mathcal{N}(0,I)$ 生成新数据<br><br>
+
+          <strong>ELBO (Evidence Lower Bound):</strong>
+          $$\log p_\theta(x) \geq \underbrace{\mathbb{E}_{q_\phi(z|x)}[\log p_\theta(x|z)]}_{\text{Reconstruction}} - \underbrace{D_{\mathrm{KL}}\bigl(q_\phi(z|x) \;\|\; p(z)\bigr)}_{\text{KL Regularization}}$$
+
+          <strong>Reparameterization Trick:</strong>
+          $$z = \mu + \sigma \odot \epsilon, \quad \epsilon \sim \mathcal{N}(0, I)$$
+          将随机采样转化为确定性函数 + 外部噪声，使得梯度可以通过 $\mu, \sigma$ 反向传播
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">Reconstruction Loss</span>
+            <h3>重建输入数据</h3>
+            <p>$\mathbb{E}[\log p_\theta(x|z)]$: 让 decoder 输出尽可能接近输入。保证 encoder 学到有用的信息。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">KL Divergence Loss</span>
+            <h3>正则化隐空间</h3>
+            <p>$D_\mathrm{KL}(q_\phi(z|x) \| p(z))$: 让 encoder 输出的分布接近标准正态。使得隐空间连续、有意义。<strong>去掉 KL 就失去了正则化。</strong></p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Generation:</strong> 训练好后，从 $z \sim \mathcal{N}(0,I)$ 采样，通过 Decoder 即可生成新数据。不需要 Encoder。
+        </div>
+      </section>
+
+      <!-- ==================== GAN vs VAE ==================== -->
+      <section class="section" id="gen-compare">
+        <h2>GAN vs VAE Comparison</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>GAN</th><th>VAE</th></tr></thead>
+            <tbody>
+              <tr><td><strong>训练方式</strong></td><td>对抗博弈 (Minimax)</td><td>最大化 ELBO (变分推断)</td></tr>
+              <tr><td><strong>生成质量</strong></td><td>通常更清晰、更逼真</td><td>通常更模糊</td></tr>
+              <tr><td><strong>训练稳定性</strong></td><td>不稳定 (Mode collapse, 难调)</td><td>更稳定 (有明确的 loss)</td></tr>
+              <tr><td><strong>隐空间</strong></td><td>无显式结构约束</td><td>有先验约束 ($\mathcal{N}(0,I)$)</td></tr>
+              <tr><td><strong>Density Estimation</strong></td><td>不直接提供密度估计</td><td>提供 log-likelihood 下界</td></tr>
+              <tr><td><strong>主要问题</strong></td><td>Mode Collapse, 训练不稳定</td><td>生成质量较低 (blurry)</td></tr>
+              <tr><td><strong>Loss</strong></td><td>$\min_G \max_D V(D,G)$</td><td>$\max$ ELBO = Recon - KL</td></tr>
+              <tr><td><strong>采样方式</strong></td><td>$z \sim p(z) \to G(z)$</td><td>$z \sim \mathcal{N}(0,I) \to \text{Dec}(z)$</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag green">Autoencoder</span>
+            <h3>基础版本</h3>
+            <p>Encoder → Latent $z$ → Decoder<br>只做重建，不能生成新数据。$z$ 没有结构可以采样。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">VAE</span>
+            <h3>Probabilistic Autoencoder</h3>
+            <p>Encoder → $(\mu,\sigma)$ → Sample $z$ → Decoder<br>KL loss 让 $z$ 分布规整。可以采样生成。但生成较模糊。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">GAN</span>
+            <h3>Adversarial Training</h3>
+            <p>$z$ → Generator → Discriminator 对抗<br>不需要 encoder。生成清晰但可能 mode collapse。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== GNN ==================== -->
+      <section class="section" id="gnn">
+        <h2>Graph Neural Networks (GNN)</h2>
+        <p class="lead">将神经网络扩展到图结构数据。通过 message passing 在节点之间传递和聚合信息。</p>
+
+        <!-- GNN Architecture -->
+        <div class="arch-diagram">
+          <h3 style="margin:0 0 12px;">Message Passing Framework</h3>
+          <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" style="max-width:600px;">
+            <!-- Central node -->
+            <circle cx="300" cy="110" r="30" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+            <text x="300" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">$v$</text>
+
+            <!-- Neighbor 1 -->
+            <circle cx="150" cy="50" r="22" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="150" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">$u_1$</text>
+            <line x1="170" y1="60" x2="275" y2="95" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Neighbor 2 -->
+            <circle cx="150" cy="170" r="22" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="150" y="175" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">$u_2$</text>
+            <line x1="170" y1="165" x2="275" y2="125" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Neighbor 3 -->
+            <circle cx="450" cy="50" r="22" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="450" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">$u_3$</text>
+            <line x1="430" y1="60" x2="325" y2="95" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Neighbor 4 -->
+            <circle cx="450" cy="170" r="22" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+            <text x="450" y="175" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">$u_4$</text>
+            <line x1="430" y1="165" x2="325" y2="125" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+            <!-- Labels -->
+            <text x="300" y="185" text-anchor="middle" font-size="11" font-weight="600" fill="#b45309">Aggregate neighbor features</text>
+            <text x="300" y="205" text-anchor="middle" font-size="11" font-weight="600" fill="#b45309">→ Update node v's representation</text>
+          </svg>
+        </div>
+
+        <div class="equation">
+          <strong>Message Passing Update Rule:</strong>
+          $$h_v^{(l+1)} = \text{UPDATE}\!\Bigl(h_v^{(l)}, \; \text{AGGREGATE}\bigl(\{h_u^{(l)} : u \in \mathcal{N}(v)\}\bigr)\Bigr)$$
+          <strong>常见 Aggregation:</strong> Sum, Mean, Max — 都是对称函数，保证排列不变/等变<br><br>
+
+          <strong>GCN 层 (简化版):</strong>
+          $$H^{(l+1)} = \sigma\!\bigl(\hat{A} \, H^{(l)} \, W^{(l)}\bigr)$$
+          其中 $\hat{A}$ 是归一化邻接矩阵, $W^{(l)}$ 是可学习权重
+        </div>
+
+        <h3 style="margin-top:22px;">GNN Task Types</h3>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag green">Node Classification</span>
+            <h3>节点分类</h3>
+            <p>预测每个节点的标签。例: 社交网络中用户标签预测。利用部分已标注节点 (semi-supervised)。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">Link Prediction</span>
+            <h3>链接预测</h3>
+            <p>预测两个节点之间是否应该存在边。例: 推荐系统中预测用户-商品交互。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">Graph Classification</span>
+            <h3>图分类</h3>
+            <p>预测整张图的标签。需要 Readout/Pooling 将所有节点表示聚合为图级别表示。</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Permutation Invariance/Equivariance:</strong> GNN 的输出不能因为节点编号不同而改变。使用对称聚合函数 (sum, mean, max) 是满足这一性质的关键。
+        </div>
+      </section>
+
+      <!-- ==================== ALL MODELS COMPARISON ==================== -->
+      <section class="section" id="model-compare">
+        <h2>All Models Comparison</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>Input Type</th><th>Key Mechanism</th><th>Advantages</th><th>Limitations</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>MLP (FC)</strong></td>
+                <td>向量 (fixed-size)</td>
+                <td>全连接</td>
+                <td>简单、通用</td>
+                <td>不考虑空间/时间结构、参数多</td>
+              </tr>
+              <tr>
+                <td><strong>CNN</strong></td>
+                <td>图像/网格数据</td>
+                <td>局部卷积 + Weight sharing</td>
+                <td>参数高效、平移等变、层次特征</td>
+                <td>不适合序列/图结构</td>
+              </tr>
+              <tr>
+                <td><strong>RNN</strong></td>
+                <td>序列数据</td>
+                <td>递归 + 权重共享</td>
+                <td>处理变长序列</td>
+                <td>梯度消失/爆炸、难并行</td>
+              </tr>
+              <tr>
+                <td><strong>LSTM</strong></td>
+                <td>序列数据</td>
+                <td>Cell state + 三门控制</td>
+                <td>长距离依赖更好</td>
+                <td>参数多 (4× RNN)、仍难并行</td>
+              </tr>
+              <tr>
+                <td><strong>GNN</strong></td>
+                <td>图结构数据</td>
+                <td>Message passing + Aggregation</td>
+                <td>利用图拓扑结构</td>
+                <td>Over-smoothing、可伸缩性</td>
+              </tr>
+              <tr>
+                <td><strong>GAN</strong></td>
+                <td>生成任务</td>
+                <td>G-D 对抗训练</td>
+                <td>生成质量高</td>
+                <td>训练不稳定、Mode collapse</td>
+              </tr>
+              <tr>
+                <td><strong>VAE</strong></td>
+                <td>生成任务</td>
+                <td>概率编码 + ELBO</td>
+                <td>训练稳定、有密度估计</td>
+                <td>生成较模糊</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px;">Feature Comparison Matrix</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>MLP</th><th>CNN</th><th>RNN</th><th>LSTM</th><th>GNN</th></tr></thead>
+            <tbody>
+              <tr><td>Weight Sharing</td><td>❌</td><td>✅ Spatial</td><td>✅ Temporal</td><td>✅ Temporal</td><td>✅ Across nodes</td></tr>
+              <tr><td>Variable-length Input</td><td>❌</td><td>❌ (fixed grid)</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td>Long-range Dep.</td><td>✅ (by depth)</td><td>✅ (by depth)</td><td>❌ 差</td><td>✅ 好</td><td>✅ (by depth)</td></tr>
+              <tr><td>Parallelizable</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>✅ (per layer)</td></tr>
+              <tr><td>Spatial Awareness</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>✅ (topology)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== EXAM TIPS ==================== -->
+      <section class="section" id="exam-tips">
+        <h2>Exam Tips & Sanity Checks</h2>
+
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag green">Sanity Check #1</span>
+            <h3>初始 Loss 是否合理</h3>
+            <p>$K$ 分类初始 loss $\approx \log K$<br>10 classes → ~2.3<br>如果偏差很大，实现有 bug。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">Sanity Check #2</span>
+            <h3>能否在小数据集上过拟合</h3>
+            <p>取 5-10 个样本训练，loss 应该能降到接近 0。<br>如果不能 → 实现或架构有问题。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">Sanity Check #3</span>
+            <h3>监控 Validation 而非只看 Training</h3>
+            <p>Training loss 下降不代表模型正确。<br>要看 validation loss/accuracy 确认泛化能力。</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;">High-Frequency Exam Traps</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Trap</th><th>错误选项常见说法</th><th>正确理解</th></tr></thead>
+            <tbody>
+              <tr><td>BN at test</td><td>"BN 推理时关闭/disabled"</td><td>BN 仍在工作，只是用 running stats 而非 batch stats</td></tr>
+              <tr><td>Sigmoid range</td><td>"Sigmoid 输出 [-1,1]"</td><td>Sigmoid 输出 (0,1)，Tanh 才是 [-1,1]</td></tr>
+              <tr><td>ReLU zero-centered</td><td>"Standard ReLU 是 zero-centered"</td><td>不是，输出全 ≥ 0。Tanh 是 zero-centered</td></tr>
+              <tr><td>ResNet removes nonlinearity</td><td>"Residual connections 去掉了非线性"</td><td>还有非线性，ResNet 是加法捷径不是替换</td></tr>
+              <tr><td>Dropout at test</td><td>"Test 时仍然 drop units"</td><td>Test 时全部使用 (inverted dropout 无需额外 scaling)</td></tr>
+              <tr><td>RNN params grow with T</td><td>"增加序列长度增加参数数量"</td><td>参数共享，T 增加只增加计算量不增加参数</td></tr>
+              <tr><td>Bias correction = clipping</td><td>"Adam bias correction 是用来 clip gradients 的"</td><td>不是!是因为 $m,v$ 初始化为 0 导致前几步估计偏低</td></tr>
+              <tr><td>GAN → MLE</td><td>"Non-saturating loss 将 GAN 变成 MLE"</td><td>不是，仍然是对抗训练，只是梯度信号更强</td></tr>
+              <tr><td>VAE remove KL</td><td>"去掉 KL 保持相同正则化"</td><td>去掉 KL 就失去了 prior-matching 正则化</td></tr>
+              <tr><td>Warm-up guarantee</td><td>"Warm-up 保证立即收敛"</td><td>只是减少初期不稳定性，不保证收敛</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="footer-note" style="margin-top:22px;">
+          Good luck on the midterm! 🎯 记住: 理解模型的 "为什么" 比死记 "是什么" 更重要。每个模型存在都是为了解决前一个模型的某个缺陷。
+          <br><br>
+          <a href="CSCI566_Quiz_v2.html" style="color:var(--accent);text-decoration:underline;font-weight:700;">→ 去做 50 题模拟测试</a>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          <a href="index.html" style="color:var(--accent);text-decoration:underline;font-weight:700;">← 返回 EE508 Study Guide</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
