@@ -1,0 +1,2104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EE508 Midterm Visual Study Guide</title>
+  <style>
+    :root {
+      --bg: #f7f3ea;
+      --paper: #fffdf8;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d9cfbe;
+      --accent: #115e59;
+      --accent-2: #b45309;
+      --accent-3: #7c2d12;
+      --soft-1: #e6f4f1;
+      --soft-2: #fff0dc;
+      --soft-3: #fbe7e2;
+      --shadow: 0 18px 50px rgba(31, 41, 55, 0.08);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "SF Pro Display", "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(180, 83, 9, 0.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(17, 94, 89, 0.12), transparent 30%),
+        linear-gradient(180deg, #f8f4eb 0%, #f5efe4 100%);
+      line-height: 1.65;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 28px;
+      width: min(1440px, calc(100vw - 40px));
+      margin: 24px auto 48px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      background: rgba(255, 253, 248, 0.92);
+      border: 1px solid rgba(217, 207, 190, 0.9);
+      border-radius: 24px;
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+    }
+
+    .sidebar h1 {
+      font-size: 1.1rem;
+      line-height: 1.35;
+      margin: 0 0 12px;
+    }
+
+    .sidebar p {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin: 0 0 16px;
+    }
+
+    .nav-group {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .nav-group:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .nav-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .sidebar a {
+      display: block;
+      text-decoration: none;
+      color: var(--ink);
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .sidebar a:hover {
+      background: var(--soft-1);
+      transform: translateX(2px);
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(255, 253, 248, 0.95), rgba(255, 246, 233, 0.95));
+      border: 1px solid rgba(217, 207, 190, 0.9);
+      border-radius: 30px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      right: -80px;
+      top: -80px;
+      background: radial-gradient(circle, rgba(17, 94, 89, 0.16), transparent 65%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--soft-1);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.83rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+    }
+
+    .hero h2 {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.06;
+      margin: 0 0 16px;
+      max-width: 12ch;
+    }
+
+    .hero p {
+      max-width: 70ch;
+      color: var(--muted);
+      margin: 0;
+      font-size: 1.02rem;
+    }
+
+    .hero-grid,
+    .card-grid,
+    .compare-grid,
+    .model-grid,
+    .qa-grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .hero-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .compare-grid,
+    .model-grid,
+    .qa-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .panel,
+    .mini-card,
+    .compare-card,
+    .model-card,
+    .qa-card,
+    .table-wrap,
+    .section {
+      background: var(--paper);
+      border: 1px solid rgba(217, 207, 190, 0.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel,
+    .section,
+    .table-wrap {
+      padding: 24px;
+      margin-top: 22px;
+    }
+
+    .mini-card,
+    .compare-card,
+    .model-card,
+    .qa-card {
+      padding: 18px;
+    }
+
+    .mini-card h3,
+    .compare-card h3,
+    .model-card h3,
+    .qa-card h3,
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      line-height: 1.3;
+    }
+
+    .mini-card p,
+    .compare-card p,
+    .model-card p,
+    .qa-card p,
+    .section p,
+    .section li {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 1.6rem;
+    }
+
+    .section .lead {
+      margin-bottom: 16px;
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--soft-2);
+      color: var(--accent-2);
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .tag.alt {
+      background: var(--soft-3);
+      color: var(--accent-3);
+    }
+
+    .tag.green {
+      background: var(--soft-1);
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.96rem;
+    }
+
+    th,
+    td {
+      text-align: left;
+      vertical-align: top;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--accent);
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .flow .node {
+      padding: 12px 16px;
+      border-radius: 16px;
+      background: var(--soft-1);
+      color: var(--ink);
+      font-weight: 700;
+      min-width: 140px;
+      text-align: center;
+      border: 1px solid rgba(17, 94, 89, 0.15);
+    }
+
+    .flow .node.gold {
+      background: var(--soft-2);
+      border-color: rgba(180, 83, 9, 0.16);
+    }
+
+    .flow .arrow {
+      color: var(--accent-2);
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .equation {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: #fbf8f1;
+      border: 1px solid var(--line);
+      overflow-x: auto;
+      font-size: 1.04rem;
+      font-family: "Times New Roman", "STIX Two Text", serif;
+      line-height: 1.8;
+    }
+
+    .math-inline {
+      font-family: "Times New Roman", "STIX Two Text", serif;
+      font-style: italic;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f3eee3;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    ul.clean {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    ul.clean li + li {
+      margin-top: 8px;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      padding: 20px 22px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #efe8d8, #f8f4ea);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .deep-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .detail-block {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .detail-block:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .detail-block h3 {
+      font-size: 1.18rem;
+      margin: 0 0 10px;
+    }
+
+    .detail-block h4 {
+      font-size: 1rem;
+      margin: 16px 0 8px;
+      color: var(--accent);
+    }
+
+    .callout {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #f4f9f7, #fff7eb);
+      border: 1px solid var(--line);
+    }
+
+    .callout strong {
+      color: var(--accent-3);
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .checklist .mini-card {
+      height: 100%;
+    }
+
+    @media (max-width: 1120px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        max-height: none;
+      }
+
+      .hero-grid,
+      .card-grid,
+      .deep-grid,
+      .checklist,
+      .compare-grid,
+      .model-grid,
+      .qa-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .layout {
+        width: min(100vw - 20px, 100%);
+        margin: 12px auto 28px;
+      }
+
+      .hero,
+      .panel,
+      .section,
+      .table-wrap {
+        padding: 18px;
+      }
+
+      .hero-grid,
+      .card-grid,
+      .deep-grid,
+      .checklist,
+      .compare-grid,
+      .model-grid,
+      .qa-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h2 {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>EE508 Midterm Guide</h1>
+      <p>An English-first visual study guide for a beginner. Start with structure, then details, then memorization.</p>
+
+      <div class="nav-group">
+        <div class="nav-label">Overview</div>
+        <a href="#overview">Exam Map</a>
+        <a href="#roadmap">Study Order</a>
+        <a href="#cheatsheet">Closed-Book Memory Cards</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Machine Learning</div>
+        <a href="#ml">ML Fundamentals</a>
+        <a href="#loss">Loss Functions</a>
+        <a href="#gd">Gradient Descent</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">CNN</div>
+        <a href="#cnn">CNN and Convolution</a>
+        <a href="#models">Classic Models</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Optimization</div>
+        <a href="#performance">Performance / Roofline Intuition</a>
+        <a href="#gemm">GEMM and Tiling</a>
+        <a href="#img2col">Toeplitz and img2col</a>
+        <a href="#transform">Strassen and Winograd</a>
+        <a href="#kernel">Kernel Implementation</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Hardware</div>
+        <a href="#dataflow">Dataflow and Stationary</a>
+        <a href="#eyeriss">Eyeriss</a>
+        <a href="#tpu">TPU</a>
+        <a href="#gpu">GPU</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Before the Exam</div>
+        <a href="#deepdive">Full Lecture Notes</a>
+        <a href="#dense-notes">Detailed Slide-Based Notes</a>
+        <a href="#compare">High-Frequency Comparisons</a>
+        <a href="#plan">6-Day Study Plan</a>
+        <a href="#quiz">Self-Test Questions</a>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="overview">
+        <span class="eyebrow">Closed Book · Beginner Friendly · Visual</span>
+        <h2>EE508 Midterm Master Study Map</h2>
+        <p>You do not need to memorize the course as a pile of disconnected terms. The right strategy is to understand the whole map first, then fill in each topic. If you can explain the full pipeline clearly, most of the midterm will fall into place.</p>
+
+        <div class="hero-grid">
+          <div class="mini-card">
+            <span class="tag green">Exam Info</span>
+            <h3>March 13, GFS 106</h3>
+            <p>In-person, closed-book, pen-and-paper exam. No electronic devices allowed.</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">What the course is really testing</span>
+            <h3>The full chain from algorithms to hardware</h3>
+            <p>Not isolated facts about CNNs or GPUs, but the relationships among training, convolution, optimization, and hardware.</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Most important sentence</span>
+            <h3>What is expensive is often not computation, but data movement</h3>
+            <p>The second half of the course is largely built around this idea.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="roadmap">
+        <h2>Main Course Pipeline</h2>
+        <div class="flow">
+          <div class="node">ML Task</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Loss</div>
+          <div class="arrow">→</div>
+          <div class="node">Gradient Descent</div>
+          <div class="arrow">→</div>
+          <div class="node gold">CNN / DNN</div>
+          <div class="arrow">→</div>
+          <div class="node">Efficient Convolution Implementation</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Dataflow / TPU / GPU</div>
+        </div>
+
+        <div class="table-wrap" style="margin-top: 18px; padding: 0; box-shadow: none; border: 0; background: transparent;">
+          <table>
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>主题</th>
+                <th>What you must be able to answer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Machine learning layer</td>
+                <td>classification, clustering, loss, gradient descent</td>
+                <td>What the model is learning, how it measures error, and how it updates parameters</td>
+              </tr>
+              <tr>
+                <td>Neural network layer</td>
+                <td>CNN, convolution, pooling, softmax, famous models</td>
+                <td>Why CNNs are good for images and what each classic model contributes</td>
+              </tr>
+              <tr>
+                <td>Algorithm optimization layer</td>
+                <td>GEMM, Toeplitz, img2col, Strassen, Winograd</td>
+                <td>Why convolution can be transformed and why that can make it faster</td>
+              </tr>
+              <tr>
+                <td>Hardware layer</td>
+                <td>performance, dataflow, TPU, Eyeriss, GPU</td>
+                <td>Why the real bottleneck is often data movement rather than the number of MACs</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="cheatsheet">
+        <h2>Closed-Book Memory Cards</h2>
+        <p class="lead">Memorize these one-line summaries first, then read the detailed explanations below.</p>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag green">Machine Learning</span>
+            <h3>Classification vs Clustering</h3>
+            <p>Labeled discrete prediction vs unlabeled similarity-based grouping.</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">Loss</span>
+            <h3>Cross-Entropy</h3>
+            <p>对错误高置信度预测惩罚很强，所以适合分类训练。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">Optimization</span>
+            <h3>Gradient Descent</h3>
+            <p>Update parameters along the negative gradient so the loss decreases.</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">CNN</span>
+            <h3>Why CNNs work well</h3>
+            <p>Local connectivity plus weight sharing makes them naturally suited for image structure.</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">卷积优化</span>
+            <h3>img2col</h3>
+            <p>Lower convolution to GEMM to reuse highly optimized matrix-multiplication kernels.</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">变换</span>
+            <h3>Strassen / Winograd</h3>
+            <p>The first reduces matrix-multiplication count; the second reduces multiplications for small convolution kernels.</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">硬件</span>
+            <h3>Dataflow</h3>
+            <p>The point is not only to compute more, but to move less and reuse data more.</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">Eyeriss</span>
+            <h3>Row-Stationary</h3>
+            <p>Balances reuse of weights, inputs, and partial sums for high energy efficiency.</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag alt">TPU / GPU</span>
+            <h3>核心关键词</h3>
+            <p>For TPU, remember systolic array; for GPU, remember thread, warp, and block.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="ml">
+        <h2>Machine Learning Fundamentals</h2>
+        <p class="lead">先别着急看神经网络。你要先理解模型、输入、输出、参数和任务类型。</p>
+
+        <div class="equation">ŷ = f(x; θ)</div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">机器学习是什么</span>
+            <h3>学一个从输入到输出的函数</h3>
+            <p><span class="math-inline">x</span> 是输入，<span class="math-inline">ŷ</span> 是预测，<span class="math-inline">θ</span> 是参数。训练就是调整参数，让预测更接近真实答案。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">你必须会的判断</span>
+            <h3>先分清任务类型</h3>
+            <p>闭卷考试最容易出错的第一件事，就是把 classification 和 clustering 混掉。</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>主题</th>
+                <th>Classification</th>
+                <th>Clustering</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>中文</td>
+                <td>分类</td>
+                <td>聚类</td>
+              </tr>
+              <tr>
+                <td>学习类型</td>
+                <td>监督学习</td>
+                <td>无监督学习</td>
+              </tr>
+              <tr>
+                <td>是否有标签</td>
+                <td>有</td>
+                <td>没有</td>
+              </tr>
+              <tr>
+                <td>输出</td>
+                <td>离散类别</td>
+                <td>若干数据组</td>
+              </tr>
+              <tr>
+                <td>例子</td>
+                <td>垃圾邮件检测、猫狗分类</td>
+                <td>用户分群、图像压缩分组</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="loss">
+        <h2>Loss Functions</h2>
+        <p class="lead">Loss 是训练时的评分规则。模型越错，loss 越大。模型越对，loss 越小。</p>
+
+        <div class="flow">
+          <div class="node">模型输出</div>
+          <div class="arrow">→</div>
+          <div class="node gold">和真实标签比较</div>
+          <div class="arrow">→</div>
+          <div class="node">得到 Loss</div>
+          <div class="arrow">→</div>
+          <div class="node gold">更新参数</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Loss</th>
+                <th>主要用途</th>
+                <th>优点</th>
+                <th>缺点</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MSE</td>
+                <td>回归</td>
+                <td>可导，常用，对大误差惩罚重</td>
+                <td>不适合分类的离散决策</td>
+              </tr>
+              <tr>
+                <td>0/1 loss</td>
+                <td>分类最终评价</td>
+                <td>最直观，直接表示对错</td>
+                <td>不可导，不适合训练</td>
+              </tr>
+              <tr>
+                <td>Hinge loss</td>
+                <td>margin-based 分类</td>
+                <td>鼓励分类边界留 margin</td>
+                <td>不是概率形式</td>
+              </tr>
+              <tr>
+                <td>Logistic loss</td>
+                <td>二分类训练</td>
+                <td>平滑，可导</td>
+                <td>解释上不如 0/1 直观</td>
+              </tr>
+              <tr>
+                <td>Cross-entropy</td>
+                <td>多分类训练</td>
+                <td>对错误高置信度预测惩罚强</td>
+                <td>需要概率输出</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag green">最容易考</span>
+            <h3>为什么分类不用 MSE</h3>
+            <p>因为分类关注的是类别和概率分布，而不是数值差了多少。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">训练与评价</span>
+            <h3>0/1 loss</h3>
+            <p>很适合最终评价对错，但不适合直接用来做梯度训练。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag green">必背句</span>
+            <h3>Cross-Entropy</h3>
+            <p>如果正确类别概率很小，loss 会非常大，所以它逼模型把高概率给正确类别。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="gd">
+        <h2>Gradient Descent 和变体</h2>
+        <div class="equation">θ<sub>t+1</sub> = θ<sub>t</sub> − η∇L(θ<sub>t</sub>)</div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>符号</th>
+                <th>意义</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="math-inline">θ</span></td><td>模型参数</td></tr>
+              <tr><td><span class="math-inline">L</span></td><td>loss</td></tr>
+              <tr><td><span class="math-inline">∇L</span></td><td>梯度，表示 loss 上升最快方向</td></tr>
+              <tr><td><span class="math-inline">η</span></td><td>learning rate</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag">Learning Rate</span>
+            <h3>太大和太小都不行</h3>
+            <p>太大会震荡甚至发散，太小会非常慢。考试里如果问 loss 为什么不降，这通常是第一怀疑对象。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag">训练循环</span>
+            <h3>固定流程</h3>
+            <p>输入数据，模型预测，计算 loss，求梯度，更新参数，然后重复。</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>方法</th>
+                <th>每次用多少样本</th>
+                <th>优点</th>
+                <th>缺点</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Batch GD</td>
+                <td>全部样本</td>
+                <td>稳定</td>
+                <td>慢，计算贵</td>
+              </tr>
+              <tr>
+                <td>SGD</td>
+                <td>1 个样本</td>
+                <td>更新快</td>
+                <td>抖动大</td>
+              </tr>
+              <tr>
+                <td>Mini-batch</td>
+                <td>一小批样本</td>
+                <td>现实中最常用的平衡方案</td>
+                <td>仍要调 batch size</td>
+              </tr>
+              <tr>
+                <td>Momentum</td>
+                <td>变体</td>
+                <td>减少震荡，加快收敛</td>
+                <td>多一个超参数感受</td>
+              </tr>
+              <tr>
+                <td>Adam</td>
+                <td>变体</td>
+                <td>常用，带自适应学习率</td>
+                <td>不等于所有场景都最好</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="cnn">
+        <h2>CNN、Convolution、Pooling、Softmax</h2>
+        <p class="lead">这部分是期中最核心的大块之一。</p>
+
+        <div class="flow">
+          <div class="node">边缘</div>
+          <div class="arrow">→</div>
+          <div class="node gold">角和轮廓</div>
+          <div class="arrow">→</div>
+          <div class="node">局部部件</div>
+          <div class="arrow">→</div>
+          <div class="node gold">完整物体</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>关键词</th>
+                <th>考试表达</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Local connectivity</td>
+                <td>每个输出只看局部区域</td>
+              </tr>
+              <tr>
+                <td>Weight sharing</td>
+                <td>同一个 filter 在整张图上复用</td>
+              </tr>
+              <tr>
+                <td>Convolution</td>
+                <td>filter 滑动，逐元素乘法再求和</td>
+              </tr>
+              <tr>
+                <td>Padding</td>
+                <td>补边界，控制尺寸和边界效应</td>
+              </tr>
+              <tr>
+                <td>Stride</td>
+                <td>控制步长，越大通常输出越小</td>
+              </tr>
+              <tr>
+                <td>Pooling</td>
+                <td>下采样，减少空间尺寸</td>
+              </tr>
+              <tr>
+                <td>Softmax</td>
+                <td>把 logits 转成概率分布</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="compare-grid">
+          <div class="compare-card">
+            <span class="tag">为什么 CNN 适合图像</span>
+            <h3>空间局部性</h3>
+            <p>图像局部像素关系强，所以局部卷积天然合适。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">为什么参数更少</span>
+            <h3>参数共享</h3>
+            <p>同一个 filter 在不同位置重复使用，不像全连接那样每个位置都单独一套权重。</p>
+          </div>
+          <div class="compare-card">
+            <span class="tag">Softmax</span>
+            <h3>logits 不是概率</h3>
+            <p>logits 是原始分数，softmax 才把它们变成总和为 1 的概率。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="models">
+        <h2>Famous CNN Models</h2>
+        <p class="lead">你不需要背所有层数和参数，只需要记住每个模型为什么重要。</p>
+
+        <div class="model-grid">
+          <div class="model-card">
+            <span class="tag green">LeNet</span>
+            <h3>最早期经典 CNN</h3>
+            <p>手写数字识别，证明 CNN 这条路线是可行的。</p>
+          </div>
+          <div class="model-card">
+            <span class="tag green">AlexNet</span>
+            <h3>2012 爆发点</h3>
+            <p>ReLU、dropout、GPU 训练，真正推动深度学习在图像分类上爆发。</p>
+          </div>
+          <div class="model-card">
+            <span class="tag green">VGG</span>
+            <h3>大量 3x3 卷积</h3>
+            <p>结构统一，堆深网络，直观而强大。</p>
+          </div>
+          <div class="model-card">
+            <span class="tag">GoogLeNet</span>
+            <h3>Inception</h3>
+            <p>多尺度并行，用 1x1 bottleneck 降低成本。</p>
+          </div>
+          <div class="model-card">
+            <span class="tag">ResNet</span>
+            <h3>Residual / Skip Connection</h3>
+            <p>让梯度更容易回传，解决深层网络退化和训练困难。</p>
+          </div>
+          <div class="model-card">
+            <span class="tag">MobileNet</span>
+            <h3>轻量化</h3>
+            <p>面向移动端，追求更低计算量和功耗。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="performance">
+        <h2>Performance Evaluation 和 Roofline 直觉</h2>
+        <p class="lead">老师 slides 虽然写到 roofline，但真正强调的是 cache、bandwidth、data movement、reuse 这些直觉。</p>
+
+        <div class="flow">
+          <div class="node">Arithmetic Intensity 低</div>
+          <div class="arrow">→</div>
+          <div class="node gold">数据搬运多</div>
+          <div class="arrow">→</div>
+          <div class="node">更可能 Memory-Bound</div>
+        </div>
+
+        <div class="flow" style="margin-top:10px;">
+          <div class="node">Arithmetic Intensity 高</div>
+          <div class="arrow">→</div>
+          <div class="node gold">数据复用高</div>
+          <div class="arrow">→</div>
+          <div class="node">更可能接近 Compute-Bound</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>概念</th>
+                <th>最简单理解</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Arithmetic intensity</td><td>每搬一单位数据，做了多少运算</td></tr>
+              <tr><td>Memory-bound</td><td>性能主要被带宽或访存拖住</td></tr>
+              <tr><td>Compute-bound</td><td>性能主要被峰值算力限制</td></tr>
+              <tr><td>Reuse</td><td>一份数据能不能被用很多次</td></tr>
+              <tr><td>Tiling</td><td>切块，提高局部性和 reuse</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="gemm">
+        <h2>GEMM、Cache、Locality、Tiling</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>概念</th>
+                <th>核心意思</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>GEMM</td><td>很多 DNN/CNN 运算都能被改写成矩阵乘法</td></tr>
+              <tr><td>Cache</td><td>靠近计算单元，访问更快</td></tr>
+              <tr><td>Temporal locality</td><td>刚用过的数据很快还会用</td></tr>
+              <tr><td>Spatial locality</td><td>相邻地址很快也会访问</td></tr>
+              <tr><td>Loop ordering</td><td>循环顺序不同，cache miss 会差很多</td></tr>
+              <tr><td>Tiling</td><td>把大问题切成小块，提高命中率和 reuse</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mini-card" style="margin-top:18px;">
+          <span class="tag">一句话总结</span>
+          <h3>性能不只是乘法次数</h3>
+          <p>真正决定速度的，往往是数据有没有以正确顺序被访问和复用。</p>
+        </div>
+      </section>
+
+      <section class="section" id="img2col">
+        <h2>Toeplitz Matrix 和 img2col</h2>
+        <div class="flow">
+          <div class="node">输入图像</div>
+          <div class="arrow">→</div>
+          <div class="node gold">提取滑动窗口</div>
+          <div class="arrow">→</div>
+          <div class="node">每个窗口拉平成列</div>
+          <div class="arrow">→</div>
+          <div class="node gold">和卷积核一起做 GEMM</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>概念</th>
+                <th>作用</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Toeplitz matrix</td><td>展示卷积和矩阵乘法之间的结构联系</td></tr>
+              <tr><td>img2col</td><td>把卷积 lower 成 GEMM，方便用高性能矩阵乘法库</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag green">优点</span>
+            <h3>为什么快</h3>
+            <p>因为可以直接利用已经非常成熟的高性能 GEMM 实现。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">代价</span>
+            <h3>为什么也可能贵</h3>
+            <p>因为会复制大量重叠窗口，中间矩阵膨胀，带来额外内存和带宽压力。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="transform">
+        <h2>Strassen 和 Winograd</h2>
+        <p class="lead">考试不要求你背长公式，但一定会默认你知道它们的概念和 trade-off。</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>方法</th>
+                <th>优化对象</th>
+                <th>核心思想</th>
+                <th>好处</th>
+                <th>代价</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Strassen</td>
+                <td>矩阵乘法</td>
+                <td>减少 block matrix multiplication 中的乘法次数</td>
+                <td>理论复杂度更好</td>
+                <td>实现复杂，内存和精度问题</td>
+              </tr>
+              <tr>
+                <td>Winograd</td>
+                <td>小卷积</td>
+                <td>用变换减少小卷积核的乘法</td>
+                <td>3x3 等小核常很有效</td>
+                <td>有变换开销和数值稳定性代价</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="kernel">
+        <h2>Kernel Implementation</h2>
+        <div class="pill-row">
+          <div class="pill">少访存</div>
+          <div class="pill">多复用</div>
+          <div class="pill">高并行</div>
+          <div class="pill">好局部性</div>
+          <div class="pill">降带宽压力</div>
+        </div>
+
+        <ul class="clean">
+          <li>kernel implementation 这里说的是计算内核实现，不是卷积核本身。</li>
+          <li>同一个数学运算，写法不同，速度可能差很多。</li>
+          <li>高性能 kernel 的本质是把数据尽量留在近处，多算几次，少搬几次。</li>
+        </ul>
+      </section>
+
+      <section class="section" id="dataflow">
+        <h2>Dataflow 和 Stationariness</h2>
+        <p class="lead">这是硬件部分的真正核心。因为数据搬运的代价，往往比一次 MAC 更贵。</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>类型</th>
+                <th>固定什么</th>
+                <th>优点</th>
+                <th>缺点</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Weight Stationary</td>
+                <td>权重</td>
+                <td>权重复用高，适合减少权重读取</td>
+                <td>大模型时不容易放下</td>
+              </tr>
+              <tr>
+                <td>Output Stationary</td>
+                <td>partial sums</td>
+                <td>减少中间结果写回</td>
+                <td>其他数据可能搬得更多</td>
+              </tr>
+              <tr>
+                <td>Input Stationary</td>
+                <td>输入激活</td>
+                <td>输入复用高时有效</td>
+                <td>需要更复杂控制保证权重到位</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mini-card" style="margin-top:18px;">
+          <span class="tag">统一理解</span>
+          <h3>先记原则，再记名字</h3>
+          <p>Stationary dataflow 的目标是让某类数据尽量留在近处，通过 reuse 减少昂贵的 memory access。</p>
+        </div>
+      </section>
+
+      <section class="section" id="eyeriss">
+        <h2>Eyeriss</h2>
+        <p class="lead">Eyeriss is an energy-efficient CNN accelerator. The core idea is not just to add more MAC units, but to reduce expensive data movement. Eyeriss 是一个以能效为核心的 CNN 加速器，重点不是盲目堆算力，而是尽量少搬数据。</p>
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag alt">What It Is</span>
+            <h3>Energy-first CNN accelerator</h3>
+            <p>Eyeriss is built for convolution-heavy workloads where reuse matters. 它面向卷积层，设计目标是把可复用的数据尽量留在片上。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Why It Matters</span>
+            <h3>DRAM access dominates energy</h3>
+            <p>Moving data from off-chip DRAM can cost far more energy than doing the MAC itself. 从 DRAM 取数往往比乘加本身贵得多，所以少搬数据就是直接省能耗。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Innovation</span>
+            <h3>Row-stationary dataflow</h3>
+            <p>Instead of optimizing only one reuse type, Eyeriss tries to balance input reuse, weight reuse, and partial-sum reuse. 创新点在于它不是只偏向一种 stationary，而是更平衡地吃到多种复用收益。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Why It Fits ML/DL</span>
+            <h3>CNNs have structured reuse</h3>
+            <p>Convolution repeatedly reuses nearby activations, filter weights, and partial sums, so a reuse-aware dataflow is a natural match. 卷积天生就有局部窗口和重复使用，因此 Eyeriss 特别适合 CNN。</p>
+          </div>
+        </div>
+
+        <div class="flow">
+          <div class="node">Keep a filter row near the PE</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Stream an input row across</div>
+          <div class="arrow">→</div>
+          <div class="node">Reuse data for more MACs</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Reduce repeated DRAM traffic</div>
+        </div>
+
+        <div class="callout"><strong>Best exam angle:</strong> Eyeriss is good because it improves energy efficiency by organizing computation around reuse. 它的强点不是“算得更神秘”，而是“用更少的数据移动完成卷积”。</div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Role</th>
+                <th>Why it helps</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>PE array</td><td>Parallel MAC engine 并行乘加阵列</td><td>Many convolutions can proceed at once.</td></tr>
+              <tr><td>Local scratchpad</td><td>Small nearby storage 就近小缓存</td><td>Keeps frequently reused data close to compute.</td></tr>
+              <tr><td>NoC</td><td>On-chip communication 片上互连</td><td>Moves data efficiently across the chip.</td></tr>
+              <tr><td>Global buffer</td><td>Shared on-chip storage 共享片上缓冲</td><td>Acts as a cheaper staging area than DRAM.</td></tr>
+              <tr><td>Off-chip DRAM</td><td>Largest but most expensive memory 片外大存储</td><td>This is what the architecture tries hardest to avoid accessing too often.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="tpu">
+        <h2>TPU</h2>
+        <p class="lead">TPU is an ASIC designed around neural-network matrix operations. Its strength is not general-purpose flexibility, but extremely efficient high-throughput dense linear algebra. TPU 是围绕神经网络矩阵运算定制的专用芯片，核心优势是大规模矩阵乘法吞吐率高。</p>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag alt">What It Is</span>
+            <h3>Matrix-centric ML accelerator</h3>
+            <p>The TPU treats matrix multiplication as the main event because many DNN layers reduce to GEMM-like computation. 它把矩阵乘法当作主战场，因为很多神经网络层最终都能归结为矩阵运算。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Why It Is Good</span>
+            <h3>High throughput with regular dataflow</h3>
+            <p>Regular movement through the array enables steady reuse and pipelined computation. 数据按规则流过阵列，适合流水化执行，也方便提高吞吐。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Innovation</span>
+            <h3>Systolic-array-style execution</h3>
+            <p>Data moves rhythmically across many processing elements, so computation happens where data already is. 创新点是让数据在阵列里有规律地流动，边流边算，而不是频繁往返大内存。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Why It Fits ML/DL</span>
+            <h3>DNN workloads are highly regular</h3>
+            <p>Fully connected layers, attention projections, and many convolutions can be organized into matrix multiplies. 神经网络里大量核心算子都规则、重复、并行度高，非常适合 TPU 这种规则阵列。</p>
+          </div>
+        </div>
+
+        <div class="flow">
+          <div class="node">Inputs stream in</div>
+          <div class="arrow">→</div>
+          <div class="node gold">PE grid / systolic array</div>
+          <div class="arrow">→</div>
+          <div class="node">Local multiply-accumulate</div>
+          <div class="arrow">→</div>
+          <div class="node gold">Partial sums accumulate</div>
+        </div>
+
+        <div class="callout"><strong>Best exam angle:</strong> TPU is powerful because it maps ML computation onto a highly regular matrix engine, which improves throughput and reuse. 它强在“矩阵计算和硬件结构非常对口”。</div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Structure</th>
+                <th>Role</th>
+                <th>Why it matters for ML/DL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Systolic array</td><td>Regular data-moving compute fabric 规则流动的计算阵列</td><td>Excellent match for repeated MAC-heavy ML kernels.</td></tr>
+              <tr><td>Matrix multiply unit</td><td>Performs large GEMM operations 大规模矩阵乘法单元</td><td>Most DNN compute can be lowered or organized into this form.</td></tr>
+              <tr><td>Weight FIFO / on-chip memory</td><td>Stores reusable model data 保存可复用权重和中间数据</td><td>Reduces repeated off-chip accesses.</td></tr>
+              <tr><td>Vector unit</td><td>Handles activation, normalization, softmax 处理逐元素和向量操作</td><td>Supports the non-GEMM parts of neural-network inference/training.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="gpu">
+        <h2>GPU Architecture</h2>
+        <p class="lead">A GPU is effective for ML because it can run many similar operations on many data elements at the same time. GPU 适合 ML，不是因为“万能”，而是因为 ML 里有大量可并行、重复的计算。</p>
+
+        <div class="card-grid">
+          <div class="mini-card">
+            <span class="tag alt">What It Is</span>
+            <h3>Massively parallel throughput processor</h3>
+            <p>A GPU is designed to keep many threads in flight so arithmetic units stay busy. GPU 的设计目标是让大量线程同时工作，尽量喂满计算单元。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Why It Is Good</span>
+            <h3>High parallelism, mature software stack</h3>
+            <p>It supports large-scale parallel kernels and has strong compiler/library ecosystems. 它不光并行度高，而且软件生态成熟，所以深度学习非常依赖 GPU。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Innovation</span>
+            <h3>SIMT execution with programmable hierarchy</h3>
+            <p>Threads are exposed to programmers, but execution is grouped efficiently in warps. 创新点是把线程编程模型和底层成组执行结合起来，兼顾易编程和高吞吐。</p>
+          </div>
+          <div class="mini-card">
+            <span class="tag alt">Why It Fits ML/DL</span>
+            <h3>ML kernels have huge data parallelism</h3>
+            <p>Vector ops, GEMM, convolution, reduction, and tensor kernels all contain many repeated operations on different data. ML/DL 的很多算子都天然数据并行，所以 GPU 能很好吃满这些工作负载。</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Concept</th>
+                <th>Simple explanation</th>
+                <th>Why it matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Thread</td><td>Smallest logical worker 最小逻辑执行单位</td><td>Lets a kernel map many independent data elements to many workers.</td></tr>
+              <tr><td>Warp</td><td>Group of threads executed together 一组同步执行的线程</td><td>This is a key hardware execution unit behind SIMT efficiency.</td></tr>
+              <tr><td>Block</td><td>Cooperating thread group 可协作线程组</td><td>Threads in a block can share data and coordinate local work.</td></tr>
+              <tr><td>Shared memory</td><td>Fast block-local on-chip memory block 内高速共享存储</td><td>Critical for tiling and reuse, which reduces slow global-memory traffic.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="equation">global_id = blockIdx.x × blockDim.x + threadIdx.x</div>
+
+        <div class="mini-card" style="margin-top:18px;">
+          <span class="tag">How to read this</span>
+          <h3>How a thread knows its piece of the work</h3>
+          <p><strong>threadIdx.x</strong> is the thread's local position inside a block, <strong>blockIdx.x</strong> is the block's position inside the grid, and <strong>blockDim.x</strong> is the number of threads per block. 中文直白版就是：线程先知道自己在本组里的编号，再结合这个组在全局里的位置，算出自己该处理哪一段数据。</p>
+        </div>
+
+        <div class="callout"><strong>Best exam angle:</strong> GPUs are good for ML because they combine huge data parallelism with memory hierarchies like shared memory that support reuse. GPU 不是只靠“线程多”，而是靠“线程多 + 层次化存储 + 成熟编程模型”。</div>
+
+        <div class="mini-card" style="margin-top:18px;">
+          <span class="tag alt">One clean comparison</span>
+          <h3>GPU vs TPU vs Eyeriss</h3>
+          <p><strong>GPU:</strong> flexible, programmable, strong ecosystem. <strong>TPU:</strong> more specialized for matrix-heavy ML throughput. <strong>Eyeriss:</strong> more explicitly optimized for CNN data reuse and energy efficiency. 中文抓手：GPU 重灵活，TPU 重矩阵吞吐，Eyeriss 重卷积复用和能效。</p>
+        </div>
+      </section>
+
+      <section class="section" id="deepdive">
+        <h2>完整版详细讲义</h2>
+        <p class="lead">这一部分把你给出的 midterm 范围逐项展开，而且尽量贴合 slides 的重点。你可以把前面的内容当地图，把这里当正文讲义。</p>
+
+        <div class="detail-block">
+          <h3>1. Machine Learning Fundamentals and Basic Models</h3>
+          <p>这部分是整门课最前面的地基。如果这里没吃透，后面的 loss、gradient descent、CNN 都会变成硬背。最重要的是先分清任务是什么，再分清模型在输出什么。</p>
+
+          <div class="deep-grid">
+            <div class="mini-card">
+              <span class="tag green">监督学习</span>
+              <h3>Classification</h3>
+              <p>输入样本和标签都给定，模型学的是“输入到类别”的映射。slides 里强调它输出的是离散类别，并常用 accuracy、precision、recall、F1 来评估。</p>
+            </div>
+            <div class="mini-card">
+              <span class="tag">无监督学习</span>
+              <h3>Clustering</h3>
+              <p>没有标签，算法按照相似性把样本分组。slides 里给出的代表算法是 k-means 和 hierarchical clustering。</p>
+            </div>
+          </div>
+
+          <h4>你要掌握的基础模型</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>模型</th>
+                  <th>适用任务</th>
+                  <th>最简单理解</th>
+                  <th>你考试时怎么说</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Linear model</td>
+                  <td>回归或线性判别</td>
+                  <td>输出是输入的加权和</td>
+                  <td>最基础模型，常写成 ŷ = Wx + b</td>
+                </tr>
+                <tr>
+                  <td>Logistic regression</td>
+                  <td>二分类</td>
+                  <td>先线性变换，再映射成概率</td>
+                  <td>名字叫 regression，但常用于分类</td>
+                </tr>
+                <tr>
+                  <td>K-means</td>
+                  <td>聚类</td>
+                  <td>反复“分配到最近中心”和“更新中心”</td>
+                  <td>核心目标是让簇内更紧、簇间更分开</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout"><strong>考试表达模板：</strong>如果老师问“classification 和 clustering 区别”，不要只答“一个有标签一个没标签”。要再补一句：classification 预测离散类别；clustering 在无标签数据中自动发现结构。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>2. Different Loss Functions</h3>
+          <p>loss function 是模型训练时的目标函数。模型每做一次预测，都要通过 loss 变成一个“错了多少”的数。训练算法不是直接看 accuracy，而是通过 loss 来更新参数。</p>
+
+          <h4>为什么不同任务要用不同 loss</h4>
+          <p>slides 里很强调这一点：回归关心数值误差，所以 MSE 很自然；分类关心类别和概率，所以 cross-entropy 更自然；0/1 loss 虽然直观，但不可导，不适合做梯度优化。</p>
+
+          <div class="deep-grid">
+            <div class="mini-card">
+              <span class="tag green">MSE / SE</span>
+              <h3>回归常用</h3>
+              <p>平方误差会放大大误差，所以适合连续数值预测。它可导，训练方便，但对分类不自然。</p>
+            </div>
+            <div class="mini-card">
+              <span class="tag">MAE / AE</span>
+              <h3>更直观的平均偏差</h3>
+              <p>对异常值没那么敏感，解释性强，但优化性质不如 MSE 平滑。</p>
+            </div>
+            <div class="mini-card">
+              <span class="tag alt">0/1 loss</span>
+              <h3>适合评价，不适合训练</h3>
+              <p>对了就是 0，错了就是 1。它最直观，但不可导，而且不区分“错一点”和“错得离谱”。</p>
+            </div>
+            <div class="mini-card">
+              <span class="tag alt">Hinge / Logistic / Cross-Entropy</span>
+              <h3>分类训练的主力</h3>
+              <p>hinge 强调 margin；logistic 和 cross-entropy 强调概率和高置信度错误的惩罚。</p>
+            </div>
+          </div>
+
+          <h4>Cross-entropy 为什么在分类里这么重要</h4>
+          <p>如果真实类别是某一类，而模型给这一类的概率很低，那么 cross-entropy 会给出很大损失。它会推动模型不仅“分类对”，还要“对正确类别有高置信度”。这正是 slides 里反复强调的点。</p>
+
+          <div class="callout"><strong>必背：</strong>0/1 loss 常用于最终评价；cross-entropy 常用于训练。原因不是“老师规定这样”，而是因为前者不可导、后者更适合梯度优化。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>3. Gradient Descent Algorithm and Variations</h3>
+          <p>你可以把 gradient descent 理解成：站在山坡上，想往谷底走。梯度告诉你哪里是“上坡最快方向”，所以你往相反方向迈一步。</p>
+
+          <div class="equation">θ<sub>t+1</sub> = θ<sub>t</sub> − η∇L(θ<sub>t</sub>)</div>
+
+          <h4>每一项都要会解释</h4>
+          <ul class="clean">
+            <li><span class="math-inline">θ</span> 是参数，也就是模型真正会被训练改变的量。</li>
+            <li><span class="math-inline">L</span> 是 loss，代表当前错得多不多。</li>
+            <li><span class="math-inline">∇L</span> 是梯度，表示 loss 增长最快的方向。</li>
+            <li><span class="math-inline">η</span> 是 learning rate，决定每一步走多大。</li>
+          </ul>
+
+          <h4>变体之间怎么比较</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>方法</th>
+                  <th>优点</th>
+                  <th>缺点</th>
+                  <th>考试里一句话</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Batch GD</td>
+                  <td>稳定</td>
+                  <td>慢、内存和计算开销大</td>
+                  <td>每次看全部样本再更新</td>
+                </tr>
+                <tr>
+                  <td>SGD</td>
+                  <td>更新频繁，单次开销小</td>
+                  <td>噪声大、轨迹抖</td>
+                  <td>每次只看一个样本</td>
+                </tr>
+                <tr>
+                  <td>Mini-batch</td>
+                  <td>兼顾稳定和效率</td>
+                  <td>仍要选 batch size</td>
+                  <td>现实训练最常见</td>
+                </tr>
+                <tr>
+                  <td>Momentum</td>
+                  <td>减少震荡，加快收敛</td>
+                  <td>多超参数</td>
+                  <td>像球带惯性往下滚</td>
+                </tr>
+                <tr>
+                  <td>Adam</td>
+                  <td>自适应学习率，常用</td>
+                  <td>不是一切场景都最优</td>
+                  <td>Momentum 加自适应学习率</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout"><strong>高频题：</strong>如果问 learning rate 太大或太小的后果，答“太大可能震荡或发散，太小会收敛过慢”。这类题很稳。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>4. Convolution and CNNs</h3>
+          <p>slides 对 CNN 的讲法很形象：第一层识别边缘，第二层识别角和轮廓，再往后识别部件和整体。你最好把这个层次感直接记住。</p>
+
+          <h4>卷积操作本质</h4>
+          <p>一个小 filter 在输入上滑动。每到一个位置，就把 filter 覆盖到局部区域上，逐元素相乘再求和，得到输出 feature map 中的一个值。</p>
+
+          <h4>卷积为什么比全连接更适合图像</h4>
+          <div class="checklist">
+            <div class="mini-card">
+              <h3>Local connectivity</h3>
+              <p>图像的局部像素之间强相关，所以每个输出只看局部区域更合理。</p>
+            </div>
+            <div class="mini-card">
+              <h3>Weight sharing</h3>
+              <p>同一个 filter 在整张图上复用，所以参数大幅减少。</p>
+            </div>
+            <div class="mini-card">
+              <h3>Hierarchy of features</h3>
+              <p>从边缘到轮廓，再到部件和物体，特征是逐层组合出来的。</p>
+            </div>
+            <div class="mini-card">
+              <h3>更自然的归纳偏置</h3>
+              <p>网络结构本身就假设图像有空间结构，因此更适合图像任务。</p>
+            </div>
+          </div>
+
+          <h4>Padding、Stride、Pooling</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>概念</th>
+                  <th>作用</th>
+                  <th>考试里最该记住什么</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Padding</td>
+                  <td>补边界，保持尺寸，减小边界信息损失</td>
+                  <td>same 尽量保尺寸，valid 不补零</td>
+                </tr>
+                <tr>
+                  <td>Stride</td>
+                  <td>控制步长</td>
+                  <td>stride 越大，输出通常越小</td>
+                </tr>
+                <tr>
+                  <td>Max pooling</td>
+                  <td>保留局部最强响应</td>
+                  <td>强调最显著特征</td>
+                </tr>
+                <tr>
+                  <td>Average pooling</td>
+                  <td>保留整体趋势</td>
+                  <td>比 max pooling 更平滑</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4>输出尺寸公式</h4>
+          <div class="equation">Output = ⌊(W − K + 2P) / S⌋ + 1</div>
+          <p>你不一定每次都要背成这个样子，但一定要知道：输入尺寸、kernel 大小、padding、stride 一起决定输出 feature map 大小。</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>5. Famous CNN and DNN Models</h3>
+          <p>这部分最容易被学生学成“背名字”。正确方法是把每个模型看成“它解决了上一代模型的什么问题”。</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>模型</th>
+                  <th>关键特点</th>
+                  <th>为什么重要</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>LeNet</td>
+                  <td>早期 CNN，用于手写数字</td>
+                  <td>证明卷积网络可行</td>
+                </tr>
+                <tr>
+                  <td>AlexNet</td>
+                  <td>ReLU、dropout、GPU</td>
+                  <td>推动现代深度学习爆发</td>
+                </tr>
+                <tr>
+                  <td>VGG</td>
+                  <td>大量统一的 3x3 卷积</td>
+                  <td>结构规整，堆深网络</td>
+                </tr>
+                <tr>
+                  <td>GoogLeNet</td>
+                  <td>Inception，多尺度并行，1x1 bottleneck</td>
+                  <td>兼顾表达能力和计算效率</td>
+                </tr>
+                <tr>
+                  <td>ResNet</td>
+                  <td>Residual / skip connection</td>
+                  <td>缓解深层网络训练困难</td>
+                </tr>
+                <tr>
+                  <td>MobileNet</td>
+                  <td>轻量化设计</td>
+                  <td>面向移动端和低功耗场景</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout"><strong>ResNet 必背：</strong>ResNet 不是只是“更深”，而是通过残差连接让梯度更容易传回前层，从而减轻 vanishing gradient 和 degradation problem。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>6. Performance Evaluation and Roofline Analysis</h3>
+          <p>这一块最容易被误解成“只是一个图”。其实它在考你：到底是算力不够，还是搬数据太慢。</p>
+
+          <h4>从 slides 的角度理解 roofline</h4>
+          <p>老师的 slides 文本里虽然没有大量直接出现 roofline 公式，但一直在讲 cache、bandwidth、tiling、locality、data movement。这些正是 roofline 的底层直觉。</p>
+
+          <ul class="clean">
+            <li><strong>Arithmetic intensity 低：</strong>每搬一点数据只做很少计算，说明复用差，更可能 memory-bound。</li>
+            <li><strong>Arithmetic intensity 高：</strong>每份数据被多次使用，更可能接近 compute-bound。</li>
+            <li><strong>Tiling 的意义：</strong>提高 reuse，从而提升 arithmetic intensity。</li>
+          </ul>
+
+          <div class="callout"><strong>考试表达模板：</strong>Roofline model 帮助我们同时考虑峰值算力和内存带宽。它用 arithmetic intensity 判断一个 workload 更像是 memory-bound 还是 compute-bound，并指导优化方向。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>7. Matrix Operations and Transformations: GEMM, Strassen, Winograd</h3>
+          <p>很多神经网络运算最后都想办法转成 GEMM。原因不是数学优雅，而是 GEMM 已经被软件库和硬件做到了极高优化。</p>
+
+          <h4>GEMM 为什么是中心</h4>
+          <ul class="clean">
+            <li>矩阵乘法有成熟高性能实现，如 BLAS、cuBLAS、MKL。</li>
+            <li>cache、tiling、SIMD、tensor cores 等优化都和 GEMM 天然匹配。</li>
+            <li>很多卷积实现最终都绕回矩阵乘法。</li>
+          </ul>
+
+          <h4>Strassen 和 Winograd 的考试重点</h4>
+          <p>你不需要背推导，但要记住：<strong>Strassen 是减少矩阵乘法次数，Winograd 是减少小卷积核乘法次数。</strong> 同时要知道两者都有代价：额外加法、实现复杂度、数值问题、并非所有场景都赢。</p>
+
+          <div class="callout"><strong>从 slides 提炼：</strong>Strassen 更像理论上很强但实现上有门槛；Winograd 更像在 3x3 一类小卷积上很实用，但有变换和精度代价。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>8. Kernel Implementation, Toeplitz Matrix, img2col</h3>
+          <p>这里的 kernel 不是卷积核，而是计算内核实现。考试想看你能不能把数学公式和真实实现联系起来。</p>
+
+          <h4>Toeplitz 的作用</h4>
+          <p>Toeplitz matrix 的意义不是让你现场把大矩阵写出来，而是让你明白：卷积可以被表达成一种特殊的矩阵乘法。这是卷积转 GEMM 的概念桥梁。</p>
+
+          <h4>img2col 的完整理解</h4>
+          <ul class="clean">
+            <li>把每个滑动窗口抽出来。</li>
+            <li>每个窗口拉平成为一列。</li>
+            <li>所有列拼成大矩阵。</li>
+            <li>把卷积核也重排成矩阵。</li>
+            <li>最后变成 GEMM。</li>
+          </ul>
+
+          <div class="deep-grid">
+            <div class="mini-card">
+              <span class="tag green">优点</span>
+              <h3>复用成熟矩阵乘法库</h3>
+              <p>这让卷积实现可以直接享受 GEMM 优化带来的性能红利。</p>
+            </div>
+            <div class="mini-card">
+              <span class="tag alt">缺点</span>
+              <h3>中间矩阵膨胀</h3>
+              <p>很多重叠区域被重复展开，增加内存容量和带宽压力。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>9. Dataflow and Stationariness</h3>
+          <p>这部分是后面 TPU、Eyeriss、甚至 GPU shared memory 优化的共同语言。你要学会的问题不是“名字是什么”，而是“到底固定什么最划算”。</p>
+
+          <h4>统一原则</h4>
+          <p>stationary 的意思是：尽量让某类数据留在近处不动，让它被多次使用，减少昂贵的数据移动。</p>
+
+          <h4>三种主流 stationary 的考试说法</h4>
+          <ul class="clean">
+            <li><strong>Weight-stationary：</strong>权重尽量留在 PE 或近处 buffer，让输入流过来。适合权重复用高的情况。</li>
+            <li><strong>Output-stationary：</strong>partial sums 留在本地累加，减少中间结果写回。</li>
+            <li><strong>Input-stationary：</strong>输入激活留在本地，让多个权重或多个输出重用同一输入。</li>
+          </ul>
+
+          <div class="callout"><strong>别死记名字：</strong>真正的核心不是定义，而是它们都在试图减少带宽压力和数据搬运能耗。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>10. TPU</h3>
+          <p>TPU 是 Google 为神经网络矩阵计算设计的专用 ASIC。slides 里很强调它要解决的问题：DNN 计算太大，传统 CPU/GPU 不够专门，数据中心需要更高吞吐和更低能耗。</p>
+
+          <h4>你必须会的 TPU 关键词</h4>
+          <div class="checklist">
+            <div class="mini-card">
+              <h3>Systolic array</h3>
+              <p>数据和权重按规则流经 PE 阵列，边流边算，局部复用很强。</p>
+            </div>
+            <div class="mini-card">
+              <h3>Matrix multiply unit</h3>
+              <p>TPU 的核心计算单元，专门为大规模矩阵乘法服务。</p>
+            </div>
+            <div class="mini-card">
+              <h3>Weight stationary 倾向</h3>
+              <p>slides 里明确提到权重复用和 weight FIFO，这正是 TPU 的关键思路之一。</p>
+            </div>
+            <div class="mini-card">
+              <h3>Vector unit</h3>
+              <p>负责 ReLU、softmax、normalization 等逐元素或向量操作。</p>
+            </div>
+          </div>
+
+          <div class="callout"><strong>考试模板：</strong>TPU 的核心不是通用并行，而是围绕矩阵乘法设计的专用高吞吐数据流系统，代表结构是 systolic array。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>11. Basic Architecture of Eyeriss</h3>
+          <p>从 slides 抽出来，Eyeriss 最重要的一句话是：<strong>AI 里搬数据的能耗比 MAC 高很多很多。</strong> 所以 Eyeriss 不只是追求快，而是追求能效。</p>
+
+          <h4>你一定要会写出来的词</h4>
+          <ul class="clean">
+            <li>Row-stationary dataflow</li>
+            <li>PE array</li>
+            <li>local scratchpad</li>
+            <li>NoC</li>
+            <li>global buffer</li>
+            <li>off-chip DRAM</li>
+          </ul>
+
+          <h4>Row-stationary 为什么强</h4>
+          <p>它不是只固定权重，也不是只固定输出，而是尽量在行级别上同时兼顾 input reuse、weight reuse 和 partial sum reuse。也正因为这种“更平衡”的复用方式，Eyeriss 在 CNN 上有很强的能效表现。</p>
+
+          <div class="callout"><strong>Eyeriss 和 TPU 不要混：</strong>TPU 更像“矩阵吞吐怪兽”；Eyeriss 更像“CNN 数据流和能效专家”。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>12. GPU Architecture, Warp, Block, Thread ID</h3>
+          <p>GPU 这部分 slides 的主线是：编程上你写的是 threads，底层硬件执行更像 SIMT。很多执行同一条指令的 threads 会被硬件动态组织成 warp。</p>
+
+          <h4>最该记住的层级关系</h4>
+          <div class="flow">
+            <div class="node">Thread</div>
+            <div class="arrow">→</div>
+            <div class="node gold">Warp</div>
+            <div class="arrow">→</div>
+            <div class="node">Block</div>
+            <div class="arrow">→</div>
+            <div class="node gold">Grid</div>
+          </div>
+
+          <h4>你要会解释的三个点</h4>
+          <ul class="clean">
+            <li><strong>Thread：</strong>最小逻辑执行单位，每个线程通常处理不同数据。</li>
+            <li><strong>Warp：</strong>一组同时执行同一条指令的 threads，是硬件执行的重要单位。</li>
+            <li><strong>Block：</strong>一组 threads，可以共享 shared memory，并在 block 内协作。</li>
+          </ul>
+
+          <h4>Thread ID 公式怎么读</h4>
+          <div class="equation">global_id = blockIdx.x × blockDim.x + threadIdx.x</div>
+          <p>公式不是拿来吓人的。它只是告诉你：一个线程要先知道自己在 block 里的位置，再知道 block 在 grid 里的位置，然后合成全局编号，决定自己处理哪一部分数据。</p>
+
+          <h4>Shared memory 为什么重要</h4>
+          <p>因为它比 global memory 快得多，block 内线程可以把重复使用的数据先搬进 shared memory，再多次复用，从而减少慢速全局访存。这和前面讲的 tiling、dataflow、reuse 是一条逻辑线。</p>
+
+          <div class="callout"><strong>考试不要只写定义：</strong>如果问 warp 或 shared memory，最好补一句“它们的存在是为了提高并行执行效率和数据复用效率”。</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>13. 考试怎么答，最容易拿分</h3>
+          <p>这次考试是线下、闭卷、纸笔，不给 cheat sheet，而且复杂公式如果需要会给你。所以你真正要准备的是“概念表达能力”，不是大段公式记忆。</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>题型</th>
+                  <th>最稳答题结构</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>定义题</td>
+                  <td>先写定义，再写作用，再写为什么重要</td>
+                </tr>
+                <tr>
+                  <td>对比题</td>
+                  <td>先说共同点，再说核心差异，再说 trade-off</td>
+                </tr>
+                <tr>
+                  <td>硬件题</td>
+                  <td>优先想到 reuse、bandwidth、data movement</td>
+                </tr>
+                <tr>
+                  <td>CNN 题</td>
+                  <td>优先想到 local connectivity、weight sharing、feature hierarchy</td>
+                </tr>
+                <tr>
+                  <td>优化器题</td>
+                  <td>优先想到 loss、gradient、learning rate</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="footer-note">真正稳的复习方法不是从第一页一直往下死看，而是反复做三件事：先看地图，再口述主线，再回来看细节。</div>
+        </div>
+      </section>
+
+      <section class="section" id="dense-notes">
+        <h2>Detailed Slide-Based Notes</h2>
+        <p class="lead">This section is intentionally much denser. It is written to feel closer to actual lecture-note depth, not just a study summary. Use it when the short cards and tables are not enough.</p>
+
+        <div class="detail-block">
+          <h3>1. Machine Learning Fundamentals: what the model is really doing</h3>
+          <p>At the most basic level, machine learning is about learning a function that maps an input to an output. In the early lectures, the important point is not just the equation itself, but the training loop around it: data goes in, the model makes a prediction, that prediction is compared to the true answer using a loss function, and then the parameters are updated. If you remember only one thing from the fundamentals, remember that the model is not “finding truth directly”; it is repeatedly minimizing a training objective.</p>
+          <p>For classification, the output is a discrete class label. The model is trying to separate inputs into categories such as spam vs not spam, or cat vs dog. For clustering, there are no labels. The algorithm tries to discover structure in the data by grouping similar points together. This is why classification is supervised learning and clustering is unsupervised learning.</p>
+          <p>The slides treat this distinction as foundational because many later choices depend on it. The choice of loss, the choice of evaluation metric, and even the interpretation of model output all depend on whether the task is classification or clustering.</p>
+
+          <div class="callout"><strong>Slide-aligned exam insight:</strong> if a question asks for “basic models,” do not overcomplicate the answer. A linear model, logistic regression, and k-means are enough to anchor your explanation unless the question explicitly asks for more.</div>
+
+          <h4>Basic models you should be able to explain</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Main idea</th>
+                  <th>Why it matters for the exam</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Linear model</td>
+                  <td>The output is a weighted sum of the input plus a bias.</td>
+                  <td>It is the simplest trainable model and the cleanest starting point for talking about parameters and gradients.</td>
+                </tr>
+                <tr>
+                  <td>Logistic regression</td>
+                  <td>A linear score is turned into a probability for binary classification.</td>
+                  <td>It connects classification, probability, and logistic loss.</td>
+                </tr>
+                <tr>
+                  <td>K-means</td>
+                  <td>Assign points to the nearest center, then update the centers repeatedly.</td>
+                  <td>It is the canonical clustering example and makes unsupervised learning concrete.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>2. Loss Functions: why training needs more than “correct or wrong”</h3>
+          <p>A loss function converts prediction quality into a number that optimization can act on. This sounds obvious, but it is one of the most important ideas in the course. The slides emphasize that the training objective is not necessarily identical to the final metric. For example, 0/1 loss is intuitive for evaluation because it directly measures correctness, but it is not smooth and not differentiable in a useful way for gradient-based training.</p>
+          <p>This is why classification often uses logistic loss or cross-entropy instead of 0/1 loss. Cross-entropy does not just ask whether the answer is correct; it also asks whether the model assigned high probability to the correct class. If the correct class receives very low probability, the loss becomes very large. That gives the optimizer a strong signal.</p>
+          <p>For regression, MSE is natural because the target is a numerical value and squared deviation is meaningful. For classification, MSE is often a poor match because classification is about discrete decisions and probability distributions rather than raw numeric distance.</p>
+
+          <h4>How to talk about major losses</h4>
+          <ul class="clean">
+            <li><strong>MSE:</strong> appropriate for regression, differentiable, punishes large numerical errors heavily.</li>
+            <li><strong>0/1 loss:</strong> intuitive for final correctness, but too coarse and not suitable for direct gradient optimization.</li>
+            <li><strong>Hinge loss:</strong> useful when the model should not only classify correctly but also keep a margin from the decision boundary.</li>
+            <li><strong>Logistic loss:</strong> a smooth classification-friendly objective, especially natural for binary settings.</li>
+            <li><strong>Cross-entropy:</strong> the standard answer for multi-class probabilistic classification.</li>
+          </ul>
+
+          <div class="callout"><strong>What instructors like to ask:</strong> “Why not use MSE for classification?” The robust answer is: because classification is about correct categories and confidence/probabilities, not about minimizing raw numeric distance between labels.</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>3. Gradient Descent and Its Variations</h3>
+          <p>The slides treat gradient descent as the general training engine. The intuition should be completely clear: if the gradient points toward the steepest increase in loss, then moving in the negative gradient direction decreases the loss. The learning rate controls how large that step is.</p>
+          <p>The biggest conceptual risk for beginners is treating the update equation like a memorization item instead of an algorithm. It is an algorithm. Each training step means: compute prediction, compute loss, compute gradient, update parameters. This cycle repeats until the parameters settle into a region with lower loss.</p>
+          <p>The variations matter because real training has practical constraints. Batch gradient descent is stable but expensive. SGD is fast and noisy. Mini-batch is the practical compromise and is what you should assume unless a problem explicitly says otherwise. Momentum keeps part of the previous direction to reduce oscillation. Adam is widely used because it combines momentum-like behavior with adaptive step sizes.</p>
+
+          <h4>Common exam angles</h4>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Question type</th>
+                  <th>Good answer direction</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Why is there a negative sign?</td>
+                  <td>Because we want to move opposite the direction of greatest loss increase.</td>
+                </tr>
+                <tr>
+                  <td>What happens if the learning rate is too large?</td>
+                  <td>The updates may overshoot, oscillate, or diverge.</td>
+                </tr>
+                <tr>
+                  <td>Why use mini-batches?</td>
+                  <td>They balance stability, efficiency, and hardware-friendly parallelism.</td>
+                </tr>
+                <tr>
+                  <td>Why use momentum?</td>
+                  <td>To smooth updates and reduce zig-zagging in narrow valleys.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>4. CNNs and Convolution: the representation story</h3>
+          <p>The CNN lectures are not just teaching the convolution operation mechanically. They are building a story of representation. Early layers learn local edges and simple patterns. Middle layers combine those into contours and parts. Later layers combine parts into object-level recognition. That is why CNNs are not just “matrix operations on images”; they are hierarchical feature extractors.</p>
+          <p>Convolution is attractive because it builds in assumptions that are appropriate for images. Images have local structure, so local connectivity makes sense. The same useful pattern can appear in many places, so weight sharing makes sense. Together these reduce parameter count and make learning more data-efficient than a fully connected alternative.</p>
+          <p>Padding, stride, and pooling are all part of how information is shaped as it flows through the network. Padding controls boundary behavior and output size. Stride controls how aggressively the feature map shrinks. Pooling reduces spatial dimensions and helps with translation tolerance, though it also discards detail.</p>
+
+          <h4>What not to miss in the CNN slides</h4>
+          <ul class="clean">
+            <li>In deep learning, “convolution” is often implemented more like cross-correlation, but the name convolution is still used.</li>
+            <li>Multi-channel convolution means each filter spans all input channels and the contributions are summed.</li>
+            <li>3D convolution is not the same thing as 2D convolution on a 3-channel RGB image.</li>
+            <li>Global pooling is important because it can replace large fully connected heads and reduce parameter count.</li>
+          </ul>
+        </div>
+
+        <div class="detail-block">
+          <h3>5. Famous CNN and DNN Models: why each one matters historically</h3>
+          <p>The right way to study the famous models is as a progression of ideas. LeNet proves CNNs are useful. AlexNet proves deeper CNNs plus GPUs can dominate large-scale image recognition. VGG shows that repeating small filters in a very regular architecture can be very effective. GoogLeNet shows that multi-branch multi-scale processing can improve representational efficiency. ResNet solves the major depth-related training difficulty by providing shortcut paths for gradients. MobileNet pushes efficiency and deployability.</p>
+          <p>The slides on AlexNet are especially important because they link model design to hardware reality. Group convolution in AlexNet was not only a modeling choice; it was also shaped by the practical limitation of splitting work across two GPUs. That is a very EE508-style point: architecture and implementation are connected.</p>
+          <p>ResNet is another key lecture highlight. It matters not just because it is famous, but because it gives a concrete answer to why deeper plain networks can perform worse: optimization difficulty and degradation. The skip connection provides a cleaner path for gradient flow.</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>6. Performance Evaluation and Roofline: what the slides are really emphasizing</h3>
+          <p>Even when the term “roofline” is not shown everywhere, the performance lectures are preparing you for roofline-style reasoning. The recurring themes are cache, locality, bandwidth, and data movement. That means the real question is not only “how many operations are there?” but also “how often do we have to fetch data?”</p>
+          <p>Arithmetic intensity gives a compact way to talk about this: how much computation is performed per unit of data movement. If arithmetic intensity is low, performance is more likely to be memory-bound. If arithmetic intensity is high, the hardware has a better chance of approaching compute limits.</p>
+          <p>This is why tiling shows up repeatedly. Tiling is not just a coding trick; it is a way to increase locality and reuse, which effectively improves arithmetic intensity from the machine’s point of view.</p>
+
+          <div class="callout"><strong>Strong exam phrasing:</strong> “Roofline analysis helps distinguish whether a workload is limited more by compute throughput or memory bandwidth, and arithmetic intensity is the key bridge between the two.”</div>
+        </div>
+
+        <div class="detail-block">
+          <h3>7. Matrix Operations and Transformations: why this block exists in the course</h3>
+          <p>This block is teaching you that deep learning computation is often reorganized into forms that hardware and libraries handle well. GEMM is central because it is the most heavily optimized dense computation primitive in modern numerical computing. If a convolution can be lowered into GEMM, it can inherit an enormous ecosystem of optimizations.</p>
+          <p>Strassen matters because it is the classic example showing that even matrix multiplication itself is not fixed. The usual cubic formulation is not the only possibility. By reducing multiplication count at the cost of additional additions and structural complexity, Strassen improves asymptotic complexity. The slides also emphasize why that does not automatically make it dominant in practice: memory overhead, precision concerns, and large constant factors matter.</p>
+          <p>Winograd plays a similar conceptual role for convolution. It shows that for small kernels, especially 3×3, one can reduce multiplication count through a transform-based approach. But again, there is no free lunch. There is extra transform work, there may be numerical sensitivity, and its benefits depend strongly on kernel size and layer shape.</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>8. Kernel Implementation, Toeplitz, and img2col</h3>
+          <p>This is where the course moves from “what operation is being computed” to “how the operation is actually implemented.” Toeplitz is important conceptually because it shows that convolution can be expressed as a structured matrix multiplication. It is not important because you will literally store giant Toeplitz matrices in practice. In fact, one of the lessons is that explicit structured expansion can be wasteful.</p>
+          <p>img2col is the practical bridge. It extracts each receptive field, flattens it into a column, and turns the convolution into a matrix multiplication problem. This is powerful because it lets implementation reuse optimized GEMM kernels. But it is also expensive because overlapping windows create duplicated data in the intermediate representation.</p>
+          <p>That trade-off is exactly the kind of systems thinking this course wants you to develop: a mathematically elegant reformulation can still be costly in memory footprint and bandwidth. So the “best” implementation is not determined by arithmetic count alone.</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>9. Dataflow and Stationary Schemes</h3>
+          <p>Dataflow is the language used to describe how inputs, weights, and partial sums move through an accelerator. Stationary schemes are specialized versions of this idea in which one type of data is kept close to the compute units as much as possible. The goal is always the same: reduce expensive movement and maximize reuse.</p>
+          <p>Weight-stationary keeps weights near the processing elements and streams inputs through. Output-stationary keeps partial sums local so that accumulation does not require repeated writes and reads. Input-stationary keeps activations close so multiple filters or outputs can reuse them. None of these is “the best” in all situations. Each one reflects a different reuse priority.</p>
+          <p>The slides also connect stationary schemes to reuse distance and bandwidth implications. That is a very important point: dataflow is not only a conceptual mapping choice; it directly affects energy and performance.</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>10. TPU: what makes it different from generic parallel hardware</h3>
+          <p>TPU is not simply “a faster processor.” The reason it appears in this course is that it is designed around a dominant ML workload pattern: large-scale matrix multiplication. The systolic array is the architectural center because it supports regular, pipelined, highly local data reuse. Inputs and weights enter in structured ways, multiply-accumulate work is done as values move through the array, and the architecture is shaped around throughput and efficiency.</p>
+          <p>The TPU slides also emphasize that the TPU is part of a larger system. There are host interactions, memory hierarchy decisions, vector units for non-matrix operations, and workload mapping questions. That means a good answer about TPU should mention not just “systolic array,” but also why such an array is well-matched to DNN matrix workloads and how it reduces the pressure on external memory access.</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>11. Eyeriss: why row-stationary is a big deal</h3>
+          <p>Eyeriss is central because it turns the abstract idea of dataflow into a concrete accelerator architecture. The headline insight is that moving data to and from off-chip DRAM is vastly more expensive than the MAC operations themselves. Therefore, the architecture should be built around reducing movement, not simply increasing raw arithmetic throughput.</p>
+          <p>Row-stationary is important because it is more balanced than a pure weight-stationary or pure output-stationary strategy. Instead of fully optimizing only one reuse type, it tries to capture multiple forms of reuse at once: weights, activations, and partial sums. That is why the Eyeriss lecture is not just about naming blocks such as PE arrays and global buffers; it is about understanding why that combination supports efficient CNN execution.</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>12. GPU Architecture: thread, warp, block, and why SIMT matters</h3>
+          <p>The GPU lecture is trying to bridge programming and hardware execution. From the programmer’s perspective, you write many threads that run the same code on different data. From the hardware perspective, these are dynamically organized into warps. That is why GPUs are often described as SIMT machines: they expose a thread-based programming model but execute in a grouped, SIMD-like way under the hood.</p>
+          <p>You should know the hierarchy clearly: threads are the smallest logical units, warps are execution groups of threads following the same instruction path, blocks are programmer-visible groups of threads that can cooperate and share on-chip memory, and grids are collections of blocks for a kernel launch. The thread ID formula tells each thread which portion of the work it is responsible for.</p>
+          <p>Shared memory is important because it is the GPU equivalent of “keep data near compute and reuse it.” That directly links the GPU section back to the earlier performance, tiling, and dataflow themes. A good answer about shared memory should mention both speed and reuse.</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>13. What the instructor is not asking you to do</h3>
+          <p>The exam statement explicitly says you do not need to memorize long formulas like Winograd. That should change how you study. You are not preparing for a symbolic derivation exam. You are preparing for a concept, systems, and explanation exam. You should be able to describe the purpose of Winograd, not derive every transform matrix from memory. You should be able to explain the role of row-stationary dataflow, not redraw an entire chip floorplan perfectly from memory.</p>
+          <p>In other words, depth matters, but the right kind of depth. The right kind of depth is understanding the motivation, mechanism, and trade-off of each concept.</p>
+        </div>
+
+        <div class="detail-block">
+          <h3>14. Best answer style for this specific midterm</h3>
+          <p>Because the exam is in-person, closed-book, and paper-based, you should practice speaking and writing compact technical explanations. For most questions, the strongest structure is:</p>
+          <ul class="clean">
+            <li>Define the concept clearly.</li>
+            <li>State why it is used.</li>
+            <li>State one or two major trade-offs or comparisons.</li>
+          </ul>
+          <p>That structure works for loss functions, optimization methods, CNN models, dataflow schemes, and hardware architectures.</p>
+        </div>
+      </section>
+
+      <section class="section" id="compare">
+        <h2>High-Frequency Comparison Questions</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>对比</th>
+                <th>正确抓手</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Classification vs Clustering</td><td>有标签 vs 无标签</td></tr>
+              <tr><td>MSE vs Cross-Entropy</td><td>回归 vs 分类</td></tr>
+              <tr><td>Batch vs SGD vs Mini-batch</td><td>稳定但慢 vs 快但抖 vs 最常用平衡</td></tr>
+              <tr><td>CNN vs Fully Connected</td><td>局部连接和共享权重 vs 参数多</td></tr>
+              <tr><td>img2col vs Direct Conv</td><td>利用 GEMM vs 中间数据更少</td></tr>
+              <tr><td>Strassen vs Winograd</td><td>快矩阵乘法 vs 快小卷积</td></tr>
+              <tr><td>Weight stationary vs Output stationary</td><td>固定权重 vs 固定 partial sum</td></tr>
+              <tr><td>TPU vs Eyeriss</td><td>矩阵吞吐 vs CNN dataflow 能效</td></tr>
+              <tr><td>Thread vs Warp vs Block</td><td>逻辑线程 vs 硬件执行组 vs 线程组</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="plan">
+        <h2>考前 6 天复习计划</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>天数</th>
+                <th>任务</th>
+                <th>目标</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Day 1</td><td>ML fundamentals, loss, gradient descent</td><td>先把训练主线搞懂</td></tr>
+              <tr><td>Day 2</td><td>CNN, convolution, padding, stride, pooling, softmax</td><td>会解释 CNN 为什么有效</td></tr>
+              <tr><td>Day 3</td><td>Famous models</td><td>每个模型一句核心创新</td></tr>
+              <tr><td>Day 4</td><td>GEMM, locality, tiling, Toeplitz, img2col</td><td>会解释为什么数据访问决定性能</td></tr>
+              <tr><td>Day 5</td><td>Strassen, Winograd, dataflow, Eyeriss, TPU</td><td>会讲清楚少乘法和少搬数据</td></tr>
+              <tr><td>Day 6</td><td>GPU architecture 全复习</td><td>整门课主线从头口述一遍</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="quiz">
+        <h2>自测题</h2>
+        <div class="qa-grid">
+          <div class="qa-card"><h3>1</h3><p>为什么分类更常用 cross-entropy，而不是 MSE？</p></div>
+          <div class="qa-card"><h3>2</h3><p>CNN 为什么比全连接网络更适合图像？</p></div>
+          <div class="qa-card"><h3>3</h3><p>img2col 的优点和代价分别是什么？</p></div>
+          <div class="qa-card"><h3>4</h3><p>Strassen 和 Winograd 各自在优化什么？</p></div>
+          <div class="qa-card"><h3>5</h3><p>为什么 dataflow 和 stationary 在 AI 硬件里非常重要？</p></div>
+          <div class="qa-card"><h3>6</h3><p>Eyeriss 和 TPU 的设计重点有什么不同？</p></div>
+          <div class="qa-card"><h3>7</h3><p>thread、warp、block 的关系是什么？</p></div>
+          <div class="qa-card"><h3>8</h3><p>什么叫 memory-bound，什么叫 compute-bound？</p></div>
+          <div class="qa-card"><h3>9</h3><p>为什么 tiling 常常能提升性能？</p></div>
+          <div class="qa-card"><h3>10</h3><p>如果老师问你整门课最核心的一句话，你会怎么答？</p></div>
+        </div>
+
+        <div class="footer-note">
+          最后只记这一条：在现代机器学习系统里，真正昂贵的往往不是计算本身，而是数据搬运。
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
