@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSCI 566 Midterm Practice v2 — 50 Multi-Select Questions</title>
+<title>CSCI 566 Midterm Practice v2 — 50 Single-Choice Questions</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#222;line-height:1.5;padding:12px}
@@ -55,7 +55,7 @@ button{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:0
 <body>
 <div class="container">
 <h1>CSCI 566 Midterm Practice v2</h1>
-<p class="subtitle">50 High-Quality Multi-Select Questions &bull; Select ALL correct answers &bull; Calculator Allowed<br>Focused on NN, CNN, RNN/LSTM, GNN, GAN/VAE, backprop, unsupervised learning, training tricks, and regularization</p>
+<p class="subtitle">50 Single-Choice Questions &bull; Find the ONE incorrect statement &bull; Calculator Allowed<br>Focused on NN, CNN, RNN/LSTM, GNN, GAN/VAE, backprop, unsupervised learning, training tricks, and regularization</p>
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 <div class="controls">
 <button class="btn-primary" onclick="grade()">Submit &amp; Grade</button>
@@ -72,7 +72,7 @@ button{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:0
 const questions = [
 {id:1,text:'Which of the following are supervised learning tasks?',opts:['(A) Predicting a continuous target from labeled examples','(B) Classifying samples into fixed categories using labels','(C) Grouping unlabeled samples into clusters','(D) Predicting labels for nodes when labeled training nodes are provided'],ans:[0,1,3],topic:'W1: ML Basics',diff:'easy',expl:'Supervised learning uses labeled targets. Clustering unlabeled samples is unsupervised.'},
 {id:2,text:'Which of the following are usually treated as unsupervised or self-supervised representation-learning problems?',opts:['(A) Clustering unlabeled samples or embeddings','(B) Learning low-dimensional structure from unlabeled data','(C) Modeling the data distribution with density estimation','(D) Classifying inputs into fixed labels'],ans:[0,1,2],topic:'W1: ML Basics',diff:'easy',expl:'Clustering, dimensionality reduction, and density estimation do not require class labels; ordinary classification does.'},
-{id:3,text:'For a linear classifier f(x)=Wx+b with input dimension D and C classes, which statements are correct?',opts:['(A) W has shape C x D','(B) b has length C','(C) The scores are linear functions of x','(D) Stacking linear layers without nonlinearities still gives a linear map'],ans:[0,1,2,3],topic:'W1: ML Basics',diff:'medium',expl:'All four are standard facts about linear models and compositions of linear transformations.'},
+{id:3,text:'For a linear classifier f(x)=Wx+b with input dimension D and C classes, which statements are correct?',opts:['(A) W has shape C x D','(B) b has length C','(C) The scores are linear functions of x','(D) Adding a bias term b makes the classifier nonlinear'],ans:[0,1,2],topic:'W1: ML Basics',diff:'medium',expl:'W is C×D, b has length C, and scores are linear in x. Adding bias only shifts the decision boundary — the model remains linear.'},
 {id:4,text:'A model has very low training error but much higher validation error. Which are reasonable conclusions or fixes?',opts:['(A) The model is overfitting','(B) Stronger regularization or augmentation may help','(C) Early stopping based on validation performance may help','(D) The first fix should be to increase capacity further'],ans:[0,1,2],topic:'W1: Generalization',diff:'medium',expl:'This is the classic overfitting pattern. Regularization, augmentation, and early stopping are standard responses.'},
 {id:5,text:'A model has high training error and high validation error. Which statements are reasonable?',opts:['(A) The model is likely underfitting','(B) Increasing model capacity may help','(C) Reducing overly strong regularization may help','(D) The main problem must be data leakage'],ans:[0,1,2],topic:'W1: Generalization',diff:'medium',expl:'High training and validation error usually indicates underfitting rather than leakage.'},
 {id:6,text:'Which statements about common GNN prediction settings are correct?',opts:['(A) Node classification predicts labels for nodes','(B) Link prediction predicts whether an edge should exist between two nodes','(C) Graph classification predicts one label for an entire graph','(D) GNN output should change arbitrarily when the same graph nodes are merely reordered'],ans:[0,1,2],topic:'W8: GNN',diff:'easy',expl:'Node-, link-, and graph-level prediction are standard GNN tasks. Reordering nodes should not arbitrarily change predictions.'},
@@ -89,7 +89,7 @@ const questions = [
 {id:17,text:'For Y = XW + b with X of shape N x D and W of shape D x M, which vectorized gradients are correct?',opts:['(A) dW = X^T dY','(B) dX = dY W^T','(C) db is the batch-wise sum of dY','(D) dW has shape N x M'],ans:[0,1,2],topic:'W4: Backprop',diff:'medium',expl:'The standard vectorized formulas are dW = X^T dY, dX = dY W^T, and db = sum over the batch axis.'},
 {id:18,text:'Why do we cache intermediate values during the forward pass?',opts:['(A) Some local gradients depend on forward-pass values','(B) Backward pass through multiply or max gates needs saved inputs or winners','(C) Caching is needed to compute many activation derivatives efficiently','(D) Caching removes the need to store model parameters'],ans:[0,1,2],topic:'W4: Backprop',diff:'medium',expl:'Many backward computations depend on forward values, but caching does not replace parameter storage.'},
 {id:19,text:'Which statements about vanishing gradients are correct?',opts:['(A) Repeated multiplication by terms smaller than 1 can shrink gradients','(B) Early layers may receive very small updates','(C) Proper initialization and activation choice can help mitigate the issue','(D) Vanishing gradients imply the loss must already be zero'],ans:[0,1,2],topic:'W4: Backprop',diff:'medium',expl:'Vanishing gradients are an optimization issue, not proof that the loss is zero.'},
-{id:20,text:'Which formulas correctly give the convolution output width or height?',opts:['(A) (W - F + 2P)/S + 1','(B) (W + 2P - F)/S + 1','(C) W - F + P','(D) W/S - F + 1'],ans:[0,1],topic:'W4: CNN',diff:'easy',expl:'The first two are algebraically identical standard convolution-arithmetic formulas.'},
+{id:20,text:'Which formulas correctly give the convolution output width or height?',opts:['(A) (W - F + 2P)/S + 1','(B) (W + 2P - F)/S + 1','(C) W - F + P','(D) When S=1 and P=(F−1)/2 (F odd), the output width equals the input width'],ans:[0,1,3],topic:'W4: CNN',diff:'easy',expl:'(A) and (B) are the same standard formula. (D) describes same-padding which preserves spatial size. (C) is not the correct formula.'},
 {id:21,text:'Suppose a convolution layer takes a 4x6 image with 3 channels as input and outputs a 3x4x10 volume. Which statements must be correct?',opts:['(A) The layer uses 10 filters','(B) Each filter has depth 3','(C) One valid configuration is 2x2 filters, stride 2, padding 1','(D) A 1x1 filter with stride 2 and no padding can produce the same spatial output'],ans:[0,1,2],topic:'W4: CNN',diff:'medium',expl:'To produce 3x4x10, the layer needs 10 filters spanning the input depth. A 1x1 stride-2 no-padding setup would not match the target shape.'},
 {id:22,text:'A 32x32x3 input is convolved with six 5x5 filters, stride 1, padding 0. Which statements are correct?',opts:['(A) The output spatial size is 28x28','(B) The output depth is 6','(C) Each filter spans all 3 input channels','(D) The output is 32x32x6'],ans:[0,1,2],topic:'W4: CNN',diff:'medium',expl:'Without padding, 32 becomes 28 after a 5x5 stride-1 convolution.'},
 {id:23,text:'A convolution layer uses ten 5x5 filters on a 3-channel input, with one bias per filter. Which statements are correct?',opts:['(A) Each filter has 75 weights','(B) Each filter has 76 trainable parameters including bias','(C) The total trainable parameter count is 760','(D) The total trainable parameter count is 750'],ans:[0,1,2],topic:'W4: CNN',diff:'medium',expl:'Each filter has 5x5x3 weights plus one bias, so total parameters are 10 x 76 = 760.'},
@@ -192,21 +192,22 @@ card.className='q-card'+(q._result==='correct'?' correct':q._result==='wrong'?' 
 card.id='q'+q.id;
 if(showOnlyWrong&&q._result==='correct'){card.style.display='none';}
 const dt=q.diff==='easy'?'<span class="tag tag-easy">Easy</span>':q.diff==='medium'?'<span class="tag tag-medium">Medium</span>':'<span class="tag tag-hard">Hard</span>';
+const wrongOpt=[0,1,2,3].find(i=>!q.ans.includes(i));
 card.innerHTML=`<div class="q-num">Q${q.id}. <span style="color:#555;font-weight:400;font-size:0.85em">[${q.topic}]</span>${dt}</div>
-<div class="q-hint">Select ALL that apply (one or more correct answers)</div>
+<div class="q-hint">Choose the ONE incorrect statement</div>
 <div class="q-text">${q.text}</div>
 <div class="options">${q.opts.map((o,oi)=>{
-const sel=(q._sel||[]).includes(oi);let cls='opt'+(sel?' selected':'');
-if(graded){if(q.ans.includes(oi)&&sel)cls+=' correct-opt';else if(q.ans.includes(oi)&&!sel)cls+=' missed-opt';else if(!q.ans.includes(oi)&&sel)cls+=' wrong-opt';}
-return`<label class="${cls}"><input type="checkbox" ${graded?'disabled':''}${sel?' checked':''} onchange="toggle(${qi},${oi})"><span>${o}</span></label>`;}).join('')}</div>
-<div class="explanation${(showExpl||(graded&&q._result!=='correct'))?' show':''}">${graded?(q._result==='correct'?'✅ ':q._result==='wrong'?'❌ ':'⚠️ '):''}${q.expl}${graded?'<br><b>Correct: '+q.ans.map(i=>String.fromCharCode(65+i)).join(', ')+'</b>':''}</div>`;
-quizEl.appendChild(card);if((q._sel||[]).length>0)answered++;});
+const sel=q._sel===oi;let cls='opt'+(sel?' selected':'');
+if(graded){if(oi===wrongOpt&&sel)cls+=' correct-opt';else if(oi===wrongOpt&&!sel)cls+=' missed-opt';else if(oi!==wrongOpt&&sel)cls+=' wrong-opt';}
+return`<label class="${cls}"><input type="radio" name="q${qi}" ${graded?'disabled':''}${sel?' checked':''} onchange="toggle(${qi},${oi})"><span>${o}</span></label>`;}).join('')}</div>
+<div class="explanation${(showExpl||(graded&&q._result!=='correct'))?' show':''}">${graded?(q._result==='correct'?'✅ ':q._result==='wrong'?'❌ ':'⚠️ '):''}${q.expl}${graded?'<br><b>Incorrect statement: '+String.fromCharCode(65+wrongOpt)+'</b>':''}</div>`;
+quizEl.appendChild(card);if(q._sel!==undefined&&q._sel!==null)answered++;});
 progressEl.style.width=(answered/questions.length*100)+'%';}
-function toggle(qi,oi){if(graded)return;const q=questions[qi];if(!q._sel)q._sel=[];const idx=q._sel.indexOf(oi);if(idx>=0)q._sel.splice(idx,1);else q._sel.push(oi);render();}
+function toggle(qi,oi){if(graded)return;questions[qi]._sel=oi;render();}
 function grade(){graded=true;let c=0,w=0,u=0;
-questions.forEach(q=>{const sel=(q._sel||[]).sort(),ans=[...q.ans].sort();
-if(sel.length===0){q._result='unanswered';u++;}
-else if(JSON.stringify(sel)===JSON.stringify(ans)){q._result='correct';c++;}
+questions.forEach(q=>{const wrongOpt=[0,1,2,3].find(i=>!q.ans.includes(i));
+if(q._sel===undefined||q._sel===null){q._result='unanswered';u++;}
+else if(q._sel===wrongOpt){q._result='correct';c++;}
 else{q._result='wrong';w++;}});
 scoreEl.className='scoreboard show';
 scoreEl.innerHTML=`<b>Score: ${c}/${questions.length}</b> (${(c/questions.length*100).toFixed(1)}%)<div class="stat-row"><span class="stat-correct">✅ Correct: ${c}</span><span class="stat-wrong">❌ Wrong: ${w}</span><span class="stat-skip">⚠️ Skipped: ${u}</span></div>${buildAnalysisHtml()}`;
