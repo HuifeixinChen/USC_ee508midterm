@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EE508 Midterm Study Guide</title>
+<title>EE508 Midterm 手把手教学</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
@@ -43,7 +43,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .compare-card{border:1px solid #d1d5db;border-radius:8px;overflow:hidden}
 .compare-card .head{background:var(--accent);color:#fff;padding:.5rem .8rem;font-weight:700;font-size:.9rem}
 .compare-card .body{padding:.8rem;font-size:.88rem}
-.equation{background:#faf5ff;border-left:4px solid #7c3aed;padding:1rem 1.2rem;margin:1rem 0;border-radius:0 8px 8px 0;font-family:'Times New Roman',serif;font-size:1.05rem;overflow-x:auto}
+.equation{background:#faf5ff;border-left:4px solid #7c3aed;padding:1rem 1.2rem;margin:1rem 0;border-radius:0 8px 8px 0;overflow-x:auto}
 .table-wrap{overflow-x:auto;margin:1rem 0}
 table{border-collapse:collapse;width:100%;font-size:.88rem}
 th{background:var(--accent);color:#fff;padding:.55rem .7rem;text-align:left}
@@ -58,12 +58,22 @@ tr:nth-child(even){background:#f9fafb}
 .tag{display:inline-block;font-size:.7rem;padding:2px 8px;border-radius:4px;font-weight:700;vertical-align:middle}
 .tag-green{background:#dcfce7;color:#166534}.tag-amber{background:#fef3c7;color:#92400e}.tag-red{background:#fee2e2;color:#991b1b}.tag-blue{background:#dbeafe;color:#1e40af}
 ol.steps{counter-reset:step;list-style:none;padding:0}
-ol.steps li{counter-increment:step;padding:.5rem 0 .5rem 2.5rem;position:relative}
-ol.steps li::before{content:counter(step);position:absolute;left:0;top:.45rem;width:1.8rem;height:1.8rem;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700}
+ol.steps li{counter-increment:step;padding:.6rem 0 .6rem 2.8rem;position:relative;border-bottom:1px dashed #e5e7eb}
+ol.steps li:last-child{border-bottom:none}
+ol.steps li::before{content:counter(step);position:absolute;left:0;top:.5rem;width:2rem;height:2rem;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700}
 .practice{background:#fefce8;border:2px solid #fde68a;border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0}
 .practice h4{color:var(--accent-2);margin:0 0 .5rem}
 .solution{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:1rem;margin-top:.8rem}
 .solution summary{cursor:pointer;font-weight:700;color:var(--green)}
+.worked{background:#f0f9ff;border:2px solid #93c5fd;border-radius:var(--radius);padding:1.5rem;margin:1.2rem 0}
+.worked h4{color:var(--blue);margin:0 0 .8rem;font-size:1.05rem}
+.worked .step{margin:.6rem 0;padding:.5rem .8rem;background:#fff;border-radius:6px;border-left:3px solid var(--blue)}
+.worked .step b{color:var(--accent)}
+.pitfall{background:#fef2f2;border:2px dashed #fca5a5;border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+.pitfall h4{color:var(--red);margin:0 0 .5rem}
+.ascii-box{background:#1e293b;color:#e2e8f0;font-family:'Courier New',monospace;padding:1.2rem;border-radius:8px;font-size:.82rem;line-height:1.6;overflow-x:auto;margin:1rem 0;white-space:pre}
+.intuition{background:linear-gradient(135deg,#fef3c7,#fde68a33);border:1px solid #fde68a;border-radius:var(--radius);padding:1.2rem;margin:1rem 0}
+.intuition::before{content:'💡 ';font-size:1.2rem}
 @media(max-width:1120px){.sidebar{width:240px}.main{margin-left:240px}}
 @media(max-width:760px){.sidebar{display:none}.main{margin-left:0;padding:1rem}}
 </style>
@@ -71,435 +81,766 @@ ol.steps li::before{content:counter(step);position:absolute;left:0;top:.45rem;wi
 <body>
 <nav class="sidebar">
   <h2>EE508 Midterm</h2>
-  <details class="nav-group" open><summary>考试范围</summary>
-    <a href="#exam-overview">考试信息总览</a>
-    <a href="#quiz-review">Quiz 1 回顾</a>
-  </details>
-  <details class="nav-group" open><summary>Machine Learning</summary>
+  <details class="nav-group" open><summary>ML 基础</summary>
     <a href="#gradient-descent">Gradient Descent <span class="tag-exam">必考</span></a>
     <a href="#loss-functions">Loss Functions</a>
     <a href="#chain-rule">Chain Rule / Backprop <span class="tag-exam">必考</span></a>
   </details>
   <details class="nav-group" open><summary>CNN</summary>
-    <a href="#cnn-benefits">CNN 优势</a>
-    <a href="#output-size">Feature Map Size <span class="tag-exam">必考</span></a>
+    <a href="#output-size">Output Size 公式 <span class="tag-exam">必考</span></a>
     <a href="#conv-vs-corr">Conv vs Cross-Corr</a>
-    <a href="#im2col">im2col</a>
+    <a href="#im2col">im2col 变换</a>
   </details>
   <details class="nav-group" open><summary>Performance</summary>
-    <a href="#roofline">Roofline Model <span class="tag-exam">必考</span></a>
-    <a href="#arithmetic-intensity">Arithmetic Intensity</a>
+    <a href="#roofline">Roofline 模型 <span class="tag-exam">必考</span></a>
   </details>
   <details class="nav-group" open><summary>Hardware</summary>
     <a href="#flynn">Flynn's Taxonomy <span class="tag-exam">必考</span></a>
-    <a href="#simd">SIMD: Time vs Space</a>
+    <a href="#simd">SIMD 两种实现</a>
     <a href="#array-vs-vector">Array vs Vector <span class="tag-exam">必考</span></a>
     <a href="#memory-banks">Memory Banks <span class="tag-exam">必考</span></a>
-    <a href="#scalar-vector-code">Scalar vs Vector Code</a>
+    <a href="#scalar-vector-code">Scalar vs Vector 算周期</a>
   </details>
   <details class="nav-group" open><summary>Accelerators</summary>
     <a href="#systolic-array">Systolic Array</a>
-    <a href="#dataflow">Dataflow (WS/OS/IS)</a>
+    <a href="#dataflow">Dataflow WS/OS/IS</a>
     <a href="#gpu-simt">GPU / SIMT</a>
   </details>
-  <details class="nav-group" open><summary>Practice</summary>
-    <a href="#practice">模拟题</a>
+  <details class="nav-group" open><summary>练习</summary>
+    <a href="#practice">模拟题集</a>
   </details>
 </nav>
+
 <div class="main">
 
-<div class="hero" id="exam-overview">
-  <h1>EE-508 Midterm 考前突击</h1>
-  <p class="sub">Hardware Foundations for Machine Learning &middot; Instructor: Arash Saifhashemi</p>
+<div class="hero">
+  <h1>EE-508 Midterm 手把手教学</h1>
+  <p class="sub">不是背公式，是教你怎么做题</p>
   <div class="exam-info">
-    <span>March 13 (Friday)</span><span>GFS 106</span><span>Closed-book, Pen &amp; Paper</span><span>In-class</span>
+    <span>March 13 (Fri)</span><span>GFS 106</span><span>Closed-book</span><span>Pen &amp; Paper</span>
   </div>
 </div>
 
-<div class="section" id="quiz-review">
-<h2>Quiz 1 回顾</h2>
-<p>共 100 分 4 题，掌握题型 = Midterm 基础。</p>
-<div class="grid grid-2" style="margin-top:1rem">
-  <div class="mini-card warn"><h4>Q1 Systolic Array (35pt)</h4>
-    <p>3&times;3 阵列数据流 + AI 计算</p>
-    <ul><li>activation 经过 <strong>3</strong> 个 PE，每个做 <strong>3</strong> MAC</li>
-    <li>AI<sub>act</sub>=18N/12N=<strong>1.5</strong></li>
-    <li>AI<sub>wt</sub>=2N/4=<strong>0.5N</strong></li></ul>
-  </div>
-  <div class="mini-card warn"><h4>Q2 Conv vs Cross-Corr (20pt)</h4>
-    <p>Conv <strong>flip kernel</strong>；CNN 用 <strong>cross-correlation</strong>（不翻转）</p>
-  </div>
-  <div class="mini-card warn"><h4>Q3 1D Output Size (20pt)</h4>
-    <ul><li>In=3,F=11,S=1 &rarr; <strong>invalid</strong></li>
-    <li>pad=4 &rarr; out=1; same需pad=5</li></ul>
-  </div>
-  <div class="mini-card warn"><h4>Q4 2D Multi-Ch Conv (25pt)</h4>
-    <ul><li>In 3&times;3&times;3, F 3&times;2&times;2 &rarr; Out <strong>2&times;2</strong></li>
-    <li>im2col 降低 AI（mem traffic&uarr;, FLOPs不变）</li></ul>
-  </div>
-</div></div>
-
+<!-- ==================== GRADIENT DESCENT ==================== -->
 <div class="section" id="gradient-descent">
-<h2>1. Gradient Descent 梯度下降</h2>
-<h3>核心思想</h3>
-<p>迭代更新参数<strong>最小化 Loss</strong>。每步沿梯度负方向走一小步。</p>
+<h2>1. Gradient Descent — 梯度下降</h2>
+
+<div class="intuition">
+想象你蒙着眼站在山上，想走到最低点。你能做的就是<strong>摸一下脚下的坡度</strong>（梯度），然后<strong>往下坡方向走一小步</strong>。重复这个过程，最终到达谷底（Loss 最小）。
+</div>
+
+<h3>公式只有一个</h3>
 <div class="equation">$$w_{new} = w_{old} - \alpha \cdot \frac{\partial L}{\partial w}$$</div>
-<p style="text-align:center;font-size:.85rem">$\alpha$ = Learning Rate, $\frac{\partial L}{\partial w}$ = Gradient</p>
-<h3>算法步骤</h3>
-<ol class="steps">
-  <li><strong>初始化</strong> $w$（Xavier/He）</li>
-  <li><strong>Forward</strong>：$\hat{y}=h(x)$</li>
-  <li><strong>Loss</strong>：$L=\frac{1}{N}\sum(\hat{y}_i-y_i)^2$</li>
-  <li><strong>Backward</strong>：Chain Rule 算 $\frac{\partial L}{\partial w_j}$</li>
-  <li><strong>Update</strong>：$w_j \leftarrow w_j - \alpha\frac{\partial L}{\partial w_j}$</li>
-  <li>重复直到收敛</li>
-</ol>
-<h3>GD 变体</h3>
-<div class="grid grid-3">
-  <div class="mini-card"><h4>Batch GD</h4><p><strong>全部数据</strong>算梯度。稳定但慢</p></div>
-  <div class="mini-card info"><h4>SGD</h4><p><strong>1 个样本</strong>。快但噪声大</p></div>
-  <div class="mini-card warn"><h4>Mini-batch</h4><p><strong>一小批</strong>。平衡（最常用）</p></div>
-</div>
-<h3>Learning Rate</h3>
-<div class="grid grid-2">
-  <div class="mini-card red"><h4>&alpha; 太大</h4><p>震荡/<strong>发散</strong></p></div>
-  <div class="mini-card"><h4>&alpha; 太小</h4><p>收敛极慢，卡局部最小</p></div>
-</div>
-<div class="callout tip"><strong>考点</strong>写出 update formula；区分 Batch/SGD/Mini-batch；LR 影响。</div>
+<p>拆开来理解：</p>
+<ul>
+<li>$w$ = 你要调的参数（weight）</li>
+<li>$\alpha$ = 步长（Learning Rate），走多远。<strong>你自己设的</strong>，不是算出来的</li>
+<li>$\frac{\partial L}{\partial w}$ = Loss 对 w 的偏导 = 坡度方向。<strong>这个要算</strong></li>
+<li>减号 = 往<strong>反方向</strong>走（坡度指向上坡，我们要下坡）</li>
+</ul>
+
+<h3>手把手：怎么算梯度？</h3>
+<p>假设用 MSE Loss，模型是线性的 $\hat{y}=w_1 x_1 + w_2 x_2$：</p>
+<div class="equation">$$L = (\hat{y} - y)^2$$</div>
+<p>对 $w_1$ 求偏导（Chain Rule）：</p>
+<div class="equation">$$\frac{\partial L}{\partial w_1} = 2(\hat{y}-y) \cdot \frac{\partial \hat{y}}{\partial w_1} = 2(\hat{y}-y) \cdot x_1$$</div>
+<p style="color:var(--accent-2)"><strong>规律：MSE 梯度 = 2 &times; 误差 &times; 对应的输入</strong></p>
+
+<div class="worked">
+<h4>例题：一步 GD 更新</h4>
+<p>已知 $\hat{y}=3x_1+2x_2$, 数据点 $(x_1,x_2,y)=(1,2,10)$, $\alpha=0.1$, 用 MSE。求更新后 $w_1$。</p>
+<div class="step"><b>Step 1: 算预测值</b><br>$\hat{y}=3(1)+2(2)=3+4=7$</div>
+<div class="step"><b>Step 2: 算误差</b><br>$\hat{y}-y=7-10=-3$（预测小了3）</div>
+<div class="step"><b>Step 3: 算梯度</b><br>$\frac{\partial L}{\partial w_1}=2(-3)(1)=-6$<br><em>（注意：$x_1=1$，乘对应的输入）</em></div>
+<div class="step"><b>Step 4: 更新</b><br>$w_1=3-0.1\times(-6)=3+0.6=\mathbf{3.6}$<br><em>（梯度为负 → 减去负数 → w 变大 → 预测值变大 → 更接近 $y=10$）</em></div>
 </div>
 
+<div class="pitfall">
+<h4>常见错误</h4>
+<ul>
+<li><strong>忘记乘 $x$</strong>：梯度公式里的 $x_1$ 很多人漏掉</li>
+<li><strong>符号搞反</strong>：是 $w - \alpha \cdot gradient$，不是加号</li>
+<li><strong>不知道对哪个 $w$ 求导</strong>：题目问 $w_1$ 就乘 $x_1$，问 $w_2$ 就乘 $x_2$</li>
+</ul>
+</div>
+
+<h3>三种 GD — 考概念</h3>
+<div class="table-wrap"><table>
+<tr><th>方法</th><th>每步用多少数据</th><th>特点</th></tr>
+<tr><td><strong>Batch GD</strong></td><td>全部 N 个样本</td><td>梯度准确，但一步很慢</td></tr>
+<tr><td><strong>SGD</strong></td><td>随机 1 个样本</td><td>一步很快，但方向不稳（噪声大）</td></tr>
+<tr><td><strong>Mini-batch</strong></td><td>一批（如 32 个）</td><td>折中，<strong>实际最常用</strong></td></tr>
+</table></div>
+
+<h3>Learning Rate 影响</h3>
+<div class="grid grid-2">
+<div class="mini-card red"><h4>$\alpha$ 太大</h4><p>步子太大 → 跨过最低点 → 来回震荡 → <strong>可能发散</strong>（Loss 越来越大）</p></div>
+<div class="mini-card warn"><h4>$\alpha$ 太小</h4><p>步子太小 → 收敛极慢 → 可能卡在局部最小</p></div>
+</div>
+</div>
+
+<!-- ==================== LOSS FUNCTIONS ==================== -->
 <div class="section" id="loss-functions">
-<h2>2. Loss Functions</h2>
-<h3>回归</h3>
-<div class="grid grid-2">
-  <div class="mini-card"><h4>MSE</h4><div class="equation">$$L=\frac{1}{N}\sum(\hat{y}_i-y_i)^2$$</div><p>惩罚大误差；可微</p></div>
-  <div class="mini-card info"><h4>MAE</h4><div class="equation">$$L=\frac{1}{N}\sum|\hat{y}_i-y_i|$$</div><p>对 outlier 鲁棒</p></div>
+<h2>2. Loss Functions — 怎么衡量"错多少"</h2>
+
+<div class="intuition">
+Loss = 预测和真实值之间的差距。不同任务用不同的 loss，但核心思想一样：<strong>预测越准，loss 越小</strong>。
 </div>
-<h3>分类</h3>
+
+<h3>回归任务（输出连续值）</h3>
 <div class="grid grid-2">
-  <div class="mini-card warn"><h4>Cross-Entropy</h4><div class="equation">$$L=-\sum_{c} y_c\log\hat{y}_c$$</div><p>预测概率越高 loss 越小</p></div>
-  <div class="mini-card"><h4>Logistic (Binary)</h4><div class="equation">$$L=-[y\log\hat{y}+(1-y)\log(1-\hat{y})]$$</div></div>
+<div class="mini-card">
+<h4>MSE — 均方误差</h4>
+<div class="equation">$$L=\frac{1}{N}\sum_{i=1}^{N}(\hat{y}_i-y_i)^2$$</div>
+<p><strong>平方</strong>的意义：大误差被放大惩罚（差 2 比差 1 的惩罚大 4 倍）</p>
+<p>求导简单：$\frac{\partial}{\partial \hat{y}}=2(\hat{y}-y)$</p>
+</div>
+<div class="mini-card info">
+<h4>MAE — 均绝对误差</h4>
+<div class="equation">$$L=\frac{1}{N}\sum_{i=1}^{N}|\hat{y}_i-y_i|$$</div>
+<p>对 outlier 更不敏感（差 2 只比差 1 惩罚 2 倍，不是 4 倍）</p>
 </div>
 </div>
 
+<h3>分类任务（输出概率）</h3>
+<div class="mini-card warn">
+<h4>Cross-Entropy — 交叉熵（多分类）</h4>
+<div class="equation">$$L=-\sum_{c=1}^{C} y_c \log \hat{y}_c$$</div>
+<p>$y_c$ 是 one-hot（只有正确类=1，其余=0），所以实际只算：$L=-\log\hat{y}_{correct}$</p>
+<p>如果预测正确类概率=0.9，$L=-\log(0.9)=0.105$（很小✓）</p>
+<p>如果预测正确类概率=0.1，$L=-\log(0.1)=2.303$（很大✗）</p>
+</div>
+
+<div class="mini-card" style="margin-top:1rem">
+<h4>Binary Cross-Entropy（二分类）</h4>
+<div class="equation">$$L=-[y\log\hat{y}+(1-y)\log(1-\hat{y})]$$</div>
+<p>$y=1$ 时只剩 $-\log\hat{y}$；$y=0$ 时只剩 $-\log(1-\hat{y})$</p>
+</div>
+</div>
+
+<!-- ==================== CHAIN RULE ==================== -->
 <div class="section" id="chain-rule">
-<h2>3. Chain Rule &amp; Backprop</h2>
-<h3>Chain Rule</h3>
-<p>复合函数导数 = 各层导数之积。从 Loss 反向传播梯度。</p>
+<h2>3. Chain Rule &amp; Backprop — 怎么算深层网络的梯度</h2>
+
+<div class="intuition">
+一个多层网络就像一条流水线：输入 → 第一层 → 第二层 → ... → Loss。<br>
+Chain Rule 说：<strong>总变化 = 每一段变化的乘积</strong>。<br>
+就像：汇率换算 1美元→7人民币→0.7港币，总换算率 = 7 &times; 0.1 = 0.7。
+</div>
+
+<h3>Chain Rule 公式</h3>
+<p>如果 $L$ 依赖 $\hat{y}$，$\hat{y}$ 依赖 $z$，$z$ 依赖 $w$：</p>
 <div class="equation">$$\frac{\partial L}{\partial w}=\frac{\partial L}{\partial \hat{y}}\cdot\frac{\partial \hat{y}}{\partial z}\cdot\frac{\partial z}{\partial w}$$</div>
-<h3>线性回归</h3>
-<p>$\hat{y}=w_1x_1+\cdots+w_nx_n$, MSE</p>
-<div class="equation">$$\frac{\partial L}{\partial w_j}=\frac{2}{N}\sum(\hat{y}_i-y_i)\cdot x_j$$</div>
-<h3>Backpropagation</h3>
-<ol class="steps">
-  <li>Forward: 逐层算输出，存中间值</li>
-  <li>Compute Loss</li>
-  <li>Backward: Chain Rule 逐层算 $\frac{\partial L}{\partial W^{(l)}}$</li>
-  <li>Update: $W^{(l)}\leftarrow W^{(l)}-\alpha\frac{\partial L}{\partial W^{(l)}}$</li>
-</ol>
-<h3>Vanishing Gradient</h3>
-<p>Sigmoid/Tanh 导数&lt;1，多层相乘梯度衰减。</p>
-<div class="grid grid-3">
-  <div class="mini-card"><h4>ReLU</h4><p>正区间梯度=1</p></div>
-  <div class="mini-card info"><h4>Weight Init</h4><p>Xavier/He</p></div>
-  <div class="mini-card warn"><h4>Batch Norm</h4><p>$\hat{x}=\frac{x-\mu}{\sqrt{\sigma^2+\epsilon}}$</p></div>
-</div>
+<p>就是把每一段的导数乘起来。</p>
+
+<div class="worked">
+<h4>手算例题：2 层网络</h4>
+<p>网络：$z=w \cdot x$，$\hat{y}=\text{ReLU}(z)=\max(0,z)$，$L=(\hat{y}-y)^2$<br>
+已知 $w=2, x=3, y=5$。求 $\frac{\partial L}{\partial w}$。</p>
+<div class="step"><b>Step 1: Forward（正向算一遍）</b><br>
+$z=2 \times 3=6$<br>
+$\hat{y}=\text{ReLU}(6)=6$（因为 6&gt;0）<br>
+$L=(6-5)^2=1$</div>
+<div class="step"><b>Step 2: 从后往前，逐段求导</b><br>
+$\frac{\partial L}{\partial \hat{y}}=2(\hat{y}-y)=2(6-5)=2$</div>
+<div class="step"><b>Step 3: ReLU 那段</b><br>
+$\frac{\partial \hat{y}}{\partial z}=1$（因为 $z=6>0$，ReLU 导数=1）<br>
+<em>（如果 $z&lt;0$，ReLU 导数=0，梯度就断了！→ 这就是 dead ReLU 问题）</em></div>
+<div class="step"><b>Step 4: 线性那段</b><br>
+$\frac{\partial z}{\partial w}=x=3$</div>
+<div class="step"><b>Step 5: 乘起来</b><br>
+$\frac{\partial L}{\partial w}=2 \times 1 \times 3=\mathbf{6}$</div>
 </div>
 
-<div class="section" id="cnn-benefits">
-<h2>4. CNN 优势</h2>
-<div class="grid grid-2">
-  <div class="mini-card"><h4>局部连接</h4><p>输出只连输入局部&rarr;减参数</p></div>
-  <div class="mini-card info"><h4>权值共享</h4><p>同一filter滑动&rarr;再减参数</p></div>
-  <div class="mini-card warn"><h4>空间层级</h4><p>边缘&rarr;纹理&rarr;物体</p></div>
-  <div class="mini-card"><h4>易并行</h4><p>各位置 MAC 独立</p></div>
-</div>
+<h3>Vanishing Gradient 问题</h3>
+<p>Sigmoid 导数最大=0.25。10 层网络：$0.25^{10}\approx 0.000001$，梯度几乎为 0！</p>
+<div class="callout tip"><strong>解决方法</strong>
+<ul><li><strong>ReLU</strong>：正区间导数=1，不会衰减</li>
+<li><strong>BatchNorm</strong>：归一化每层输出 $\hat{x}=\frac{x-\mu}{\sqrt{\sigma^2+\epsilon}}$</li>
+<li><strong>好的初始化</strong>：Xavier（tanh），He（ReLU）</li>
+</ul></div>
 </div>
 
+<!-- ==================== OUTPUT SIZE ==================== -->
 <div class="section" id="output-size">
-<h2>5. Output Feature Map Size</h2>
-<div class="equation">$$\text{Out}=\left\lfloor\frac{\text{In}-F+2P}{S}\right\rfloor+1$$</div>
-<h3>速查</h3>
+<h2>4. CNN Output Size — 考试必出的计算题</h2>
+
+<div class="intuition">
+一个 filter 在输入上滑动，每滑一次产生一个输出。<strong>输出大小 = 能滑多少次 + 1</strong>。
+</div>
+
+<h3>万能公式</h3>
+<div class="equation">$$\text{Out}=\left\lfloor\frac{\text{In} - F + 2P}{S}\right\rfloor + 1$$</div>
+<p>每个字母的意思：</p>
 <div class="table-wrap"><table>
-<tr><th>场景</th><th>In</th><th>F</th><th>P</th><th>S</th><th>Out</th></tr>
-<tr><td>基本</td><td>5</td><td>3</td><td>0</td><td>1</td><td><strong>3</strong></td></tr>
-<tr><td>Same pad</td><td>5</td><td>3</td><td>1</td><td>1</td><td><strong>5</strong></td></tr>
-<tr><td>Stride</td><td>7</td><td>3</td><td>0</td><td>2</td><td><strong>3</strong></td></tr>
-<tr><td>Quiz Q3</td><td>3</td><td>11</td><td>0</td><td>1</td><td><strong>invalid</strong></td></tr>
+<tr><th>符号</th><th>英文</th><th>中文</th><th>典型值</th></tr>
+<tr><td>$\text{In}$</td><td>Input size</td><td>输入的宽或高</td><td>28, 32, 224...</td></tr>
+<tr><td>$F$</td><td>Filter size</td><td>卷积核大小</td><td>3, 5, 7, 11...</td></tr>
+<tr><td>$P$</td><td>Padding</td><td>输入外面加几圈 0</td><td>0, 1, 2...</td></tr>
+<tr><td>$S$</td><td>Stride</td><td>每次滑几格</td><td>1, 2</td></tr>
 </table></div>
-<h3>Same Padding</h3>
-<div class="equation">$$P=\frac{F-1}{2}\quad(S=1)$$</div>
-<h3>Multi-Channel</h3>
-<div class="callout blue"><strong>多通道</strong>
-In: $H\times W\times C$, Filter: $R\times S\times C$ (depth=C). $M$ filters &rarr; out depth=$M$</div>
+
+<h3>做题套路（3步）</h3>
+<div class="worked">
+<h4>例 1：基本题</h4>
+<p>In=7, F=3, P=0, S=1</p>
+<div class="step"><b>Step 1: 代入分子</b> In - F + 2P = 7 - 3 + 0 = 4</div>
+<div class="step"><b>Step 2: 除以 S</b> 4 / 1 = 4</div>
+<div class="step"><b>Step 3: 加 1</b> 4 + 1 = <strong>5</strong></div>
 </div>
 
-<div class="section" id="conv-vs-corr">
-<h2>6. Conv vs Cross-Correlation</h2>
-<div class="grid grid-2">
-  <div class="compare-card"><div class="head">Convolution</div><div class="body">
-    <p><strong>Flip</strong> kernel 再滑动</p>
-    <div class="equation">$$(f*g)(t)=\sum_\tau f(\tau)g(t-\tau)$$</div>
-    <p>交换律、结合律</p>
-  </div></div>
-  <div class="compare-card"><div class="head">Cross-Correlation (CNN)</div><div class="body">
-    <p><strong>不翻转</strong>直接滑动</p>
-    <div class="equation">$$(f\star g)(t)=\sum_\tau f(\tau)g(t+\tau)$$</div>
-    <p>kernel learned，翻不翻一样</p>
-  </div></div>
-</div>
-<div class="callout tip"><strong>考点</strong>CNN 用 cross-correlation 不翻转，但习惯叫 convolution。</div>
+<div class="worked">
+<h4>例 2：有 Padding 和 Stride</h4>
+<p>In=32, F=5, P=2, S=2</p>
+<div class="step"><b>Step 1:</b> 32 - 5 + 2&times;2 = 32 - 5 + 4 = 31</div>
+<div class="step"><b>Step 2:</b> 31 / 2 = 15.5 → <strong>下取整</strong> → 15</div>
+<div class="step"><b>Step 3:</b> 15 + 1 = <strong>16</strong></div>
 </div>
 
-<div class="section" id="im2col">
-<h2>7. im2col</h2>
-<p>卷积&rarr;<strong>GEMM</strong>，利用 BLAS 加速。</p>
-<ol class="steps">
-  <li>Filter flatten 为行向量</li>
-  <li>输入窗口展成列，拼 im2col 矩阵</li>
-  <li>矩阵乘 = output</li>
+<div class="worked">
+<h4>例 3：Quiz 原题 — 什么时候 Invalid？</h4>
+<p>In=3, F=11, P=0, S=1</p>
+<div class="step"><b>Step 1:</b> 3 - 11 + 0 = <strong>-8</strong>（负数！）</div>
+<div class="step"><b>结论:</b> Filter 比输入还大，<strong>放不下 → Invalid！</strong></div>
+</div>
+
+<h3>Same Padding — 让输出=输入</h3>
+<p>当 $S=1$ 时，想让 Out = In，需要：</p>
+<div class="equation">$$P=\frac{F-1}{2}$$</div>
+<div class="worked">
+<h4>例：In=28, F=7, S=1，求 Same Padding</h4>
+<div class="step">$P = (7-1)/2 = 3$</div>
+<div class="step">验证：$\lfloor(28-7+6)/1\rfloor+1 = 27+1 = 28$ ✓ 输出=输入</div>
+</div>
+
+<h3>多通道 — 深度怎么算？</h3>
+<div class="callout blue"><strong>记住两点</strong>
+<ol>
+<li><strong>一个 filter 的深度 = 输入通道数 $C$</strong>（必须匹配）</li>
+<li><strong>用 $M$ 个 filter → 输出深度 = $M$</strong></li>
 </ol>
-<div class="callout danger"><strong>缺点: AI 下降</strong>数据重复存储&rarr;memory traffic&uarr;, FLOPs不变&rarr;AI&darr;</div>
+输入 $H\times W\times C$，$M$ 个 $R\times S\times C$ filter → 输出 $H'\times W'\times M$<br>
+$H'$ 和 $W'$ 用上面的公式算</div>
+
+<div class="worked">
+<h4>Quiz Q4 原题：2D 多通道</h4>
+<p>Input $3\times3\times3$（3通道），3 个 $2\times2\times3$ filter，S=1, P=0</p>
+<div class="step"><b>宽/高:</b> $\lfloor(3-2+0)/1\rfloor+1=2$</div>
+<div class="step"><b>深度:</b> 3 个 filter → 深度 = 3</div>
+<div class="step"><b>输出:</b> $2\times2\times3$</div>
 </div>
 
+<div class="pitfall">
+<h4>Output Size 常见错误</h4>
+<ul>
+<li><strong>忘记 2P</strong>：Padding 是两边都加，所以是 $2P$ 不是 $P$</li>
+<li><strong>忘记下取整</strong>：结果有小数时必须 floor</li>
+<li><strong>通道数搞错</strong>：filter 深度=输入通道（不影响空间大小），输出深度=filter个数</li>
+</ul>
+</div>
+</div>
+
+<!-- ==================== CONV vs CROSS-CORR ==================== -->
+<div class="section" id="conv-vs-corr">
+<h2>5. Convolution vs Cross-Correlation</h2>
+
+<div class="intuition">
+数学上的卷积 = 先把 kernel <strong>翻转 180°</strong>，再滑动相乘求和。<br>
+CNN 的"卷积" = <strong>不翻转</strong>，直接滑动相乘求和（其实是 cross-correlation）。<br>
+为什么没关系？因为 kernel 是学出来的，翻不翻转学到的值不同而已，效果一样。
+</div>
+
+<div class="worked">
+<h4>数值例子</h4>
+<p>Input: [1, 2, 3, 4, 5], Kernel: [a, b, c]</p>
+<div class="step"><b>Cross-Correlation（CNN 用的）</b><br>
+output[0] = 1&times;a + 2&times;b + 3&times;c<br>
+output[1] = 2&times;a + 3&times;b + 4&times;c<br>
+<em>kernel 不动，按原顺序 [a, b, c] 滑</em></div>
+<div class="step"><b>Convolution（数学定义）</b><br>
+先翻转 kernel → [c, b, a]<br>
+output[0] = 1&times;c + 2&times;b + 3&times;a<br>
+output[1] = 2&times;c + 3&times;b + 4&times;a</div>
+</div>
+
+<div class="callout warn"><strong>考试答题模板</strong>
+<p>Convolution 需要 <strong>flip（翻转）kernel</strong>，有交换律。CNN 实际使用 <strong>cross-correlation（不翻转）</strong>，因为 kernel 是通过学习得到的，翻转与否不影响模型表达能力。</p></div>
+</div>
+
+<!-- ==================== IM2COL ==================== -->
+<div class="section" id="im2col">
+<h2>6. im2col — 把卷积变成矩阵乘法</h2>
+
+<div class="intuition">
+卷积本质是"滑动窗口 + 求和"。im2col 把每个窗口<strong>拉成一列</strong>，所有窗口拼成一个大矩阵，然后用一次矩阵乘法算出所有输出。<strong>GPU 做矩阵乘特别快</strong>（有 BLAS 库优化），所以这样反而更快。
+</div>
+
+<div class="worked">
+<h4>具体例子</h4>
+<p>Input $4\times4$，Filter $2\times2$，S=1, P=0 → Output $3\times3$（9个位置）</p>
+<div class="step"><b>Step 1: Filter 拉成行向量</b><br>
+Filter $\begin{bmatrix}a&b\\c&d\end{bmatrix}$ → 行向量 $[a, b, c, d]$（1&times;4）</div>
+<div class="step"><b>Step 2: 每个滑动窗口拉成列</b><br>
+窗口1（左上2&times;2）→ 列1<br>窗口2（右移一格）→ 列2<br>...共 9 个窗口 → 拼成 4&times;9 矩阵</div>
+<div class="step"><b>Step 3: 矩阵乘</b><br>
+$[1\times4] \times [4\times9] = [1\times9]$ → reshape 成 $3\times3$ 输出</div>
+</div>
+
+<h3>im2col 的代价</h3>
+<div class="grid grid-2">
+<div class="mini-card"><h4>优点</h4><p>卷积→GEMM，利用高度优化的矩阵乘库，<strong>计算速度快</strong></p></div>
+<div class="mini-card red"><h4>缺点</h4><p>窗口重叠 → 同一数据被复制多次 → <strong>内存占用&uarr;</strong><br>FLOPs 不变，但 memory traffic&uarr; → <strong>AI 下降</strong></p></div>
+</div>
+</div>
+
+<!-- ==================== ROOFLINE ==================== -->
 <div class="section" id="roofline">
-<h2>8. Roofline Model</h2>
-<h3 id="arithmetic-intensity">Arithmetic Intensity</h3>
-<div class="equation">$$AI=\frac{W}{Q}=\frac{\text{FLOPs}}{\text{Bytes}}$$</div>
-<h3>Roofline</h3>
-<div class="equation">$$\text{GFLOP/s}=\min\begin{cases}\text{Peak GFLOP/s}\\AI\times\text{Peak GB/s}\end{cases}$$</div>
-<h3>两区域</h3>
-<div class="grid grid-2">
-  <div class="mini-card red"><h4>Memory Bound</h4><p>$AI&lt;$ Peak/BW. 受<strong>带宽</strong>限制</p></div>
-  <div class="mini-card"><h4>Compute Bound</h4><p>$AI\geq$ Peak/BW. 已达<strong>峰值</strong></p></div>
-</div>
-<h3>Transition</h3>
-<div class="equation">$$AI_{trans}=\frac{\text{Peak GFLOP/s}}{\text{Peak GB/s}}$$</div>
-<h3>AI 对比</h3>
-<div class="table-wrap"><table>
-<tr><th>Op</th><th>Ops/E</th><th>B/E</th><th>AI</th><th>Type</th></tr>
-<tr><td>Vec Add</td><td>1</td><td>12</td><td><strong>0.083</strong></td><td>Mem</td></tr>
-<tr><td>Dot</td><td>2</td><td>8</td><td><strong>0.25</strong></td><td>Mem</td></tr>
-<tr><td>GEMV</td><td>2</td><td>4</td><td><strong>0.5</strong></td><td>Mem</td></tr>
-<tr><td>GEMM N&times;N</td><td>2N</td><td>12</td><td><strong>N/6</strong></td><td>Compute&uarr;</td></tr>
-</table></div>
-<div class="callout tip"><strong>洞察</strong>GEMM AI 随 N 增长&rarr;大 N 进入 Compute-Bound&rarr;Tensor Core 专优化</div>
-<h3>Quiz Systolic AI</h3>
-<div class="practice"><h4>3&times;3 Array, N weights/col</h4>
-<ul><li>18N FLOPs / 12N bytes &rarr; AI<sub>act</sub>=<strong>1.5</strong></li>
-<li>2N FLOPs / 4 bytes &rarr; AI<sub>wt</sub>=<strong>0.5N</strong></li></ul>
-<p><strong>增大 N &rarr; weight reuse&uarr; &rarr; AI&uarr;</strong></p>
-</div></div>
+<h2>7. Roofline Model — 性能上限分析</h2>
 
+<div class="intuition">
+一个程序的速度要么被<strong>计算能力</strong>卡住（CPU/GPU 算不过来），要么被<strong>内存带宽</strong>卡住（数据搬不过来）。Roofline 模型就是判断你被哪个卡住了。
+</div>
+
+<h3>核心概念：Arithmetic Intensity (AI)</h3>
+<div class="equation">$$AI = \frac{\text{计算量 (FLOPs)}}{\text{数据传输量 (Bytes)}} \quad\text{单位: FLOP/Byte}$$</div>
+<p>AI 衡量的是：<strong>每搬 1 字节数据，能做多少次运算</strong>。</p>
+<ul>
+<li>AI 高 → 搬一次数据反复用 → compute-bound</li>
+<li>AI 低 → 搬很多数据只算一点 → memory-bound</li>
+</ul>
+
+<h3>Roofline 公式</h3>
+<div class="equation">$$\text{性能} = \min(\text{Peak GFLOP/s}, \quad AI \times \text{Peak BW})$$</div>
+<p>性能取两者中<strong>较小的</strong>（被哪个卡住就是哪个）。</p>
+
+<h3>判断方法：算 Transition Point</h3>
+<div class="equation">$$AI_{trans} = \frac{\text{Peak GFLOP/s}}{\text{Peak GB/s}}$$</div>
+<ul>
+<li>$AI < AI_{trans}$ → <strong>Memory Bound</strong>（搬数据太慢，算力用不满）</li>
+<li>$AI \geq AI_{trans}$ → <strong>Compute Bound</strong>（算力满了，搬数据够快）</li>
+</ul>
+
+<div class="worked">
+<h4>例题：判断 bound 并算性能</h4>
+<p>硬件：Peak = 100 GFLOP/s, BW = 50 GB/s。程序 AI = 1.5</p>
+<div class="step"><b>Step 1: 算 Transition</b><br>$AI_{trans} = 100/50 = 2$</div>
+<div class="step"><b>Step 2: 比较</b><br>$AI=1.5 < 2$ → <strong>Memory Bound!</strong></div>
+<div class="step"><b>Step 3: 算性能</b><br>Performance = $AI \times BW = 1.5 \times 50 = \mathbf{75}$ GFLOP/s<br>（没达到 100 的峰值，被带宽拖后腿）</div>
+</div>
+
+<h3>怎么算 AI — 考试出题套路</h3>
+<p>FP32 = 4 bytes/element</p>
+<div class="table-wrap"><table>
+<tr><th>操作</th><th>FLOPs</th><th>数据量</th><th>AI</th><th>怎么算的</th></tr>
+<tr><td><strong>Vector Add</strong><br>$C_i = A_i + B_i$</td><td>N</td><td>3N&times;4=12N B</td><td>$\frac{N}{12N}=\frac{1}{12}$</td><td>读 A,B 写 C 各 N 个 FP32</td></tr>
+<tr><td><strong>Dot Product</strong><br>$c=\sum A_i B_i$</td><td>2N</td><td>2N&times;4+4=8N+4</td><td>$\approx\frac{1}{4}$</td><td>N 乘 + N-1 加 &asymp; 2N; 读 A,B 写 1 标量</td></tr>
+<tr><td><strong>GEMV</strong><br>$y=Ax$</td><td>$2N^2$</td><td>$(N^2+2N)\times4$</td><td>$\approx\frac{1}{2}$</td><td>矩阵 $N^2$ + 向量 $N$ + 输出 $N$</td></tr>
+<tr><td><strong>GEMM</strong><br>$C=AB$</td><td>$2N^3$</td><td>$3N^2\times4$</td><td>$\frac{N}{6}$</td><td>$2N^3$ FLOPs, 3 个 $N\times N$ 矩阵</td></tr>
+</table></div>
+
+<div class="callout tip"><strong>关键洞察</strong>
+<p><strong>GEMM 的 AI 随 N 增长！</strong> N=600 时 AI=100，远超 transition。所以大矩阵乘法是 compute-bound，GPU/TPU 专门优化它。<br>而 Vec Add 的 AI 恒=1/12，永远 memory-bound。</p>
+</div>
+
+<div class="worked">
+<h4>例题：GEMM AI 计算</h4>
+<p>两个 64&times;64 的 FP32 矩阵相乘</p>
+<div class="step"><b>FLOPs</b>: $2 \times 64^3 = 2 \times 262144 = 524288$</div>
+<div class="step"><b>Bytes</b>: 3 个 64&times;64 矩阵 &times; 4 bytes = $3 \times 4096 \times 4 = 49152$</div>
+<div class="step"><b>AI</b>: $524288 / 49152 \approx \mathbf{10.67} \approx 64/6$ ✓</div>
+</div>
+
+<h3>Quiz 的 Systolic Array AI</h3>
+<div class="worked">
+<h4>3&times;3 Array, 每列 N 个权重</h4>
+<div class="step"><b>Activation AI</b>:<br>FLOPs: 每 act 经过 3 PE，每 PE 做 3 MAC → 18 ops。共 N 个 → 18N<br>Bytes: 3 列各 N 个 FP32 读入 = 3N&times;4 = 12N<br>$AI_{act} = 18N/12N = \mathbf{1.5}$</div>
+<div class="step"><b>Weight AI</b>:<br>每个权重被 N 个 act 复用 → FLOPs = 2N<br>Bytes: 1 个 FP32 = 4<br>$AI_{wt} = 2N/4 = \mathbf{0.5N}$<br>N 越大 → 权重复用越多 → AI 越高!</div>
+</div>
+</div>
+
+<!-- ==================== FLYNN ==================== -->
 <div class="section" id="flynn">
-<h2>9. Flynn's Taxonomy</h2>
+<h2>8. Flynn's Taxonomy — 4 种计算架构</h2>
+
+<div class="intuition">
+分类标准很简单：看有几条<strong>指令流</strong>（Instruction）和几条<strong>数据流</strong>（Data）。
+</div>
+
 <div class="table-wrap"><table>
-<tr><th>类型</th><th>描述</th><th>示例</th></tr>
-<tr><td><span class="tag tag-blue">SISD</span></td><td>单指令单数据</td><td>传统CPU</td></tr>
-<tr><td><span class="tag tag-green">SIMD</span></td><td>单指令多数据</td><td>GPU, Vec/Array Proc</td></tr>
-<tr><td><span class="tag tag-amber">MISD</span></td><td>多指令单数据</td><td>Systolic Array</td></tr>
-<tr><td><span class="tag tag-red">MIMD</span></td><td>多指令多数据</td><td>Multiprocessor</td></tr>
+<tr><th></th><th>Single Data</th><th>Multiple Data</th></tr>
+<tr><td><strong>Single Instruction</strong></td>
+<td><span class="tag tag-blue">SISD</span><br>传统 CPU<br>一次一条指令处理一个数据</td>
+<td><span class="tag tag-green">SIMD</span><br>GPU、Vector/Array Proc<br>一条指令同时处理<strong>多个</strong>数据</td></tr>
+<tr><td><strong>Multiple Instruction</strong></td>
+<td><span class="tag tag-amber">MISD</span><br>Systolic Array<br>多条指令处理同一数据流</td>
+<td><span class="tag tag-red">MIMD</span><br>多核 CPU、超算<br>各核独立跑不同程序</td></tr>
 </table></div>
+
+<div class="worked">
+<h4>考试题：分类</h4>
+<div class="step"><b>单核 CPU</b> → <strong>SISD</strong>（一次一条指令一个数据）</div>
+<div class="step"><b>GPU</b> → <strong>SIMD</strong>（一条指令同时处理 32 个线程的数据）</div>
+<div class="step"><b>Systolic Array (TPU)</b> → <strong>MISD</strong>（数据流过一排 PE，每个 PE 做不同操作）</div>
+<div class="step"><b>超级计算机 / 多核</b> → <strong>MIMD</strong>（每个核跑不同程序）</div>
+</div>
 </div>
 
+<!-- ==================== SIMD ==================== -->
 <div class="section" id="simd">
-<h2>10. SIMD: Time vs Space</h2>
-<div class="grid grid-2">
-  <div class="compare-card"><div class="head" style="background:var(--accent-2)">Array Proc（空间）</div><div class="body">
-    <ul><li>多 PE 同时相同操作不同数据</li>
-    <li><strong>Same op @ same time</strong></li>
-    <li>每 lane 有 ALU + RF</li></ul>
-  </div></div>
-  <div class="compare-card"><div class="head" style="background:var(--blue)">Vector Proc（时间）</div><div class="body">
-    <ul><li>同一 PE deep pipeline 处理连续数据</li>
-    <li><strong>Same op @ same space</strong></li>
-    <li>CRAY-1 pipeline</li></ul>
-  </div></div>
-</div>
-<div class="callout tip"><strong>区分</strong>Array=空间铺开多单元同时做; Vector=时间流水一单元连续做</div>
+<h2>9. SIMD 两种实现方式</h2>
+
+<div class="intuition">
+SIMD = 一条指令处理多个数据。但具体怎么"多个"？有两种截然不同的方式。
 </div>
 
+<div class="grid grid-2">
+<div class="compare-card"><div class="head" style="background:var(--accent-2)">Array Processor（铺开在空间）</div><div class="body">
+<p><strong>多个 PE 同时干活</strong></p>
+<ul>
+<li>N 个 PE 排成一排</li>
+<li>每个 PE 有自己的 ALU + Register</li>
+<li><strong>同一时刻</strong>，所有 PE 执行相同操作但处理不同数据</li>
+<li>一个 cycle 就能处理 N 个数据</li>
+</ul>
+<p style="color:var(--accent-2)"><strong>关键词：Same time, different space（空间并行）</strong></p>
+</div></div>
+<div class="compare-card"><div class="head" style="background:var(--blue)">Vector Processor（排开在时间）</div><div class="body">
+<p><strong>一个 PE 用深流水线连续处理</strong></p>
+<ul>
+<li>1 个功能单元做成<strong>深度流水线</strong></li>
+<li>每 cycle 送入一个新数据</li>
+<li>多个数据同时处于流水线不同阶段</li>
+<li>启动延迟后，steady state = 1 result/cycle</li>
+</ul>
+<p style="color:var(--blue)"><strong>关键词：Same space, different time（时间并行）</strong></p>
+</div></div>
+</div>
+
+<div class="callout tip"><strong>一句话区分</strong>
+<p>Array = <strong>空间上铺开</strong>多个单元，同一时刻并行处理<br>
+Vector = <strong>时间上流水</strong>一个单元，不同阶段重叠处理</p></div>
+</div>
+
+<!-- ==================== ARRAY vs VECTOR ==================== -->
 <div class="section" id="array-vs-vector">
-<h2>11. Array vs Vector 对比</h2>
+<h2>10. Array vs Vector — 详细对比</h2>
+
+<h3>时序图理解（关键！）</h3>
+<p>任务：4 个元素，每个要 LD→ADD→MUL→ST</p>
+
+<div class="grid grid-2">
+<div class="mini-card info">
+<h4>Array Processor（4 个 PE）</h4>
+<div class="ascii-box">T1: LD0 LD1 LD2 LD3   ← 4个PE同时Load
+T2: AD0 AD1 AD2 AD3   ← 4个PE同时Add
+T3: MU0 MU1 MU2 MU3   ← 4个PE同时Mul
+T4: ST0 ST1 ST2 ST3   ← 4个PE同时Store
+<strong>总共: 4 cycles</strong></div>
+</div>
+<div class="mini-card warn">
+<h4>Vector Processor（流水线）</h4>
+<div class="ascii-box">T1: LD0
+T2: LD1 AD0
+T3: LD2 AD1 MU0
+T4: LD3 AD2 MU1 ST0
+T5:     AD3 MU2 ST1
+T6:         MU3 ST2
+T7:             ST3
+<strong>总共: 7 cycles（但只需1个PE!）</strong></div>
+</div>
+</div>
+
 <div class="table-wrap"><table>
-<tr><th>特征</th><th>Array</th><th>Vector</th></tr>
-<tr><td>并行</td><td>Space</td><td>Pipeline</td></tr>
-<tr><td>PE</td><td>多个独立</td><td>少量+深流水</td></tr>
-<tr><td>同一时刻</td><td>多PE同指令</td><td>不同stage不同数据</td></tr>
-<tr><td>RF</td><td>分布式</td><td>向量寄存器(8&times;64)</td></tr>
+<tr><th>对比项</th><th>Array</th><th>Vector</th></tr>
+<tr><td>并行方式</td><td>空间：多 PE 同时</td><td>时间：流水线重叠</td></tr>
+<tr><td>硬件成本</td><td>高（N 个 PE）</td><td>低（1 个 PE + pipeline）</td></tr>
+<tr><td>延迟</td><td>低（O(stages)）</td><td>高开始 → startup + N-1</td></tr>
+<tr><td>吞吐</td><td>N/cycle</td><td>1/cycle（steady state）</td></tr>
 <tr><td>典型</td><td>GPU SM</td><td>CRAY-1</td></tr>
 </table></div>
-<pre style="background:#f1f5f9;padding:1rem;border-radius:8px;font-size:.82rem;overflow-x:auto">
-<strong>Array:</strong>             <strong>Vector Pipeline:</strong>
-T1: LD0 LD1 LD2 LD3  T1: LD0
-T2: AD0 AD1 AD2 AD3  T2: LD1 AD0
-T3: MU0 MU1 MU2 MU3  T3: LD2 AD1 MU0
-T4: ST0 ST1 ST2 ST3  T4: LD3 AD2 MU1 ST0
-                      T5:     AD3 MU2 ST1
-                      T6:         MU3 ST2
-                      T7:             ST3</pre>
 </div>
 
+<!-- ==================== MEMORY BANKS ==================== -->
 <div class="section" id="memory-banks">
-<h2>12. Memory Banks</h2>
-<h3>What</h3>
-<p>内存分多个 <strong>bank</strong>，各自独立访问，共享 bus。</p>
-<h3>Why</h3>
-<div class="grid grid-2">
-  <div class="mini-card"><h4>问题</h4><p>单 memory latency 高（11cyc）</p></div>
-  <div class="mini-card info"><h4>解决</h4><p>banking 并行：一bank等待时其他服务</p></div>
-</div>
-<h3>Advantages</h3>
-<ul><li>每cycle启动新bank&rarr;<strong>1 elem/cyc</strong></li>
-<li>支持向量连续加载</li>
-<li>bandwidth 匹配处理器</li></ul>
-<h3>When Best</h3>
-<div class="callout tip"><strong>条件</strong>
-<ol><li><strong>Stride=1</strong> 连续元素交错在不同bank</li>
-<li><strong>Banks &ge; Latency</strong>（如lat=11需&ge;11 banks）</li>
-<li>&rarr; 维持 <strong>1 elem/cyc</strong></li></ol></div>
-<h3>CRAY-1</h3>
-<div class="table-wrap"><table>
-<tr><th>参数</th><th>值</th></tr>
-<tr><td>Banks</td><td><strong>16</strong></td></tr>
-<tr><td>Vec Regs</td><td>8&times;64 elem&times;64bit</td></tr>
-<tr><td>Bank Lat</td><td>11 cyc (16&gt;11&check;)</td></tr>
-</table></div>
-<h3>Stride Problem</h3>
-<p>Stride 导致访问集中同一 bank &rarr; <strong>bank conflict</strong> &rarr; 性能骤降</p>
+<h2>11. Memory Banks — 考试重点！</h2>
+
+<div class="intuition">
+问题：内存读一次要 11 个 cycle（latency=11）。如果连续读，每次都要等 11 cycle，太慢了！<br>
+解决：把内存分成 <strong>16 个 bank</strong>，轮流读。Bank 0 还在忙的时候，去读 Bank 1，Bank 1 忙了读 Bank 2...等读完一圈回来，Bank 0 已经好了。<strong>像旋转门一样！</strong>
 </div>
 
+<h3>关键条件</h3>
+<div class="callout blue"><strong>要实现每 cycle 读出 1 个元素，需要满足：</strong>
+<ol>
+<li><strong>Banks &ge; Latency</strong>：bank 数量不少于延迟周期数（否则转一圈回来 bank 还没好）</li>
+<li><strong>连续元素在不同 bank</strong>：stride=1 时，元素 0 在 bank 0，元素 1 在 bank 1...（交错存储）</li>
+</ol>
+</div>
+
+<h3>Bank 地址计算</h3>
+<div class="equation">$$\text{Bank Number} = \text{Address} \mod \text{NumBanks}$$</div>
+
+<div class="worked">
+<h4>例：16 banks, stride=1</h4>
+<div class="step">元素 0 → bank 0%16 = <strong>0</strong></div>
+<div class="step">元素 1 → bank 1%16 = <strong>1</strong></div>
+<div class="step">元素 2 → bank 2%16 = <strong>2</strong></div>
+<div class="step">...每个元素在不同 bank → <strong>不冲突！</strong> → 每 cycle 读 1 个</div>
+</div>
+
+<div class="worked">
+<h4>例：8 banks, stride=4</h4>
+<div class="step">元素 0 → bank 0%8 = <strong>0</strong></div>
+<div class="step">元素 4 → bank 4%8 = <strong>4</strong></div>
+<div class="step">元素 8 → bank 8%8 = <strong>0</strong> ← 和元素 0 同一个 bank!</div>
+<div class="step">元素 12 → bank 12%8 = <strong>4</strong> ← 和元素 4 同一个 bank!</div>
+<div class="step"><b>结果：</b>只用到 bank 0 和 4 → <strong>Bank Conflict！</strong>性能骤降</div>
+</div>
+
+<div class="pitfall">
+<h4>Bank Conflict 发生条件</h4>
+<p>当 <strong>stride 和 bank 数量不互素</strong>（有公因数）时，会有冲突：</p>
+<ul>
+<li>Stride=2, 8 banks → GCD(2,8)=2 → 只用 8/2=4 个 bank → 冲突</li>
+<li>Stride=3, 8 banks → GCD(3,8)=1 → 用满 8 个 bank → 不冲突</li>
+<li>Stride=1 → GCD(1,N)=1 → <strong>永远不冲突</strong></li>
+</ul>
+</div>
+
+<h3>CRAY-1 参数（背下来）</h3>
+<div class="table-wrap"><table>
+<tr><th>参数</th><th>值</th><th>为什么</th></tr>
+<tr><td>Banks</td><td><strong>16</strong></td><td>16 &gt; 11(latency) → 不 stall</td></tr>
+<tr><td>Vector Regs</td><td>8 个 &times; 64 元素 &times; 64 bit</td><td>能存够多向量</td></tr>
+<tr><td>Bank Latency</td><td>11 cycles</td><td>SRAM 访问延迟</td></tr>
+</table></div>
+</div>
+
+<!-- ==================== SCALAR vs VECTOR CODE ==================== -->
 <div class="section" id="scalar-vector-code">
-<h2>13. Scalar vs Vector Code</h2>
-<p><code>for(i=0..49) C[i]=(A[i]+B[i])/2</code></p>
-<div class="grid grid-2">
-  <div class="compare-card"><div class="head">Scalar (304 instr)</div><div class="body">
-<pre style="font-size:.78rem;line-height:1.5">MOVI R0=50     ;1c
-MOVA R1=A      ;1c
-MOVA R2=B      ;1c
-MOVA R3=C      ;1c
-X: LD R4=[R1++] ;11c
-   LD R5=[R2++] ;11c
-   ADD R6=R4+R5 ;4c
-   SHR R7=R6>>1 ;1c
-   ST [R3++]=R7  ;11c
-   DECBNZ R0,X  ;2c</pre>
-    <p><strong>1 bank</strong>: 4+50&times;40=<strong>2004</strong>c</p>
-    <p><strong>2 banks</strong>: 4+50&times;30=<strong>1504</strong>c</p>
-  </div></div>
-  <div class="compare-card"><div class="head" style="background:var(--green)">Vector (7 instr)</div><div class="body">
-<pre style="font-size:.78rem;line-height:1.5">MOVI VLEN=50  ;1c
-MOVI VSTR=1   ;1c
-VLD  V0=A     ;11+49=60
-VLD  V1=B     ;11+49=60
-VADD V2=V0+V1 ;4+49=53
-VSHR V3=V2>>1 ;1+49=50
-VST  C=V3     ;11+49=60</pre>
-    <p><strong>16 banks</strong>: <strong>285</strong>c</p>
-    <p>Speedup: 2004/285&asymp;<strong>7&times;</strong></p>
-  </div></div>
-</div>
-<div class="callout blue"><strong>Vector latency</strong> = startup+(VLEN-1). 16 banks&gt;11 lat &rarr; 不stall</div>
+<h2>12. Scalar vs Vector Code — 怎么算 Cycle 数</h2>
+
+<p>任务：<code>for(i=0; i&lt;50; i++) C[i] = (A[i]+B[i]) / 2</code></p>
+
+<h3>Scalar 代码</h3>
+<div class="ascii-box">MOVI R0 = 50       ; 1 cycle    ← 循环计数器
+MOVA R1 = A        ; 1 cycle    ← A 的起始地址
+MOVA R2 = B        ; 1 cycle    ← B 的起始地址
+MOVA R3 = C        ; 1 cycle    ← C 的起始地址
+X:  LD  R4 = [R1++]  ; 11 cycles  ← 读 A[i]
+    LD  R5 = [R2++]  ; 11 cycles  ← 读 B[i]
+    ADD R6 = R4 + R5 ;  4 cycles  ← 加法
+    SHR R7 = R6 >> 1 ;  1 cycle   ← 右移=除以2
+    ST  [R3++] = R7  ; 11 cycles  ← 写 C[i]
+    DECBNZ R0, X     ;  2 cycles  ← R0--, 不为0则跳回X</div>
+
+<div class="worked">
+<h4>Scalar 算周期</h4>
+<div class="step"><b>初始化:</b> 4 条指令 × 1 cycle = <strong>4 cycles</strong></div>
+<div class="step"><b>1 bank 时：每次循环</b> = 11+11+4+1+11+2 = <strong>40 cycles</strong><br>（两个 LD 和 ST 不能并行，因为只有 1 个 bank）</div>
+<div class="step"><b>总计 (1 bank):</b> 4 + 50 &times; 40 = <strong>2004 cycles</strong></div>
+<div class="step"><b>2 banks 时：</b>A 和 B 在不同 bank → 两个 LD 可重叠！<br>每次循环 = 11 + 4 + 1 + 11 + 2 + 1(overhead) = <strong>30 cycles</strong><br>总计: 4 + 50 &times; 30 = <strong>1504 cycles</strong></div>
 </div>
 
+<h3>Vector 代码</h3>
+<div class="ascii-box">MOVI VLEN = 50     ; 1 cycle    ← 向量长度
+MOVI VSTR = 1      ; 1 cycle    ← stride = 1
+VLD  V0 = A        ; 11+49 = 60 ← 读整个向量 A[0..49]
+VLD  V1 = B        ; 11+49 = 60 ← 读整个向量 B[0..49]
+VADD V2 = V0 + V1  ;  4+49 = 53 ← 向量加
+VSHR V3 = V2 >> 1  ;  1+49 = 50 ← 向量右移
+VST  C  = V3       ; 11+49 = 60 ← 写回整个向量</div>
+
+<div class="worked">
+<h4>Vector 怎么算周期</h4>
+<div class="step"><b>向量指令耗时公式:</b> startup + (VLEN - 1)<br>
+startup = 该操作的 latency（LD=11, ADD=4, SHR=1, ST=11）<br>
+VLEN-1 = 后续元素在流水线中：<strong>每 cycle 出 1 个</strong></div>
+<div class="step"><b>VLD:</b> 11 + 49 = 60 cycles（第一个等 11 cycle，后面 49 个每 cycle 一个）</div>
+<div class="step"><b>VADD:</b> 4 + 49 = 53 cycles</div>
+<div class="step"><b>总计:</b> 2 + 60 + 60 + 53 + 50 + 60 = <strong>285 cycles</strong></div>
+<div class="step"><b>Speedup:</b> 2004 / 285 &asymp; <strong>7&times;</strong> 快!</div>
+</div>
+
+<div class="callout blue"><strong>为什么 16 banks 不 stall？</strong>
+<p>VLD 每 cycle 读 1 个元素。Stride=1 → 连续访问不同 bank。<br>
+Bank latency=11, 有 16 banks (16&gt;11)。<br>
+读完 bank 0 → 1 → 2 → ... → 15 → 回到 0 时，bank 0 已经空闲（过了 16&gt;11 cycle）。<strong>不 stall！</strong></p></div>
+
+<div class="pitfall">
+<h4>算周期的常见错误</h4>
+<ul>
+<li><strong>Vector 耗时不是 startup &times; VLEN</strong>！是 startup + (VLEN-1)。流水线只有第一个要等全部 latency</li>
+<li><strong>Scalar 不要忘 DECBNZ 的 2 cycles</strong></li>
+<li><strong>2 banks 时要想清楚哪些 LD/ST 能并行</strong></li>
+</ul>
+</div>
+</div>
+
+<!-- ==================== SYSTOLIC ARRAY ==================== -->
 <div class="section" id="systolic-array">
-<h2>14. Systolic Array</h2>
-<p>数据"脉动"流过 PE 阵列，每 PE 做 MAC 传给邻居。</p>
-<div class="grid grid-3">
-  <div class="mini-card"><h4>Weights</h4><p>预加载到 PE 不动</p></div>
-  <div class="mini-card info"><h4>Activations</h4><p>左&rarr;右流过</p></div>
-  <div class="mini-card warn"><h4>Partial Sums</h4><p>上&rarr;下累加</p></div>
-</div>
-<p>TPU v1: <strong>256&times;256</strong>, WS, 65536 MACs/cyc</p>
+<h2>13. Systolic Array — 脉动阵列</h2>
+
+<div class="intuition">
+像心脏泵血一样，数据有节奏地"脉动"流过一排排 PE。每个 PE 做一次 MAC（乘加），然后把数据传给邻居。<strong>数据不回主存，在 PE 之间直接传</strong>，省带宽。
 </div>
 
+<h3>数据怎么流？</h3>
+<div class="grid grid-3">
+<div class="mini-card"><h4>Weights</h4><p><strong>预加载</strong>到每个 PE 的寄存器，<strong>不动</strong>（Weight Stationary）</p></div>
+<div class="mini-card info"><h4>Activations</h4><p>从<strong>左→右</strong>逐 cycle 流过每个 PE</p></div>
+<div class="mini-card warn"><h4>Partial Sums</h4><p>从<strong>上→下</strong>累加，最底下输出最终结果</p></div>
+</div>
+
+<div class="worked">
+<h4>2&times;2 Systolic Array 做矩阵乘</h4>
+<p>$\begin{bmatrix}a&b\\c&d\end{bmatrix} \times \begin{bmatrix}e&f\\g&h\end{bmatrix}$</p>
+<div class="step"><b>T=0:</b> 权重 [a,b,c,d] 预加载到 4 个 PE</div>
+<div class="step"><b>T=1:</b> PE(0,0) 收到 e，算 a&times;e（psum=ae）</div>
+<div class="step"><b>T=2:</b> PE(0,0) 收到 g，算 ae+b&times;g → 得到最终结果 ae+bg！<br>同时 PE(0,1) 收到 e（从左边传来），算 a&times;f</div>
+<div class="step">数据"波纹式"扩散，所有 PE 持续工作</div>
+</div>
+
+<p><strong>Google TPU v1:</strong> 256&times;256 阵列 = 65536 MAC/cycle，8-bit int</p>
+</div>
+
+<!-- ==================== DATAFLOW ==================== -->
 <div class="section" id="dataflow">
-<h2>15. Dataflow: WS/OS/IS</h2>
-<div class="grid grid-3">
-  <div class="compare-card"><div class="head">Weight Stationary</div><div class="body">
-    <p><strong>W 驻留 RF</strong></p><p>Act 广播; Psum 流动</p><p>Max weight reuse</p><p>TPU/NVDLA</p>
-  </div></div>
-  <div class="compare-card"><div class="head" style="background:var(--accent-2)">Output Stationary</div><div class="body">
-    <p><strong>Psum 驻留 RF</strong></p><p>W+Act 流入</p><p>减写回开销</p><p>FPGA/ASIC</p>
-  </div></div>
-  <div class="compare-card"><div class="head" style="background:var(--accent-3)">Input Stationary</div><div class="body">
-    <p><strong>Act 驻留 RF</strong></p><p>W 广播; Psum传递</p><p>大input多filter</p>
-  </div></div>
-</div>
-<h3>Loop Nest</h3>
-<div class="equation">$$O_{m,p,q}=\sum_{c,r,s}I_{c,p+r,q+s}\times F_{m,c,r,s}$$</div>
+<h2>14. Dataflow — WS / OS / IS</h2>
+
+<div class="intuition">
+"Stationary" = 哪个数据<strong>不动</strong>，留在 PE 的寄存器里被反复使用。<br>
+核心思想：<strong>让被复用最多的数据留在离 PE 最近的地方（RF），减少搬数据</strong>。
 </div>
 
-<div class="section" id="gpu-simt">
-<h2>16. GPU &amp; SIMT</h2>
-<div class="grid grid-2">
-  <div class="mini-card"><h4>Programming: SPMD</h4><p>写 thread（同代码不同数据）</p></div>
-  <div class="mini-card info"><h4>Execution: SIMT</h4><p>Warp(32) SIMD 执行</p></div>
-</div>
 <div class="table-wrap"><table>
-<tr><th>Concept</th><th>说明</th></tr>
-<tr><td><strong>SP</strong></td><td>最小执行单元</td></tr>
-<tr><td><strong>SM</strong></td><td>多SP+shared mem</td></tr>
-<tr><td><strong>Warp</strong></td><td>32 threads 同指令</td></tr>
-<tr><td><strong>Block</strong></td><td>映射到 SM</td></tr>
-<tr><td><strong>FGMT</strong></td><td>交替 warp 隐藏 latency</td></tr>
+<tr><th>Dataflow</th><th>什么不动</th><th>什么流动</th><th>优化目标</th><th>典型</th></tr>
+<tr><td><strong>Weight Stationary</strong></td><td>Weight 在 RF</td><td>Activation 广播<br>Psum 累加传递</td><td>最大化 weight reuse</td><td>TPU, NVDLA</td></tr>
+<tr><td><strong>Output Stationary</strong></td><td>Partial Sum 在 RF</td><td>W 和 Act 流入</td><td>减少 psum 写回次数</td><td>一些 FPGA/ASIC</td></tr>
+<tr><td><strong>Input Stationary</strong></td><td>Activation 在 RF</td><td>Weight 广播<br>Psum 传递</td><td>最大化 input reuse</td><td>某些 CNN 加速器</td></tr>
 </table></div>
+
+<h3>卷积的 Loop Nest（理解就行）</h3>
+<div class="equation">$$O_{m,p,q} = \sum_{c=0}^{C-1}\sum_{r=0}^{R-1}\sum_{s=0}^{S-1} I_{c,\,p+r,\,q+s} \times F_{m,c,r,s}$$</div>
+<p>选择不同 dataflow = 选择把哪层循环放最内层（最内层的变量变化最频繁 → 需要复用）</p>
+</div>
+
+<!-- ==================== GPU / SIMT ==================== -->
+<div class="section" id="gpu-simt">
+<h2>15. GPU &amp; SIMT</h2>
+
+<div class="intuition">
+程序员写的是<strong>一个 thread 的代码</strong>（SPMD），GPU 硬件自动把 32 个 thread 打包成一个 <strong>Warp</strong>，用 SIMD 方式执行。<br>
+这就是 <strong>SIMT</strong>：程序员以为自己写的是独立线程（MT），但硬件用 SIMD 跑。
+</div>
+
+<div class="table-wrap"><table>
+<tr><th>术语</th><th>是什么</th><th>类比</th></tr>
+<tr><td><strong>SP</strong> (Streaming Processor)</td><td>最小执行单元，1 个 ALU</td><td>一个工人</td></tr>
+<tr><td><strong>SM</strong> (Streaming Multiprocessor)</td><td>多个 SP + shared memory + register file</td><td>一个车间</td></tr>
+<tr><td><strong>Warp</strong></td><td>32 个 thread 一起执行同一指令</td><td>32 个工人做同一动作</td></tr>
+<tr><td><strong>Block</strong></td><td>程序员定义的线程组，映射到 SM</td><td>一个项目组分到某车间</td></tr>
+<tr><td><strong>FGMT</strong></td><td>Fine-Grained Multithreading：一个 warp 等内存时，切换到另一个 warp</td><td>一组人等材料时让另一组干活</td></tr>
+</table></div>
+
+<h3>SIMD vs SIMT</h3>
 <div class="grid grid-2">
-  <div class="compare-card"><div class="head">SIMD</div><div class="body"><p>单线程+vec指令; 需知vec len; lock-step</p></div></div>
-  <div class="compare-card"><div class="head" style="background:var(--green)">SIMT</div><div class="body"><p>多标量线程动态分 warp; 不需知 vec len; thread独立</p></div></div>
+<div class="compare-card"><div class="head">SIMD（传统）</div><div class="body">
+<ul><li>程序员必须用<strong>向量指令</strong>（如 AVX）</li>
+<li>必须知道向量长度</li>
+<li>Lock-step，所有 lane 强制同步</li></ul>
+</div></div>
+<div class="compare-card"><div class="head" style="background:var(--green)">SIMT（GPU）</div><div class="body">
+<ul><li>程序员写<strong>标量代码</strong>（看起来是普通线程）</li>
+<li>不需要知道 warp 大小</li>
+<li>Thread 可以 diverge（if/else），硬件自动处理</li></ul>
+</div></div>
 </div>
 </div>
 
+<!-- ==================== PRACTICE ==================== -->
 <div class="section" id="practice">
-<h2>模拟练习题</h2>
+<h2>模拟题集 — 先自己做，再看答案</h2>
 
-<div class="practice"><h4>P1: Output Size</h4>
-<p>In=32, F=5, P=2, S=2.</p>
-<details class="solution"><summary>答案</summary>
-<div class="equation">$$\lfloor(32-5+4)/2\rfloor+1=16$$</div></details></div>
+<div class="practice"><h4>P1: Gradient Descent</h4>
+<p>$\hat{y}=2x_1+5x_2$, 数据点 $(x_1, x_2, y)=(3, 1, 15)$, $\alpha=0.05$, MSE。求一步更新后的 $w_1$ 和 $w_2$。</p>
+<details class="solution"><summary>点击查看详细解答</summary>
+<div class="step"><b>1. 算预测:</b> $\hat{y}=2(3)+5(1)=11$</div>
+<div class="step"><b>2. 算误差:</b> $\hat{y}-y=11-15=-4$</div>
+<div class="step"><b>3. 算梯度:</b><br>$\frac{\partial L}{\partial w_1}=2(-4)(3)=-24$<br>$\frac{\partial L}{\partial w_2}=2(-4)(1)=-8$</div>
+<div class="step"><b>4. 更新:</b><br>$w_1=2-0.05(-24)=2+1.2=\mathbf{3.2}$<br>$w_2=5-0.05(-8)=5+0.4=\mathbf{5.4}$</div>
+<div class="step"><b>验证方向:</b> 预测偏小，所以两个 w 都变大 ✓</div>
+</details></div>
 
-<div class="practice"><h4>P2: Gradient Descent</h4>
-<p>$\hat{y}=3x_1+2x_2$, $(1,2,10)$, $\alpha=0.1$, MSE. 求更新后 $w_1$。</p>
-<details class="solution"><summary>答案</summary>
-<p>$\hat{y}=7$, $\frac{\partial L}{\partial w_1}=2(7-10)(1)=-6$</p>
-<div class="equation">$$w_1=3-0.1(-6)=\mathbf{3.6}$$</div></details></div>
+<div class="practice"><h4>P2: Output Size（多个场景）</h4>
+<p>a) In=28, F=5, P=0, S=1<br>b) In=28, F=5, P=2, S=1<br>c) In=28, F=5, P=2, S=2<br>d) In=5, F=7, P=0, S=1</p>
+<details class="solution"><summary>点击查看详细解答</summary>
+<div class="step"><b>a)</b> (28-5+0)/1+1 = 23+1 = <strong>24</strong></div>
+<div class="step"><b>b)</b> (28-5+4)/1+1 = 27+1 = <strong>28</strong>（Same padding! P=(5-1)/2=2）</div>
+<div class="step"><b>c)</b> floor((28-5+4)/2)+1 = floor(13.5)+1 = 13+1 = <strong>14</strong></div>
+<div class="step"><b>d)</b> 5-7 = -2 &lt; 0 → <strong>Invalid!</strong> filter 比输入大</div>
+</details></div>
 
-<div class="practice"><h4>P3: Roofline</h4>
-<p>Peak=100G, BW=50G/s, AI=1.5.</p>
-<details class="solution"><summary>答案</summary>
-<p>Trans=2. AI=1.5&lt;2 &rarr; <strong>Mem Bound</strong>. Perf=1.5&times;50=<strong>75 GFLOP/s</strong></p></details></div>
+<div class="practice"><h4>P3: Roofline 综合</h4>
+<p>硬件: Peak=200 GFLOP/s, BW=100 GB/s<br>判断并计算：a) AI=0.5 b) AI=2 c) AI=5 各自的性能</p>
+<details class="solution"><summary>点击查看详细解答</summary>
+<div class="step"><b>Transition:</b> 200/100 = <strong>2</strong></div>
+<div class="step"><b>a) AI=0.5 &lt; 2:</b> Memory Bound. Perf = 0.5&times;100 = <strong>50 GFLOP/s</strong></div>
+<div class="step"><b>b) AI=2 = 2:</b> 恰好在 transition. Perf = 2&times;100 = <strong>200 GFLOP/s</strong></div>
+<div class="step"><b>c) AI=5 &gt; 2:</b> Compute Bound. Perf = <strong>200 GFLOP/s</strong>（达到峰值）</div>
+</details></div>
 
-<div class="practice"><h4>P4: Flynn</h4>
-<p>CPU / GPU / TPU / Supercomputer</p>
-<details class="solution"><summary>答案</summary>
-<table><tr><td>CPU</td><td><strong>SISD</strong></td></tr>
-<tr><td>GPU</td><td><strong>SIMD</strong></td></tr>
-<tr><td>TPU</td><td><strong>MISD</strong></td></tr>
-<tr><td>Super</td><td><strong>MIMD</strong></td></tr></table></details></div>
+<div class="practice"><h4>P4: AI 计算</h4>
+<p>FP32 向量点积，每个向量 N=100 个元素。计算 AI。</p>
+<details class="solution"><summary>点击查看详细解答</summary>
+<div class="step"><b>FLOPs:</b> 100 次乘法 + 99 次加法 &asymp; 200</div>
+<div class="step"><b>Bytes:</b> 读两个向量 = 2&times;100&times;4 = 800; 写 1 个标量 = 4<br>Total = 804 bytes</div>
+<div class="step"><b>AI:</b> 200/804 &asymp; <strong>0.25</strong> → 非常低 → Memory Bound</div>
+</details></div>
 
-<div class="practice"><h4>P5: Memory Banks</h4>
-<p>Lat=8, stride=1 需几 bank? Stride=4, 8 banks?</p>
-<details class="solution"><summary>答案</summary>
-<p>1) &ge;8 banks. 2) Stride=4 &rarr; bank 0,4,0,4... <strong>conflict!</strong></p></details></div>
+<div class="practice"><h4>P5: Memory Bank Conflict</h4>
+<p>有 16 banks。以下哪些 stride 会产生 bank conflict？为什么？<br>a) stride=1 &ensp; b) stride=3 &ensp; c) stride=4 &ensp; d) stride=8 &ensp; e) stride=16</p>
+<details class="solution"><summary>点击查看详细解答</summary>
+<div class="step"><b>a) stride=1:</b> GCD(1,16)=1 → 用满 16 个 bank → <strong>无冲突 ✓</strong></div>
+<div class="step"><b>b) stride=3:</b> GCD(3,16)=1 → 用满 16 个 bank → <strong>无冲突 ✓</strong></div>
+<div class="step"><b>c) stride=4:</b> GCD(4,16)=4 → 只用 16/4=4 个 bank → <strong>有冲突 ✗</strong><br>访问: bank 0,4,8,12,0,4,8,12...</div>
+<div class="step"><b>d) stride=8:</b> GCD(8,16)=8 → 只用 2 个 bank → <strong>严重冲突 ✗</strong><br>访问: bank 0,8,0,8...</div>
+<div class="step"><b>e) stride=16:</b> GCD(16,16)=16 → 只用 1 个 bank → <strong>最严重! ✗</strong><br>所有访问都打到 bank 0</div>
+</details></div>
 
-<div class="practice"><h4>P6: Scalar vs Vector</h4>
-<p>for(i=0..99). Scalar 1bank? Vector 16banks? Speedup?</p>
-<details class="solution"><summary>答案</summary>
-<p>Scalar: 4+100&times;40=<strong>4004</strong>c. Vector: 2+110+110+103+100+110=<strong>535</strong>c. &asymp;<strong>7.5&times;</strong></p></details></div>
+<div class="practice"><h4>P6: Vector Code 算周期</h4>
+<p>for(i=0..99) C[i] = A[i] * B[i]<br>
+LD latency=11, MUL latency=6, ST latency=11, 16 banks, stride=1</p>
+<details class="solution"><summary>点击查看详细解答</summary>
+<div class="step"><b>代码:</b><br>MOVI VLEN=100 (1c), MOVI VSTR=1 (1c)<br>VLD V0=A (11+99=110c), VLD V1=B (110c)<br>VMUL V2=V0*V1 (6+99=105c), VST C=V2 (110c)</div>
+<div class="step"><b>总计:</b> 1+1+110+110+105+110 = <strong>437 cycles</strong></div>
+<div class="step"><b>Scalar 对比 (1 bank):</b> 4 + 100&times;(11+11+6+11+2) = 4+4100 = <strong>4104 cycles</strong></div>
+<div class="step"><b>Speedup:</b> 4104/437 &asymp; <strong>9.4&times;</strong></div>
+</details></div>
 
-<div class="practice"><h4>P7: GEMM AI</h4>
-<p>64&times;64 FP32 matmul.</p>
-<details class="solution"><summary>答案</summary>
-<p>FLOPs=$2\times64^3=524288$. Mem=$3\times64^2\times4=49152$B. AI&asymp;<strong>10.67</strong> ($\approx N/6$)</p></details></div>
+<div class="practice"><h4>P7: 多通道 Conv + im2col</h4>
+<p>Input $6\times6\times3$, 4 个 $3\times3\times3$ filter, S=1, P=0<br>a) Output 大小？b) im2col 矩阵的维度？c) 总 FLOPs？</p>
+<details class="solution"><summary>点击查看详细解答</summary>
+<div class="step"><b>a) Output:</b> (6-3+0)/1+1 = 4, 4 个 filter → <strong>4&times;4&times;4</strong></div>
+<div class="step"><b>b) im2col:</b><br>Filter flatten: 3&times;3&times;3 = 27 → 行向量 [1&times;27]，4 个 filter → <strong>Weight 矩阵 4&times;27</strong><br>滑动窗口数: 4&times;4 = 16 个位置，每个窗口 27 元素 → <strong>im2col 矩阵 27&times;16</strong><br>矩阵乘: [4&times;27] &times; [27&times;16] = [4&times;16] → reshape 成 4&times;4&times;4 ✓</div>
+<div class="step"><b>c) FLOPs:</b> 4 filters &times; 4&times;4 output &times; 3&times;3&times;3 kernel &times; 2 = 4&times;16&times;27&times;2 = <strong>3456</strong><br>（每个输出位置做 27 次 MAC = 27 乘 + 27 加 = 54 ops，4个filter &times; 16个位置 &times; 54）</div>
+</details></div>
 
-<div class="practice"><h4>P8: Same Padding</h4>
-<p>In=28, F=7, S=1.</p>
-<details class="solution"><summary>答案</summary>
-<div class="equation">$$P=(7-1)/2=\mathbf{3}$$</div></details></div>
+<div class="practice"><h4>P8: Systolic Array AI</h4>
+<p>一个 4&times;4 weight-stationary systolic array，每列加载 N 个 activation 流过。<br>FP32。求 activation 的 AI 和 weight 的 AI。</p>
+<details class="solution"><summary>点击查看详细解答</summary>
+<div class="step"><b>每个 activation:</b> 流过 4 个 PE，每 PE 做 4 次 MAC = 4&times;4&times;2 = 32 FLOPs</div>
+<div class="step"><b>Activation AI:</b><br>FLOPs = 32N（N 个 activation 各 32 ops）<br>Bytes = 4列 &times; N &times; 4B = 16N<br>$AI_{act} = 32N/16N = \mathbf{2.0}$</div>
+<div class="step"><b>Weight AI:</b><br>每个 weight 被 N 个 activation 复用 → FLOPs = 2N<br>Bytes = 4 (1 个 FP32)<br>$AI_{wt} = 2N/4 = \mathbf{0.5N}$<br>N 越大 weight 复用率越高!</div>
+</details></div>
 
 </div>
 
-<div style="text-align:center;color:#9ca3af;font-size:.8rem;padding:2rem 0">EE-508 Midterm Study Guide</div>
+<div style="text-align:center;color:#9ca3af;font-size:.8rem;padding:2rem 0">
+EE-508 Midterm Study Guide — 手把手教学版<br>
+Good luck on Friday!
+</div>
+
 </div>
 </body>
 </html>
