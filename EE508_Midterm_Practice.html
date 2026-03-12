@@ -3,1045 +3,723 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EE508 Practice Midterm — Interactive Exam</title>
+<title>EE508 Midterm Practice Exam</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
 <style>
-:root{--bg:#f4f1eb;--paper:#fffdf8;--ink:#1f2937;--accent:#1e3a5f;--accent2:#b45309;--accent3:#7c2d12;--green:#16a34a;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;--r:10px;--sh:0 2px 10px rgba(0,0,0,.1)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;padding-top:58px}
-/* ── EXAM BAR ── */
-#exam-bar{position:fixed;top:0;left:0;right:0;z-index:300;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:56px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-#exam-bar .left{display:flex;align-items:center;gap:1rem}
-#exam-bar h1{font-size:1rem;font-weight:700;letter-spacing:.5px}
-#back-btn{background:rgba(255,255,255,.15);color:#fff;text-decoration:none;padding:5px 13px;border-radius:6px;font-size:.82rem;font-weight:600;border:1px solid rgba(255,255,255,.25);transition:background .15s;white-space:nowrap}
-#back-btn:hover{background:rgba(255,255,255,.28)}
-#timer{font-family:monospace;font-size:1.4rem;font-weight:700;background:rgba(255,255,255,.15);padding:4px 12px;border-radius:6px;min-width:90px;text-align:center;transition:background .3s}
-#timer.warn{background:#d97706;animation:none}
-#timer.danger{background:#dc2626;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-#score-badge{background:rgba(255,255,255,.15);padding:4px 14px;border-radius:6px;font-size:.85rem;font-weight:600}
-#progress-bar{position:fixed;top:56px;left:0;right:0;z-index:299;height:4px;background:rgba(0,0,0,.15)}
-#progress-fill{height:100%;background:#fbbf24;transition:width .4s;width:0%}
-/* ── CONTAINER ── */
-.container{max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem}
-/* ── COVER ── */
-.cover{background:var(--paper);border-radius:var(--r);box-shadow:var(--sh);padding:2rem;margin-bottom:2rem}
-.cover-top{text-align:center;border-bottom:2px solid #e5e7eb;padding-bottom:1.5rem;margin-bottom:1.5rem}
-.cover-top h2{font-size:1.1rem;color:#6b7280;font-weight:400;margin-bottom:.3rem}
-.cover-top h1{font-size:1.8rem;color:var(--accent);margin-bottom:.5rem}
-.cover-top .meta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:.8rem}
-.cover-top .meta span{background:#eff6ff;color:#1e40af;font-size:.8rem;padding:3px 12px;border-radius:4px;font-weight:600}
-.name-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.field-group label{display:block;font-weight:600;font-size:.9rem;margin-bottom:4px;color:#374151}
-.field-group input{width:100%;border:2px solid #d1d5db;border-radius:6px;padding:8px 12px;font-size:1rem;transition:border-color .2s}
-.field-group input:focus{outline:none;border-color:var(--accent)}
-.instructions{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:1rem 1.2rem;margin-top:1.2rem;font-size:.88rem}
-.instructions strong{display:block;margin-bottom:.4rem;color:var(--accent2)}
-.instructions ul{padding-left:1.2rem}
-.instructions li{margin-bottom:.2rem}
-/* ── QUESTION SECTION ── */
-.q-section{background:var(--paper);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:2rem;overflow:hidden}
-.q-header{background:var(--accent);color:#fff;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
-.q-header h2{font-size:1.15rem;font-weight:700}
-.q-header .pts-badge{background:rgba(255,255,255,.2);padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:600}
-.q-body{padding:1.5rem}
-/* ── SETUP BOX ── */
-.setup-box{background:#eff6ff;border:2px solid #bfdbfe;border-radius:8px;padding:1.2rem;margin-bottom:1.5rem}
-.setup-box h4{color:var(--blue);font-size:.95rem;margin-bottom:.6rem}
-.setup-box .given{margin:.4rem 0;font-size:.92rem}
-/* ── SUB-QUESTION ── */
-.sub-q{border:1px solid #e5e7eb;border-radius:8px;padding:1.2rem 1.4rem;margin-bottom:1rem;background:#fafafa}
-.sub-q:last-child{margin-bottom:0}
-.sub-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
-.sub-label{font-weight:700;color:var(--accent);font-size:1rem}
-.pts-tag{background:#fef3c7;color:#92400e;font-size:.72rem;padding:2px 8px;border-radius:4px;font-weight:700}
-.q-text{font-size:.93rem;line-height:1.7;margin-bottom:.8rem}
-/* ── ANSWER AREA ── */
-.ans-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
-.ans-label{font-size:.88rem;font-weight:600;color:#374151;min-width:fit-content}
-.ans-input{border:2px solid #d1d5db;border-radius:6px;padding:7px 10px;font-size:.95rem;width:110px;text-align:center;transition:border-color .2s,background .2s}
-.ans-input:focus{outline:none;border-color:var(--accent)}
-.ans-input.ok{border-color:var(--green)!important;background:#f0fdf4}
-.ans-input.err{border-color:var(--red)!important;background:#fef2f2}
-.check-btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
-.check-btn:hover{background:#162d4a}
-.fb{font-size:.85rem;padding:5px 10px;border-radius:5px;display:none;font-weight:600}
-.fb.ok{display:inline-block;background:#dcfce7;color:#166534}
-.fb.err{display:inline-block;background:#fee2e2;color:#991b1b}
-/* ── MCQ ── */
-.mcq-wrap{margin:.6rem 0}
-.mcq-opt{display:flex;align-items:center;gap:.6rem;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:.4rem;cursor:pointer;transition:all .18s;font-size:.9rem}
-.mcq-opt:hover{background:#f9fafb;border-color:var(--accent)}
-.mcq-opt input{margin:0;accent-color:var(--accent)}
-.mcq-opt.hit{background:#dcfce7;border-color:var(--green)}
-.mcq-opt.miss{background:#fee2e2;border-color:var(--red)}
-.mcq-opt.reveal-ok{background:#dcfce7;border-color:var(--green)}
-/* ── SOLUTION ── */
-.sol-wrap{margin-top:.8rem}
-.sol-wrap summary{list-style:none;cursor:pointer;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:7px 14px;font-size:.88rem;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:.4rem}
-.sol-wrap summary::before{content:"▶";font-size:.65rem;transition:transform .2s}
-.sol-wrap[open] summary::before{transform:rotate(90deg)}
-.sol-wrap summary::-webkit-details-marker{display:none}
-.sol-body{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:0 0 8px 8px;padding:1rem 1.2rem;font-size:.88rem}
-.sol-step{padding:.4rem 0;border-bottom:1px dashed #d1fae5}
-.sol-step:last-child{border-bottom:none}
-.sol-step b{color:var(--accent)}
-.sol-ans{display:inline-block;background:#065f46;color:#fff;padding:3px 12px;border-radius:4px;font-weight:700;margin-top:.4rem;font-size:.9rem}
-.kf{background:#faf5ff;border-left:3px solid var(--purple);padding:.6rem .8rem;margin:.6rem 0;border-radius:0 6px 6px 0;font-size:.88rem;overflow-x:auto}
-/* ── PROCESSOR VISUALIZATION ── */
-.viz-section{background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;padding:1.2rem;margin:.8rem 0}
-.viz-tabs{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
-.vtab{padding:6px 16px;border:2px solid #d1d5db;border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:600;background:#fff;transition:all .18s}
-.vtab.active{border-color:var(--accent);background:var(--accent);color:#fff}
-.viz-controls{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem;flex-wrap:wrap}
-.viz-btn{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;font-size:.83rem;font-weight:600;transition:all .18s}
-.viz-btn.play{background:#16a34a;color:#fff}
-.viz-btn.play:hover{background:#15803d}
-.viz-btn.reset{background:#e5e7eb;color:#374151}
-.viz-btn.reset:hover{background:#d1d5db}
-#cycle-info{font-family:monospace;font-size:.9rem;color:var(--accent2);font-weight:700}
-#mode-title{font-size:.85rem;font-weight:700;color:var(--accent);margin-bottom:.4rem}
-.timing-grid{border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;margin-bottom:.6rem}
-.t-row{display:grid}
-.t-cell{padding:4px 2px;text-align:center;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;height:28px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;transition:all .25s}
-.t-cell.hd{background:var(--accent);color:#fff;font-size:.7rem}
-.t-cell.lbl{background:#f1f5f9;justify-content:flex-start;padding-left:6px;font-size:.75rem;min-width:72px}
-.t-cell.cLD{background:#dbeafe;color:#1e40af}
-.t-cell.cAD{background:#dcfce7;color:#166534}
-.t-cell.cST{background:#fef3c7;color:#92400e}
-.t-cell.cID{background:#f3f4f6;color:#9ca3af}
-.t-cell.dim{opacity:.25}
-.viz-legend{display:flex;gap:.8rem;margin-top:.5rem;flex-wrap:wrap;font-size:.78rem}
-.leg-item{display:flex;align-items:center;gap:.3rem}
-.leg-box{width:14px;height:14px;border-radius:3px}
-/* ── TABLES ── */
-.tw{overflow-x:auto;margin:.8rem 0}
-table{border-collapse:collapse;width:100%;font-size:.85rem}
-th{background:var(--accent);color:#fff;padding:.45rem .7rem;text-align:left}
-td{padding:.45rem .7rem;border-bottom:1px solid #e5e7eb}
-tr:nth-child(even){background:#f9fafb}
-.hi-row{background:#fef9c3!important;font-weight:700}
-/* ── CALLOUTS ── */
-.callout{border-radius:8px;padding:.8rem 1rem;margin:.8rem 0;font-size:.88rem}
-.callout.blue{background:#eff6ff;border-left:4px solid #3b82f6}
-.callout.warn{background:#fffbeb;border-left:4px solid #f59e0b}
-.callout strong{display:block;margin-bottom:.25rem}
-/* ── SCORE SECTION ── */
-#score-section{background:var(--paper);border-radius:var(--r);box-shadow:var(--sh);padding:2rem;margin:2rem 0;text-align:center;display:none}
-.score-big{font-size:3rem;font-weight:700;color:var(--accent);line-height:1}
-.score-sub{font-size:1rem;color:#6b7280;margin-top:.3rem}
-.score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin:1.5rem 0}
-.score-card{background:#f9fafb;border-radius:8px;padding:1rem;border:1px solid #e5e7eb}
-.score-card .sc-label{font-size:.75rem;color:#6b7280;text-transform:uppercase;letter-spacing:.5px}
-.score-card .sc-val{font-size:1.5rem;font-weight:700;color:var(--accent2)}
-#show-score-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 28px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:1rem;transition:background .2s}
-#show-score-btn:hover{background:#162d4a}
-@media(max-width:640px){.name-row{grid-template-columns:1fr}.container{padding:1rem 1rem 4rem}#exam-bar{padding:0 1rem}#exam-bar h1{display:none}}
+:root{--navy:#1e3a5f;--gold:#b45309;--bg:#f8faff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Georgia',serif;background:var(--bg);color:#1a1a2e;font-size:15px;line-height:1.7}
+#exam-bar{position:fixed;top:0;left:0;right:0;height:58px;background:var(--navy);display:flex;align-items:center;
+  padding:0 20px;gap:16px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+#exam-bar h1{color:#fff;font-size:15px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#timer{color:#a5f3fc;font-size:18px;font-family:monospace;font-weight:700;min-width:70px;text-align:center}
+#timer.warn{color:#fde68a}
+#timer.danger{color:#fca5a5;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
+#score-badge{background:#334155;color:#e2e8f0;padding:4px 12px;border-radius:20px;font-size:13px;white-space:nowrap}
+#back-btn{color:#93c5fd;font-size:13px;text-decoration:none;white-space:nowrap;padding:5px 10px;
+  border:1px solid #4a6fa5;border-radius:6px}
+#back-btn:hover{background:#2d4f7a}
+.cover{margin:80px auto 32px;max-width:800px;background:#fff;border:2px solid var(--navy);
+  border-radius:12px;padding:36px 40px;text-align:center}
+.cover h2{font-size:22px;color:var(--navy);margin-bottom:8px}
+.cover .meta{color:#555;font-size:14px;margin:4px 0}
+.cover .rules{background:#eff6ff;border-left:4px solid var(--navy);padding:12px 16px;
+  margin-top:20px;text-align:left;font-size:14px;color:#1e3a5f}
+.cover .rules li{margin:3px 0 3px 18px}
+.score-summary{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.score-pill{background:var(--navy);color:#fff;padding:8px 20px;border-radius:24px;font-size:13px}
+.question-block{max-width:800px;margin:0 auto 40px;background:#fff;
+  border-radius:12px;box-shadow:0 2px 12px rgba(30,58,95,.1);overflow:hidden}
+.q-header{background:var(--navy);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px}
+.q-num{font-size:18px;font-weight:700}
+.q-title{font-size:15px;font-weight:600;flex:1}
+.q-pts{background:rgba(255,255,255,.2);padding:3px 12px;border-radius:14px;font-size:13px}
+.q-body{padding:24px}
+.setup-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:18px 22px;margin-bottom:22px;font-size:14px}
+.setup-box h4{color:var(--navy);font-size:14px;margin-bottom:10px;font-weight:700}
+.setup-box ul{list-style:disc;padding-left:22px}
+.setup-box li{margin:4px 0}
+.setup-box pre{background:#dbeafe;padding:10px 14px;border-radius:6px;font-size:13px;font-family:monospace;margin-top:10px;white-space:pre-wrap}
+.diagram-box{background:#1e2d40;color:#e2e8f0;border-radius:8px;padding:14px 18px;font-family:monospace;font-size:13px;line-height:1.6;margin:10px 0;white-space:pre}
+.part{margin-bottom:26px;padding-bottom:20px;border-bottom:1px solid #e5e7eb}
+.part:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.part-label{display:inline-block;background:#1e3a5f;color:#fff;font-size:12px;font-weight:700;padding:2px 10px;border-radius:10px;margin-bottom:10px}
+.part-q{font-size:14.5px;color:#1e293b;margin-bottom:12px}
+.calc-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+.calc-row label{color:#374151;font-size:13px;min-width:80px}
+.ans-input{border:2px solid #cbd5e1;border-radius:6px;padding:5px 10px;font-size:14px;font-family:monospace;width:120px;text-align:center;transition:.2s}
+.ans-input:focus{outline:none;border-color:var(--navy)}
+.ans-input.correct{border-color:#16a34a;background:#f0fdf4;color:#166534}
+.ans-input.wrong{border-color:#dc2626;background:#fef2f2;color:#991b1b}
+.check-btn{background:var(--navy);color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600}
+.check-btn:hover{background:#2d4f7a}
+.feedback{font-size:13px;font-weight:600;margin-left:6px}
+.feedback.ok{color:#16a34a}
+.feedback.no{color:#dc2626}
+table.conv-table{border-collapse:collapse;font-size:13.5px;width:100%;margin:12px 0}
+table.conv-table th{background:var(--navy);color:#fff;padding:8px 14px;text-align:center;font-weight:600}
+table.conv-table td{border:1px solid #e2e8f0;padding:8px 14px;text-align:center;color:#1e293b}
+table.conv-table tr:nth-child(even) td{background:#f8faff}
+table.conv-table td input{width:80px;text-align:center;border:1.5px solid #94a3b8;border-radius:5px;padding:4px 8px;font-family:monospace;font-size:14px}
+table.conv-table td input.correct{border-color:#16a34a;background:#f0fdf4;color:#166534}
+table.conv-table td input.wrong{border-color:#dc2626;background:#fef2f2;color:#991b1b}
+.invalid-note{color:#dc2626;font-weight:700}
+.flynnbox{display:flex;flex-direction:column;gap:8px;max-width:500px}
+.fl-row{display:flex;align-items:center;gap:12px}
+.fl-label{font-size:13.5px;color:#1e293b;min-width:250px}
+.asm-table{border-collapse:collapse;font-size:13px;width:100%;margin:10px 0}
+.asm-table th{background:#334155;color:#fff;padding:7px 14px;text-align:left}
+.asm-table td{border:1px solid #e2e8f0;padding:7px 14px}
+.asm-num{text-align:center}
+.asm-num input{width:60px;text-align:center;border:1.5px solid #94a3b8;border-radius:5px;padding:4px 6px;font-family:monospace;font-size:14px}
+.asm-num input.correct{border-color:#16a34a;background:#f0fdf4}
+.asm-num input.wrong{border-color:#dc2626;background:#fef2f2}
+details.sol{margin-top:14px}
+details.sol summary{cursor:pointer;color:var(--gold);font-size:13px;font-weight:700;padding:6px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;list-style:none;display:inline-block;user-select:none}
+details.sol summary::-webkit-details-marker{display:none}
+details.sol summary::before{content:"Show Solution"}
+details.sol[open] summary::before{content:"Hide Solution"}
+.sol-body{background:#fffbeb;border:1px solid #fde68a;border-top:none;padding:16px 18px;border-radius:0 0 8px 8px;font-size:13.5px}
+.sol-body p{margin:5px 0}
+.sol-body .box{background:#fef9c3;padding:8px 12px;border-radius:6px;font-family:monospace;margin:8px 0;font-size:13px}
+.page-wrapper{padding:0 20px 60px;max-width:840px;margin:0 auto}
 </style>
 </head>
 <body>
 
-<!-- EXAM BAR -->
 <div id="exam-bar">
-  <div class="left">
-    <h1>EE-508 Practice Midterm</h1>
-    <div id="timer">90:00</div>
-  </div>
-  <div style="display:flex;align-items:center;gap:.8rem">
-    <div id="score-badge">Revealed: 0 / 20</div>
-  </div>
+  <a id="back-btn" href="index.html">&#8592; Study Guide</a>
+  <h1>EE508 Midterm Practice Exam</h1>
+  <div id="timer">90:00</div>
+  <div id="score-badge">Score: <span id="sc">0</span>/120</div>
 </div>
-<div id="progress-bar"><div id="progress-fill"></div></div>
 
-<div class="container">
+<div class="page-wrapper">
 
-<!-- COVER -->
 <div class="cover">
-  <div class="cover-top">
-    <h2>EE 508 — Hardware Foundations of Machine Learning</h2>
-    <h1>Practice Midterm Examination</h1>
-    <div class="meta">
-      <span>⏱ 90 Minutes</span>
-      <span>📝 Closed Book</span>
-      <span>4 Questions</span>
-      <span>120 Points Total</span>
-    </div>
-  </div>
-  <div class="name-row">
-    <div class="field-group"><label>Name</label><input type="text" placeholder="Your Full Name"></div>
-    <div class="field-group"><label>USC ID</label><input type="text" placeholder="USC ID Number"></div>
-  </div>
-  <div class="instructions">
-    <strong>Instructions</strong>
+  <h2>EE 508 Hardware Foundations of Machine Learning</h2>
+  <p class="meta">Midterm Practice Exam &nbsp;&middot;&nbsp; 90 Minutes &nbsp;&middot;&nbsp; 120 Points &nbsp;&middot;&nbsp; Spring 2026</p>
+  <p class="meta" style="color:#dc2626;font-weight:600">Same format as Quiz 1 &mdash; setup &rarr; step-by-step analysis &rarr; AI calculation &rarr; interpretation</p>
+  <div class="rules">
+    <strong>Instructions:</strong>
     <ul>
-      <li>Enter your answers in the input boxes provided. Click <strong>Check</strong> to verify numerical answers.</li>
-      <li>Click <strong>Show Solution</strong> to see step-by-step analysis after attempting each part.</li>
-      <li>The timer starts automatically — manage your time wisely.</li>
-      <li>All floating-point numbers: assume FP32 = 4 bytes unless stated otherwise.</li>
+      <li>Four questions, all based on real exam patterns from Quiz 1.</li>
+      <li>For chain-rule problems: show every individual partial derivative, then combine.</li>
+      <li>For output-size problems: state your assumptions about padding.</li>
+      <li>For AI problems: always write <strong>FLOPs &#8594; Bytes &#8594; AI</strong> (like Quiz 1 Q1).</li>
+      <li>Closed book, closed notes, 90-minute limit on actual exam.</li>
     </ul>
   </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     QUESTION 1 — Gradient Descent (35 pts)
-     ═══════════════════════════════════════════ -->
-<div class="q-section" id="q1">
-<div class="q-header">
-  <h2>Question 1 &mdash; Gradient Descent &amp; Backpropagation</h2>
-  <span class="pts-badge">35 Points</span>
-</div>
-<div class="q-body">
-
-<div class="setup-box">
-  <h4>Setup</h4>
-  <div class="given">Linear model: $\hat{y} = w_1 x_1 + w_2 x_2$</div>
-  <div class="given">Training sample: $x_1 = 1,\; x_2 = 2,\; y_{\text{true}} = 8$</div>
-  <div class="given">Initial weights: $w_1 = 3,\; w_2 = 1$</div>
-  <div class="given">Loss: MSE $= (\hat{y} - y)^2$ &nbsp;&nbsp;|&nbsp;&nbsp; Learning rate $\alpha = 0.1$</div>
-</div>
-
-<!-- 1a -->
-<div class="sub-q" id="q1a">
-  <div class="sub-header"><span class="sub-label">(a)</span><span class="pts-tag">4 pts</span></div>
-  <div class="q-text">Using the initial weights, compute the prediction $\hat{y}$.</div>
-  <div class="ans-row">
-    <span class="ans-label">$\hat{y}$ =</span>
-    <input class="ans-input" id="in1a" type="number" placeholder="?">
-    <button class="check-btn" onclick="checkNum('in1a',5,0.05,'fb1a',4)">Check</button>
-    <span class="fb" id="fb1a"></span>
+  <div class="score-summary">
+    <div class="score-pill">Q1 &middot; 35 pts</div>
+    <div class="score-pill">Q2 &middot; 25 pts</div>
+    <div class="score-pill">Q3 &middot; 20 pts</div>
+    <div class="score-pill">Q4 &middot; 40 pts</div>
   </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>Substitute:</b> $\hat{y} = w_1 x_1 + w_2 x_2 = 3(1) + 1(2) = 3 + 2$</div>
-      <div class="sol-step"><span class="sol-ans">$\hat{y} = 5$</span></div>
+</div>
+
+<!-- ==================== Q1 ==================== -->
+<div class="question-block">
+  <div class="q-header">
+    <span class="q-num">Q1</span>
+    <span class="q-title">Gradient Descent, Loss Function &amp; Chain Rule</span>
+    <span class="q-pts">35 Points</span>
+  </div>
+  <div class="q-body">
+
+    <div class="setup-box">
+      <h4>Setup</h4>
+      <p>The following figure shows a two-layer neural network with no bias terms:</p>
+      <div class="diagram-box">  x1=1 --(w1)--+
+                   +--[ z = w1*x1 + w2*x2 ]--ReLU--[ a ]--(v)--[ yhat = v*a ]
+  x2=2 --(w2)--+
+
+  Initial weights:  w1=2,  w2=1,  v=3
+  True label:       y=10
+  Loss:             L=(yhat-y)^2
+  Learning rate:    alpha=0.05</div>
     </div>
-  </details>
-</div>
 
-<!-- 1b -->
-<div class="sub-q" id="q1b">
-  <div class="sub-header"><span class="sub-label">(b)</span><span class="pts-tag">4 pts</span></div>
-  <div class="q-text">Compute the MSE loss $L = (\hat{y} - y_{\text{true}})^2$.</div>
-  <div class="ans-row">
-    <span class="ans-label">$L$ =</span>
-    <input class="ans-input" id="in1b" type="number" placeholder="?">
-    <button class="check-btn" onclick="checkNum('in1b',9,0.05,'fb1b',4)">Check</button>
-    <span class="fb" id="fb1b"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>Error:</b> $\hat{y} - y_{\text{true}} = 5 - 8 = -3$</div>
-      <div class="sol-step"><b>Loss:</b> $L = (-3)^2 = 9$</div>
-      <div class="sol-step"><span class="sol-ans">$L = 9$</span></div>
-    </div>
-  </details>
-</div>
-
-<!-- 1c -->
-<div class="sub-q" id="q1c">
-  <div class="sub-header"><span class="sub-label">(c)</span><span class="pts-tag">10 pts</span></div>
-  <div class="q-text">
-    Using the chain rule, compute both partial derivatives:
-    $$\frac{\partial L}{\partial w_1} \qquad \text{and} \qquad \frac{\partial L}{\partial w_2}$$
-    <em>Recall:</em> $L = (\hat{y} - y)^2$, so $\frac{\partial L}{\partial \hat{y}} = 2(\hat{y} - y)$, and $\frac{\partial \hat{y}}{\partial w_j} = x_j$.
-  </div>
-  <div class="ans-row">
-    <span class="ans-label">$\partial L/\partial w_1$ =</span>
-    <input class="ans-input" id="in1c1" type="number" placeholder="?">
-    <span class="ans-label" style="margin-left:.6rem">$\partial L/\partial w_2$ =</span>
-    <input class="ans-input" id="in1c2" type="number" placeholder="?">
-    <button class="check-btn" onclick="checkTwo('in1c1',-6,0.1,'in1c2',-12,0.1,'fb1c',10)">Check Both</button>
-    <span class="fb" id="fb1c"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>Chain rule formula:</b> $\dfrac{\partial L}{\partial w_j} = \dfrac{\partial L}{\partial \hat{y}} \cdot \dfrac{\partial \hat{y}}{\partial w_j} = 2(\hat{y}-y) \cdot x_j$</div>
-      <div class="sol-step"><b>For $w_1$:</b> $2(5-8)(1) = 2(-3)(1)$ <span class="sol-ans">$= -6$</span></div>
-      <div class="sol-step"><b>For $w_2$:</b> $2(5-8)(2) = 2(-3)(2)$ <span class="sol-ans">$= -12$</span></div>
-      <div class="sol-step">Negative gradients mean: <em>increasing $w$ would decrease loss, so the descent step will increase $w$.</em></div>
-    </div>
-  </details>
-</div>
-
-<!-- 1d -->
-<div class="sub-q" id="q1d">
-  <div class="sub-header"><span class="sub-label">(d)</span><span class="pts-tag">8 pts</span></div>
-  <div class="q-text">
-    Apply one gradient descent step with $\alpha = 0.1$. What are the new values of $w_1$ and $w_2$?
-    $$w_j^{(\text{new})} = w_j^{(\text{old})} - \alpha \cdot \frac{\partial L}{\partial w_j}$$
-  </div>
-  <div class="ans-row">
-    <span class="ans-label">$w_1^{new}$ =</span>
-    <input class="ans-input" id="in1d1" type="number" step="0.1" placeholder="?">
-    <span class="ans-label" style="margin-left:.6rem">$w_2^{new}$ =</span>
-    <input class="ans-input" id="in1d2" type="number" step="0.1" placeholder="?">
-    <button class="check-btn" onclick="checkTwo('in1d1',3.6,0.05,'in1d2',2.2,0.05,'fb1d',8)">Check Both</button>
-    <span class="fb" id="fb1d"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>$w_1$:</b> $3 - 0.1 \times (-6) = 3 + 0.6$ <span class="sol-ans">$= 3.6$</span></div>
-      <div class="sol-step"><b>$w_2$:</b> $1 - 0.1 \times (-12) = 1 + 1.2$ <span class="sol-ans">$= 2.2$</span></div>
-      <div class="sol-step"><b>Sanity check:</b> New $\hat{y} = 3.6(1)+2.2(2) = 3.6+4.4 = 8.0$ — exactly the target after one step!</div>
-    </div>
-  </details>
-</div>
-
-<!-- 1e -->
-<div class="sub-q" id="q1e">
-  <div class="sub-header"><span class="sub-label">(e)</span><span class="pts-tag">5 pts</span></div>
-  <div class="q-text">If the learning rate $\alpha$ is set to a very large value (e.g., $\alpha = 100$), what will most likely happen during training?</div>
-  <div class="mcq-wrap">
-    <label class="mcq-opt" data-mcq="q1e"><input type="radio" name="q1e" value="A"> A. The model converges faster to the global optimum.</label>
-    <label class="mcq-opt" data-mcq="q1e"><input type="radio" name="q1e" value="B"> B. The gradient becomes zero permanently.</label>
-    <label class="mcq-opt" data-mcq="q1e"><input type="radio" name="q1e" value="C"> C. The loss oscillates and may diverge (increase unboundedly).</label>
-    <label class="mcq-opt" data-mcq="q1e"><input type="radio" name="q1e" value="D"> D. Training stops after the first iteration.</label>
-  </div>
-  <div class="ans-row">
-    <button class="check-btn" onclick="checkMCQ('q1e','C','fb1e',5)">Check</button>
-    <span class="fb" id="fb1e"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>Answer: C</b></div>
-      <div class="sol-step">A large $\alpha$ causes the update to <em>overshoot</em> the minimum. The weights jump past the optimum, land on a higher-loss region, then overshoot back — oscillating or diverging.</div>
-      <div class="sol-step">In our example: $w_1 = 3 - 100(-6) = 603$, giving $\hat{y}=603+2=605$, loss $=(605-8)^2 \approx 356k$ — far worse than 9.</div>
-    </div>
-  </details>
-</div>
-
-<!-- 1f -->
-<div class="sub-q" id="q1f">
-  <div class="sub-header"><span class="sub-label">(f)</span><span class="pts-tag">4 pts</span></div>
-  <div class="q-text">Briefly compare <strong>Batch Gradient Descent</strong> and <strong>Stochastic Gradient Descent (SGD)</strong>. For each, state: (1) how many samples are used per update, and (2) one advantage.</div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>Batch GD:</b> Uses <em>all N samples</em> per update. Advantage: accurate gradient estimate, stable convergence.</div>
-      <div class="sol-step"><b>SGD:</b> Uses <em>1 random sample</em> per update. Advantage: very fast update steps, can escape local minima due to noise.</div>
-      <div class="sol-step"><b>Mini-batch GD</b> (practical choice): Uses a batch of $k$ samples (e.g., 32 or 128). Balances noise and stability; leverages GPU parallelism.</div>
-    </div>
-  </details>
-</div>
-
-</div><!-- q-body -->
-</div><!-- q-section -->
-
-<!-- ═══════════════════════════════════════════
-     QUESTION 2 — CNN (20 pts)
-     ═══════════════════════════════════════════ -->
-<div class="q-section" id="q2">
-<div class="q-header">
-  <h2>Question 2 &mdash; Convolutional Neural Networks</h2>
-  <span class="pts-badge">20 Points</span>
-</div>
-<div class="q-body">
-
-<!-- 2a -->
-<div class="sub-q" id="q2a">
-  <div class="sub-header"><span class="sub-label">(a)</span><span class="pts-tag">6 pts</span></div>
-  <div class="q-text">List <strong>three distinct advantages</strong> of CNNs over fully-connected (dense) networks for image processing tasks. For each, give a one-sentence explanation.</div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>1. Parameter Sharing:</b> The same kernel (filter) is applied at every spatial position, drastically reducing the number of learnable parameters compared to a fully-connected layer.</div>
-      <div class="sol-step"><b>2. Local Connectivity (Sparse Interactions):</b> Each output neuron depends only on a small local receptive field, not the entire input — reflecting the local structure of natural images and reducing computation.</div>
-      <div class="sol-step"><b>3. Translation Equivariance:</b> A CNN can detect the same feature (e.g., an edge) regardless of where it appears in the image, because the same filters are scanned across all positions.</div>
-    </div>
-  </details>
-</div>
-
-<!-- 2b -->
-<div class="sub-q" id="q2b">
-  <div class="sub-header"><span class="sub-label">(b)</span><span class="pts-tag">10 pts</span></div>
-  <div class="q-text">
-  Using the output size formula:
-  $$\text{Out} = \left\lfloor \frac{\text{In} - F + 2P}{S} \right\rfloor + 1$$
-  Compute the output feature map size for each configuration below. Write "Invalid" if the filter does not fit.
-  </div>
-  <div class="tw"><table>
-    <tr><th>#</th><th>Input (In)</th><th>Filter (F)</th><th>Padding (P)</th><th>Stride (S)</th><th>Your Answer</th><th></th></tr>
-    <tr>
-      <td>(i)</td><td>28</td><td>5</td><td>0</td><td>1</td>
-      <td><input class="ans-input" id="in2bi" type="text" placeholder="?" style="width:90px"></td>
-      <td><button class="check-btn" style="padding:5px 10px;font-size:.78rem" onclick="checkText('in2bi','24','fb2bi',2)">✓</button> <span class="fb" id="fb2bi"></span></td>
-    </tr>
-    <tr>
-      <td>(ii)</td><td>28</td><td>5</td><td>2</td><td>2</td>
-      <td><input class="ans-input" id="in2bii" type="text" placeholder="?" style="width:90px"></td>
-      <td><button class="check-btn" style="padding:5px 10px;font-size:.78rem" onclick="checkText('in2bii','14','fb2bii',2)">✓</button> <span class="fb" id="fb2bii"></span></td>
-    </tr>
-    <tr>
-      <td>(iii)</td><td>16</td><td>3</td><td>1</td><td>2</td>
-      <td><input class="ans-input" id="in2biii" type="text" placeholder="?" style="width:90px"></td>
-      <td><button class="check-btn" style="padding:5px 10px;font-size:.78rem" onclick="checkText('in2biii','8','fb2biii',2)">✓</button> <span class="fb" id="fb2biii"></span></td>
-    </tr>
-    <tr>
-      <td>(iv)</td><td>5</td><td>7</td><td>0</td><td>1</td>
-      <td><input class="ans-input" id="in2biv" type="text" placeholder="?" style="width:110px"></td>
-      <td><button class="check-btn" style="padding:5px 10px;font-size:.78rem" onclick="checkText('in2biv','invalid','fb2biv',2)">✓</button> <span class="fb" id="fb2biv"></span></td>
-    </tr>
-    <tr>
-      <td>(v)</td><td>32</td><td>5</td><td>2</td><td>1</td>
-      <td><input class="ans-input" id="in2bv" type="text" placeholder="?" style="width:90px"></td>
-      <td><button class="check-btn" style="padding:5px 10px;font-size:.78rem" onclick="checkText('in2bv','32','fb2bv',2)">✓</button> <span class="fb" id="fb2bv"></span></td>
-    </tr>
-  </table></div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>(i)</b> $\lfloor(28-5+0)/1\rfloor+1 = 23+1$ <span class="sol-ans">$= 24$</span></div>
-      <div class="sol-step"><b>(ii)</b> $\lfloor(28-5+4)/2\rfloor+1 = \lfloor27/2\rfloor+1 = 13+1$ <span class="sol-ans">$= 14$</span> &nbsp;(note: floor of 13.5 = 13)</div>
-      <div class="sol-step"><b>(iii)</b> $\lfloor(16-3+2)/2\rfloor+1 = \lfloor15/2\rfloor+1 = 7+1$ <span class="sol-ans">$= 8$</span></div>
-      <div class="sol-step"><b>(iv)</b> $5 - 7 = -2 < 0$ → filter is larger than input &rarr; <span class="sol-ans">Invalid</span></div>
-      <div class="sol-step"><b>(v)</b> $\lfloor(32-5+4)/1\rfloor+1 = 31+1 = 32$ <span class="sol-ans">$= 32$</span> — this is <em>same padding</em>: $P=\frac{F-1}{2}=2$ keeps Out = In when $S=1$.</div>
-    </div>
-  </details>
-</div>
-
-<!-- 2c -->
-<div class="sub-q" id="q2c">
-  <div class="sub-header"><span class="sub-label">(c)</span><span class="pts-tag">4 pts</span></div>
-  <div class="q-text">
-    A 2D convolutional layer receives an input tensor of shape $7 \times 7 \times 64$ (H × W × C). It applies <strong>128 filters</strong>, each of size $3 \times 3 \times 64$, with stride $S=1$ and padding $P=1$.<br><br>
-    What are the full output dimensions $(H_{out},\, W_{out},\, D_{out})$?
-  </div>
-  <div class="ans-row">
-    <span class="ans-label">$H_{out}$:</span>
-    <input class="ans-input" id="in2c1" type="number" placeholder="?" style="width:80px">
-    <span class="ans-label">$W_{out}$:</span>
-    <input class="ans-input" id="in2c2" type="number" placeholder="?" style="width:80px">
-    <span class="ans-label">$D_{out}$:</span>
-    <input class="ans-input" id="in2c3" type="number" placeholder="?" style="width:80px">
-    <button class="check-btn" onclick="checkThree('in2c1',7,'in2c2',7,'in2c3',128,'fb2c',4)">Check All</button>
-    <span class="fb" id="fb2c"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>Spatial:</b> $\lfloor(7-3+2)/1\rfloor+1 = 6+1 = 7$. Both $H$ and $W$ unchanged.</div>
-      <div class="sol-step"><b>Depth:</b> Number of filters = 128 → output depth = 128.</div>
-      <div class="sol-step"><span class="sol-ans">Output: $7 \times 7 \times 128$</span></div>
-      <div class="sol-step"><em>Key rule: filter depth always equals input depth ($C=64$). Output depth = number of filters ($128$). Spatial size computed with the formula.</em></div>
-    </div>
-  </details>
-</div>
-
-</div><!-- q-body -->
-</div><!-- q-section -->
-
-<!-- ═══════════════════════════════════════════
-     QUESTION 3 — Roofline Model (25 pts)
-     ═══════════════════════════════════════════ -->
-<div class="q-section" id="q3">
-<div class="q-header">
-  <h2>Question 3 &mdash; The Roofline Model</h2>
-  <span class="pts-badge">25 Points</span>
-</div>
-<div class="q-body">
-
-<div class="setup-box">
-  <h4>Hardware Specification</h4>
-  <div class="given">Peak Compute: $512$ GFLOP/s</div>
-  <div class="given">Peak Memory Bandwidth: $128$ GB/s</div>
-  <div class="given">Data type: FP32 (4 bytes per element)</div>
-</div>
-
-<!-- 3a -->
-<div class="sub-q" id="q3a">
-  <div class="sub-header"><span class="sub-label">(a)</span><span class="pts-tag">5 pts</span></div>
-  <div class="q-text">
-    Compute the <strong>ridge point</strong> (transition Arithmetic Intensity). This is the AI at which a program transitions from memory-bound to compute-bound.
-    $$AI_{\text{ridge}} = \frac{\text{Peak GFLOP/s}}{\text{Peak GB/s}}$$
-  </div>
-  <div class="ans-row">
-    <span class="ans-label">$AI_{\text{ridge}}$ =</span>
-    <input class="ans-input" id="in3a" type="number" placeholder="?">
-    <span style="font-size:.85rem;color:#6b7280">FLOP/Byte</span>
-    <button class="check-btn" onclick="checkNum('in3a',4,0.05,'fb3a',5)">Check</button>
-    <span class="fb" id="fb3a"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step">$AI_{\text{ridge}} = 512 / 128$ <span class="sol-ans">$= 4$ FLOP/Byte</span></div>
-      <div class="sol-step">Programs with $AI < 4$: <b>memory-bound</b> (bandwidth is the bottleneck). Programs with $AI \geq 4$: <b>compute-bound</b> (ALUs are the bottleneck).</div>
-    </div>
-  </details>
-</div>
-
-<!-- 3b -->
-<div class="sub-q" id="q3b">
-  <div class="sub-header"><span class="sub-label">(b)</span><span class="pts-tag">8 pts</span></div>
-  <div class="q-text">
-    Consider a GEMM operation: $C = A \times B$ where $A, B, C$ are all $N \times N$ matrices, $N = 128$, FP32.<br>
-    <strong>(i)</strong> How many FLOPs does this GEMM require? &nbsp; <strong>(ii)</strong> How many bytes of memory traffic? &nbsp; <strong>(iii)</strong> Compute the Arithmetic Intensity.
-  </div>
-  <div class="ans-row">
-    <span class="ans-label">FLOPs:</span>
-    <input class="ans-input" id="in3b1" type="number" placeholder="?" style="width:130px">
-    <span class="ans-label">Bytes:</span>
-    <input class="ans-input" id="in3b2" type="number" placeholder="?" style="width:130px">
-  </div>
-  <div class="ans-row" style="margin-top:.5rem">
-    <span class="ans-label">AI ≈</span>
-    <input class="ans-input" id="in3b3" type="number" step="0.1" placeholder="?">
-    <span style="font-size:.85rem;color:#6b7280">FLOP/Byte</span>
-    <button class="check-btn" onclick="checkThreeLoose('in3b1',4194304,50000,'in3b2',196608,500,'in3b3',21.33,0.5,'fb3b',8)">Check All</button>
-    <span class="fb" id="fb3b"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>FLOPs:</b> Each output element $C_{ij}$ requires $N$ multiply-adds = $2N$ ops. There are $N^2$ outputs.<br>$\text{FLOPs} = 2N^3 = 2 \times 128^3 = 2 \times 2{,}097{,}152$ <span class="sol-ans">$= 4{,}194{,}304$</span></div>
-      <div class="sol-step"><b>Bytes:</b> Three $N \times N$ FP32 matrices: $3 \times N^2 \times 4 = 3 \times 16{,}384 \times 4$ <span class="sol-ans">$= 196{,}608$ bytes</span></div>
-      <div class="sol-step"><b>AI:</b> $\dfrac{4{,}194{,}304}{196{,}608} = \dfrac{2N^3}{3N^2 \times 4} = \dfrac{N}{6} = \dfrac{128}{6}$ <span class="sol-ans">$\approx 21.33$ FLOP/Byte</span></div>
-      <div class="sol-step"><em>Key insight: GEMM AI scales as $N/6$ — larger matrices have higher AI, making them more compute-bound and better suited for GPU acceleration.</em></div>
-    </div>
-  </details>
-</div>
-
-<!-- 3c -->
-<div class="sub-q" id="q3c">
-  <div class="sub-header"><span class="sub-label">(c)</span><span class="pts-tag">4 pts</span></div>
-  <div class="q-text">Is the GEMM from part (b) <strong>memory-bound</strong> or <strong>compute-bound</strong> on this hardware? What is its actual achievable performance?</div>
-  <div class="mcq-wrap">
-    <label class="mcq-opt" data-mcq="q3c"><input type="radio" name="q3c" value="MB"> Memory-bound. Perf = $AI \times BW$ = 21.33 × 128 ≈ 2730 GFLOP/s</label>
-    <label class="mcq-opt" data-mcq="q3c"><input type="radio" name="q3c" value="CB"> Compute-bound. Perf = Peak = 512 GFLOP/s</label>
-    <label class="mcq-opt" data-mcq="q3c"><input type="radio" name="q3c" value="NE"> Neither — the two ceilings are equal at this AI.</label>
-  </div>
-  <div class="ans-row">
-    <button class="check-btn" onclick="checkMCQ('q3c','CB','fb3c',4)">Check</button>
-    <span class="fb" id="fb3c"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step">$AI = 21.33 > AI_{\text{ridge}} = 4$ → <b>Compute-bound</b></div>
-      <div class="sol-step">Performance = $\min(\text{Peak},\; AI \times BW) = \min(512,\; 21.33 \times 128) = \min(512,\; 2730)$ <span class="sol-ans">$= 512$ GFLOP/s</span></div>
-    </div>
-  </details>
-</div>
-
-<!-- 3d -->
-<div class="sub-q" id="q3d">
-  <div class="sub-header"><span class="sub-label">(d)</span><span class="pts-tag">8 pts</span></div>
-  <div class="q-text">
-    Now consider a <strong>vector addition</strong>: $C_i = A_i + B_i$ for $N = 10^6$ FP32 elements.<br>
-    Compute the AI. Is it memory-bound or compute-bound? What is the peak achievable performance?
-  </div>
-  <div class="ans-row">
-    <span class="ans-label">AI ≈</span>
-    <input class="ans-input" id="in3d" type="number" step="0.01" placeholder="?">
-    <span style="font-size:.85rem;color:#6b7280">FLOP/Byte</span>
-    <button class="check-btn" onclick="checkNum('in3d',0.0833,0.02,'fb3d',4)">Check AI</button>
-    <span class="fb" id="fb3d"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>FLOPs:</b> $N$ additions = $10^6$ FLOP</div>
-      <div class="sol-step"><b>Bytes:</b> Read $A$ and $B$, write $C$: $3N \times 4 = 12 \times 10^6$ bytes</div>
-      <div class="sol-step"><b>AI:</b> $10^6 / (12 \times 10^6)$ <span class="sol-ans">$= 1/12 \approx 0.083$ FLOP/Byte</span></div>
-      <div class="sol-step">$0.083 \ll 4$ (ridge) → <b>Severely memory-bound</b></div>
-      <div class="sol-step">Performance = $0.083 \times 128 \approx$ <span class="sol-ans">$10.7$ GFLOP/s</span> (only 2% of peak compute!)</div>
-      <div class="sol-step"><em>Lesson: Vec Add is always memory-bound regardless of hardware. Optimizing the AI (via tiling, fusion) is the only way to improve performance.</em></div>
-    </div>
-  </details>
-</div>
-
-</div><!-- q-body -->
-</div><!-- q-section -->
-
-<!-- ═══════════════════════════════════════════
-     QUESTION 4 — Architecture (40 pts)
-     ═══════════════════════════════════════════ -->
-<div class="q-section" id="q4">
-<div class="q-header">
-  <h2>Question 4 &mdash; Flynn's Taxonomy, SIMD, Processor Visualization &amp; Memory Banks</h2>
-  <span class="pts-badge">40 Points</span>
-</div>
-<div class="q-body">
-
-<!-- 4a: Flynn -->
-<div class="sub-q" id="q4a">
-  <div class="sub-header"><span class="sub-label">(a)</span><span class="pts-tag">8 pts</span></div>
-  <div class="q-text">
-    Classify each of the following into Flynn's taxonomy: <strong>SISD, SIMD, MISD, or MIMD</strong>.
-  </div>
-  <div class="tw"><table>
-    <tr><th>#</th><th>Description</th><th>Classification</th></tr>
-    <tr><td>(i)</td><td>A single-core CPU executing a sequential scalar program (no vectorization).</td>
-      <td>
-        <select id="fl1" style="padding:4px 8px;border-radius:4px;border:1px solid #d1d5db;font-size:.85rem">
-          <option value="">— select —</option><option>SISD</option><option>SIMD</option><option>MISD</option><option>MIMD</option>
-        </select>
-        <button class="check-btn" style="padding:4px 10px;font-size:.78rem" onclick="checkSelect('fl1','SISD','fbfl1',2)">✓</button>
-        <span class="fb" id="fbfl1"></span>
-      </td>
-    </tr>
-    <tr><td>(ii)</td><td>A GPU warp: 32 threads execute an identical instruction simultaneously on different data elements.</td>
-      <td>
-        <select id="fl2" style="padding:4px 8px;border-radius:4px;border:1px solid #d1d5db;font-size:.85rem">
-          <option value="">— select —</option><option>SISD</option><option>SIMD</option><option>MISD</option><option>MIMD</option>
-        </select>
-        <button class="check-btn" style="padding:4px 10px;font-size:.78rem" onclick="checkSelect('fl2','SIMD','fbfl2',2)">✓</button>
-        <span class="fb" id="fbfl2"></span>
-      </td>
-    </tr>
-    <tr><td>(iii)</td><td>Two CPU cores each running a completely different application simultaneously.</td>
-      <td>
-        <select id="fl3" style="padding:4px 8px;border-radius:4px;border:1px solid #d1d5db;font-size:.85rem">
-          <option value="">— select —</option><option>SISD</option><option>SIMD</option><option>MISD</option><option>MIMD</option>
-        </select>
-        <button class="check-btn" style="padding:4px 10px;font-size:.78rem" onclick="checkSelect('fl3','MIMD','fbfl3',2)">✓</button>
-        <span class="fb" id="fbfl3"></span>
-      </td>
-    </tr>
-    <tr><td>(iv)</td><td>Google's TPU v1 systolic array: data flows through many PEs, each performing a different stage of the computation.</td>
-      <td>
-        <select id="fl4" style="padding:4px 8px;border-radius:4px;border:1px solid #d1d5db;font-size:.85rem">
-          <option value="">— select —</option><option>SISD</option><option>SIMD</option><option>MISD</option><option>MIMD</option>
-        </select>
-        <button class="check-btn" style="padding:4px 10px;font-size:.78rem" onclick="checkSelect('fl4','MISD','fbfl4',2)">✓</button>
-        <span class="fb" id="fbfl4"></span>
-      </td>
-    </tr>
-  </table></div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>(i) SISD</b> — Single Instruction, Single Data: the classic sequential CPU model.</div>
-      <div class="sol-step"><b>(ii) SIMD</b> — Single Instruction, Multiple Data: one instruction broadcasts across 32 lanes simultaneously. This is the core of GPU parallelism (also called SIMT in hardware).</div>
-      <div class="sol-step"><b>(iii) MIMD</b> — Multiple Instruction, Multiple Data: each core independently fetches and executes its own instruction stream on its own data.</div>
-      <div class="sol-step"><b>(iv) MISD</b> — Multiple Instruction, Single Data: the same activation value flows through all PEs in a row; each PE applies a different weight (a different "instruction"/operation). Data stream is reused; instructions differ per PE.</div>
-    </div>
-  </details>
-</div>
-
-<!-- 4b: Visualization -->
-<div class="sub-q" id="q4b">
-  <div class="sub-header"><span class="sub-label">(b)</span><span class="pts-tag">12 pts</span></div>
-  <div class="q-text">
-    The task is: compute $C[i] = A[i] + B[i]$ for $i = 0, 1, 2, 3$ (4 elements).<br>
-    Each element requires three sequential operations: <strong>LD</strong> (Load, 1 cycle) &rarr; <strong>ADD</strong> (1 cycle) &rarr; <strong>ST</strong> (Store, 1 cycle). Operations on the same element cannot be reordered.<br><br>
-    <strong>(i)</strong> Scalar processor (1 PE, sequential): how many total cycles?<br>
-    <strong>(ii)</strong> Array processor (4 PEs, each handles one element in parallel): how many total cycles?<br>
-    <strong>(iii)</strong> Vector processor (1 pipelined unit, depth = 3 stages, throughput = 1 element/cycle after startup): how many total cycles?<br>
-    Use the visualization below to help you answer.
-  </div>
-  <div class="ans-row" style="margin-bottom:1rem">
-    <span class="ans-label">Scalar:</span>
-    <input class="ans-input" id="in4s" type="number" placeholder="?" style="width:80px">
-    <span class="ans-label" style="margin-left:.5rem">cycles</span>
-    <span class="ans-label" style="margin-left:1rem">Array:</span>
-    <input class="ans-input" id="in4a" type="number" placeholder="?" style="width:80px">
-    <span class="ans-label">cycles</span>
-    <span class="ans-label" style="margin-left:1rem">Vector:</span>
-    <input class="ans-input" id="in4v" type="number" placeholder="?" style="width:80px">
-    <span class="ans-label">cycles</span>
-    <button class="check-btn" onclick="checkThree('in4s',12,'in4a',3,'in4v',6,'fb4b',12)">Check All</button>
-    <span class="fb" id="fb4b"></span>
-  </div>
-
-  <!-- INTERACTIVE VISUALIZATION -->
-  <div class="viz-section">
-    <div class="viz-tabs">
-      <button class="vtab active" data-mode="scalar" onclick="switchMode('scalar',this)">Scalar (1 PE)</button>
-      <button class="vtab" data-mode="array" onclick="switchMode('array',this)">Array (4 PEs)</button>
-      <button class="vtab" data-mode="vector" onclick="switchMode('vector',this)">Vector (Pipeline)</button>
-    </div>
-    <div class="viz-controls">
-      <button class="viz-btn play" id="play-btn" onclick="playAnimation()">&#9654; Animate</button>
-      <button class="viz-btn reset" onclick="resetViz()">&#8635; Reset</button>
-      <span id="cycle-info"></span>
-    </div>
-    <div id="mode-title">Scalar Processor — Total: 12 cycles</div>
-    <div class="timing-grid" id="viz-grid"></div>
-    <div class="viz-legend">
-      <span class="leg-item"><span class="leg-box" style="background:#dbeafe"></span> LD (Load)</span>
-      <span class="leg-item"><span class="leg-box" style="background:#dcfce7"></span> ADD</span>
-      <span class="leg-item"><span class="leg-box" style="background:#fef3c7"></span> ST (Store)</span>
-      <span class="leg-item"><span class="leg-box" style="background:#f3f4f6"></span> Idle</span>
-    </div>
-  </div>
-
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>Scalar (total = 12 cycles):</b> One PE processes elements sequentially. E0 takes cycles 1–3, E1 takes cycles 4–6, E2 takes 7–9, E3 takes 10–12. Total = $4 \times 3 = \mathbf{12}$ cycles. PE is idle 0% (fully busy but no parallelism).</div>
-      <div class="sol-step"><b>Array (total = 3 cycles):</b> Four dedicated PEs all start simultaneously. All elements load in cycle 1, add in cycle 2, store in cycle 3. Total = <b>3 cycles</b>. Speedup vs Scalar = $12/3 = 4\times$ — perfect linear scaling!</div>
-      <div class="sol-step"><b>Vector Pipeline (total = 6 cycles):</b> One pipelined unit with 3 stages. E0 enters at cycle 1. E1 enters at cycle 2 (stage 1 is free). After filling the pipeline at cycle 3, all 3 stages are active. Last element (E3) finishes at cycle 6. Formula: $\text{stages} + (N-1) = 3 + 3 = \mathbf{6}$ cycles. Speedup vs Scalar = $12/6 = 2\times$.</div>
-      <div class="sol-step"><b>Key insight:</b> Array = <em>spatial parallelism</em> (multiple PEs at once). Vector = <em>temporal parallelism</em> (pipeline overlap in time). Array is faster here but needs 4× the hardware.</div>
-    </div>
-  </details>
-</div>
-
-<!-- 4c: Memory Banks -->
-<div class="sub-q" id="q4c">
-  <div class="sub-header"><span class="sub-label">(c)</span><span class="pts-tag">10 pts</span></div>
-  <div class="q-text">
-    <strong>Memory Banks.</strong> A vector processor (like CRAY-1) has <strong>16 memory banks</strong>, each with an access latency of <strong>11 cycles</strong>. Elements are stored interleaved: element $k$ is in bank $k \bmod 16$.
-  </div>
-  <br>
-  <div class="q-text"><strong>(i)</strong> [2 pts] Which bank does element $A[37]$ reside in?</div>
-  <div class="ans-row">
-    <span class="ans-label">Bank =</span>
-    <input class="ans-input" id="in4c1" type="number" placeholder="?" style="width:80px">
-    <button class="check-btn" onclick="checkNum('in4c1',5,0,'fb4c1',2)">Check</button>
-    <span class="fb" id="fb4c1"></span>
-  </div>
-  <br>
-  <div class="q-text"><strong>(ii)</strong> [4 pts] With stride = 1 (accessing $A[0], A[1], A[2], \ldots$), can the processor sustain 1 new element per cycle with no stalls? Justify with the bank latency.</div>
-  <div class="mcq-wrap">
-    <label class="mcq-opt" data-mcq="q4c2"><input type="radio" name="q4c2" value="YES"> Yes — each consecutive element is in a different bank. After accessing bank 0 at cycle 1, the next access to bank 0 happens at cycle 17 (≥ 11+1), so bank 0 has recovered in time.</label>
-    <label class="mcq-opt" data-mcq="q4c2"><input type="radio" name="q4c2" value="NO"> No — the latency is 11 cycles and we must wait for each bank to recover before re-accessing it.</label>
-  </div>
-  <div class="ans-row">
-    <button class="check-btn" onclick="checkMCQ('q4c2','YES','fb4c2',4)">Check</button>
-    <span class="fb" id="fb4c2"></span>
-  </div>
-  <br>
-  <div class="q-text"><strong>(iii)</strong> [4 pts] Now access with stride = 4 (elements $A[0], A[4], A[8], A[12], \ldots$). How many unique banks are used? Will there be bank conflicts?</div>
-  <div class="ans-row">
-    <span class="ans-label">Unique banks used:</span>
-    <input class="ans-input" id="in4c3" type="number" placeholder="?" style="width:80px">
-    <button class="check-btn" onclick="checkNum('in4c3',4,0,'fb4c3',2)">Check</button>
-    <span class="fb" id="fb4c3"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Full Solution (c)</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>(i)</b> $37 \bmod 16 = 37 - 2\times16 = 37 - 32$ <span class="sol-ans">$= 5$ (Bank 5)</span></div>
-      <div class="sol-step"><b>(ii) YES — no stalls with stride=1.</b><br>
-        Stride-1 accesses go to banks 0, 1, 2, …, 15, 0, 1, …<br>
-        Bank 0 is first accessed at cycle 1. The <em>next</em> access to bank 0 is at cycle $1 + 16 = 17$.<br>
-        Bank 0 completes by cycle $1 + 11 = 12 \ll 17$. ✅ No stall!<br>
-        Condition: $\text{NumBanks} \geq \text{Latency}$ → $16 \geq 11$ ✅
+    <div class="part">
+      <span class="part-label">Part 1.1 &mdash; Forward Pass &nbsp;(5 pts)</span>
+      <p class="part-q">Compute the pre-activation $z$ and hidden activation $a = \text{ReLU}(z)$.</p>
+      <div class="calc-row">
+        <label>$z =$</label>
+        <input id="q1z" class="ans-input" placeholder="?">
+        <label>$a =$</label>
+        <input id="q1a" class="ans-input" placeholder="?">
+        <button class="check-btn" onclick="ck2('q1z','q1a',4,4,'p1fb')">Check</button>
+        <span id="p1fb" class="feedback"></span>
       </div>
-      <div class="sol-step"><b>(iii) Stride = 4:</b><br>
-        Banks accessed: $0\bmod16=0$, $4\bmod16=4$, $8\bmod16=8$, $12\bmod16=12$, $16\bmod16=0$, …<br>
-        Only <span class="sol-ans">4 unique banks</span> (0, 4, 8, 12) are used.<br>
-        Bank 0 is accessed at cycle 1. Next access to bank 0 is at cycle $1 + 4 = 5$ (only 4 cycles later).<br>
-        But bank 0 needs 11 cycles to recover → <b>stall of $11 - 4 = 7$ cycles every 4th access!</b><br>
-        Rule: conflict occurs when $\gcd(\text{stride}, \text{NumBanks}) > 1$. Here $\gcd(4, 16) = 4 > 1$ → ❌ conflict.
-      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>$z = w_1 x_1 + w_2 x_2 = 2(1)+1(2) = \mathbf{4}$</p>
+        <p>$a = \text{ReLU}(4) = \mathbf{4}$ &nbsp;(slope = 1 since $z>0$)</p>
+      </div></details>
     </div>
-  </details>
-</div>
 
-<!-- 4d -->
-<div class="sub-q" id="q4d">
-  <div class="sub-header"><span class="sub-label">(d)</span><span class="pts-tag">10 pts</span></div>
-  <div class="q-text">
-    The following scalar code runs on a processor with <strong>1 memory bank</strong>:<br>
-    <code style="background:#f1f5f9;padding:4px 8px;border-radius:4px;margin:.4rem 0;display:inline-block">for (i = 0; i &lt; 4; i++) &nbsp; C[i] = A[i] + B[i];</code><br><br>
-    The compiled scalar loop body (per iteration) takes: LD=4 cycles, LD=4 cycles, ADD=2 cycles, ST=4 cycles, LOOP overhead=2 cycles.<br><br>
-    <strong>(i)</strong> [4 pts] How many total cycles for the scalar loop (4 iterations)?<br>
-    <strong>(ii)</strong> [6 pts] The same program is vectorized for a vector processor: VLEN=4. Vector instruction latencies: VLD=4+3=7 cycles, VADD=2+3=5 cycles, VST=4+3=7 cycles. What is the total cycle count using 2 VLDs + 1 VADD + 1 VST + 4-cycle init overhead?<br>
-    What is the speedup?
-  </div>
-  <div class="ans-row">
-    <span class="ans-label">Scalar total:</span>
-    <input class="ans-input" id="in4d1" type="number" placeholder="?" style="width:100px">
-    <span class="ans-label">cycles</span>
-    <span class="ans-label" style="margin-left:.8rem">Vector total:</span>
-    <input class="ans-input" id="in4d2" type="number" placeholder="?" style="width:100px">
-    <span class="ans-label">cycles</span>
-    <button class="check-btn" onclick="checkTwo('in4d1',64,1,'in4d2',30,1,'fb4d',6)">Check</button>
-    <span class="fb" id="fb4d"></span>
-  </div>
-  <details class="sol-wrap">
-    <summary>Show Solution</summary>
-    <div class="sol-body">
-      <div class="sol-step"><b>Scalar per iteration:</b> LD(4) + LD(4) + ADD(2) + ST(4) + loop(2) = 16 cycles</div>
-      <div class="sol-step"><b>Scalar total (4 iterations):</b> $4 \times 16$ <span class="sol-ans">$= 64$ cycles</span></div>
-      <div class="sol-step"><b>Vector instructions:</b>
-        <br>Init overhead: 4 cycles
-        <br>VLD A: startup(4) + (4-1) = 7 cycles
-        <br>VLD B: 7 cycles
-        <br>VADD: startup(2) + 3 = 5 cycles
-        <br>VST: startup(4) + 3 = 7 cycles
-        <br>Total = 4 + 7 + 7 + 5 + 7 <span class="sol-ans">$= 30$ cycles</span>
+    <div class="part">
+      <span class="part-label">Part 1.2 &mdash; Output &amp; Loss &nbsp;(5 pts)</span>
+      <p class="part-q">Compute $\hat{y}$ and loss $L$.</p>
+      <div class="calc-row">
+        <label>$\hat{y} =$</label>
+        <input id="q1yh" class="ans-input" placeholder="?">
+        <label>$L =$</label>
+        <input id="q1L" class="ans-input" placeholder="?">
+        <button class="check-btn" onclick="ck2('q1yh','q1L',12,4,'p2fb')">Check</button>
+        <span id="p2fb" class="feedback"></span>
       </div>
-      <div class="sol-step"><b>Speedup:</b> $64 / 30 \approx 2.1\times$ faster</div>
-      <div class="sol-step"><em>Formula for vector instruction: startup latency + (VLEN − 1). The pipeline fills after startup cycles; thereafter one result emerges per cycle.</em></div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>$\hat{y}=v\cdot a = 3\times4 = \mathbf{12}$</p>
+        <p>$L=(\hat{y}-y)^2=(12-10)^2=\mathbf{4}$</p>
+      </div></details>
     </div>
-  </details>
+
+    <div class="part">
+      <span class="part-label">Part 1.3 &mdash; Chain Rule for $w_1$ &nbsp;(10 pts)</span>
+      <p class="part-q">Using the chain rule, compute $\dfrac{\partial L}{\partial w_1}$.
+        Fill in each factor individually, then the combined answer.</p>
+      <p style="margin:8px 0;font-size:14px;color:#334155">
+        $\dfrac{\partial L}{\partial w_1} =
+        \underbrace{\dfrac{\partial L}{\partial\hat{y}}}_{(1)}
+        \cdot\underbrace{\dfrac{\partial\hat{y}}{\partial a}}_{(2)}
+        \cdot\underbrace{\dfrac{\partial a}{\partial z}}_{(3)}
+        \cdot\underbrace{\dfrac{\partial z}{\partial w_1}}_{(4)}$
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0;max-width:420px">
+        <div><label style="font-size:12px;color:#555">(1) $\partial L/\partial\hat{y}$</label><br>
+          <input id="d1" class="ans-input" placeholder="?"></div>
+        <div><label style="font-size:12px;color:#555">(2) $\partial\hat{y}/\partial a$</label><br>
+          <input id="d2" class="ans-input" placeholder="?"></div>
+        <div><label style="font-size:12px;color:#555">(3) $\partial a/\partial z$</label><br>
+          <input id="d3" class="ans-input" placeholder="?"></div>
+        <div><label style="font-size:12px;color:#555">(4) $\partial z/\partial w_1$</label><br>
+          <input id="d4" class="ans-input" placeholder="?"></div>
+      </div>
+      <div class="calc-row">
+        <label>$\partial L/\partial w_1=$</label>
+        <input id="dw1" class="ans-input" placeholder="final">
+        <button class="check-btn" onclick="ck5('d1','d2','d3','d4','dw1',4,3,1,1,12,'p3fb')">Check All</button>
+        <span id="p3fb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>(1) $2(\hat{y}-y)=2(12-10)=\mathbf{4}$</p>
+        <p>(2) $\hat{y}/\partial a = v = \mathbf{3}$</p>
+        <p>(3) ReLU derivative at $z=4>0$ is $\mathbf{1}$</p>
+        <p>(4) $\partial z/\partial w_1 = x_1 = \mathbf{1}$</p>
+        <div class="box">dL/dw1 = 4 x 3 x 1 x 1 = <strong>12</strong></div>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 1.4 &mdash; Chain Rule for $v$ and $w_2$ &nbsp;(10 pts)</span>
+      <p class="part-q">(a) Compute $\partial L/\partial v$. &nbsp;&nbsp;(b) Compute $\partial L/\partial w_2$.</p>
+      <div class="calc-row">
+        <label>$\partial L/\partial v=$</label>
+        <input id="dv" class="ans-input" placeholder="?">
+        <label>$\partial L/\partial w_2=$</label>
+        <input id="dw2" class="ans-input" placeholder="?">
+        <button class="check-btn" onclick="ck2('dv','dw2',16,24,'p4fb')">Check</button>
+        <span id="p4fb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>(a) $\partial L/\partial v = \partial L/\partial\hat{y} \cdot \partial\hat{y}/\partial v = 4 \times a = 4\times4 = \mathbf{16}$</p>
+        <p>(b) Same chain as 1.3 but $\partial z/\partial w_2 = x_2 = 2$:</p>
+        <div class="box">dL/dw2 = 4 x 3 x 1 x 2 = <strong>24</strong></div>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 1.5 &mdash; Gradient Descent Update &nbsp;(5 pts)</span>
+      <p class="part-q">Perform one GD step on $w_1$ and $v$ ($\alpha=0.05$).</p>
+      <div class="calc-row">
+        <label>$w_1^\text{new}=$</label>
+        <input id="w1n" class="ans-input" placeholder="?">
+        <label>$v^\text{new}=$</label>
+        <input id="vn" class="ans-input" placeholder="?">
+        <button class="check-btn" onclick="ck2('w1n','vn',1.4,2.2,'p5fb')">Check</button>
+        <span id="p5fb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>$w_1^\text{new} = 2 - 0.05\times12 = \mathbf{1.4}$</p>
+        <p>$v^\text{new} = 3 - 0.05\times16 = \mathbf{2.2}$</p>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 1.6 &mdash; SGD vs. Full-Batch GD &nbsp;(Conceptual)</span>
+      <p class="part-q">Suppose the dataset has 10,000 samples and we switch from full-batch GD to SGD (batch size=1).</p>
+      <p class="part-q">(a) Does each SGD step give the exact same gradient as a full-batch step? Why or why not?</p>
+      <p class="part-q">(b) Which typically converges faster in wall-clock time, and why?</p>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p><strong>(a) No.</strong> SGD uses a single random sample, producing a noisy estimate of the true gradient. They match only in expectation.</p>
+        <p><strong>(b) SGD</strong> is typically faster in wall-clock time: each iteration costs 1/N of the compute, enabling far more parameter updates per second. The high update frequency usually dominates the noise disadvantage for large datasets.</p>
+      </div></details>
+    </div>
+
+  </div>
 </div>
 
-</div><!-- q-body -->
-</div><!-- q-section -->
+<!-- ==================== Q2 ==================== -->
+<div class="question-block">
+  <div class="q-header">
+    <span class="q-num">Q2</span>
+    <span class="q-title">Convolutional Neural Networks &mdash; Output Size &amp; Properties</span>
+    <span class="q-pts">25 Points</span>
+  </div>
+  <div class="q-body">
 
-<!-- SCORE BUTTON -->
-<div style="text-align:center;margin:1.5rem 0">
-  <button id="show-score-btn" onclick="revealScore()">See My Progress Summary</button>
+    <div class="part">
+      <span class="part-label">Part 2.1 &mdash; Output Length Table &nbsp;(10 pts)</span>
+      <p class="part-q">For each configuration, compute the 1D output length using
+        $\text{Out}=\lfloor(In-F+2P)/S\rfloor+1$,
+        or write <em class="invalid-note">Invalid</em> if the filter cannot fit.
+        <strong>State any assumptions you make.</strong></p>
+      <table class="conv-table">
+        <tr><th>In</th><th>F (Filter)</th><th>P (Padding)</th><th>S (Stride)</th><th>Output Length</th></tr>
+        <tr><td>7</td><td>5</td><td>0</td><td>1</td><td><input id="t1" placeholder="?"></td></tr>
+        <tr><td>7</td><td>11</td><td>0</td><td>1</td><td><input id="t2" placeholder="?"></td></tr>
+        <tr><td>28</td><td>5</td><td>2</td><td>1</td><td><input id="t3" placeholder="?"></td></tr>
+        <tr><td>28</td><td>5</td><td>0</td><td>2</td><td><input id="t4" placeholder="?"></td></tr>
+      </table>
+      <div style="margin-top:10px">
+        <button class="check-btn" onclick="ckTab()">Check Table</button>
+        <span id="tfb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p><strong>Row 1:</strong> $(7-5)/1+1=\mathbf{3}$</p>
+        <p><strong>Row 2:</strong> $(7-11)/1+1=-3$ &rarr; <span class="invalid-note">Invalid</span>. Filter is larger than input. Same situation as Quiz 1 Q3 (F=11, In=3).</p>
+        <p><strong>Row 3:</strong> $(28-5+4)/1+1=\mathbf{28}$. &ldquo;Same&rdquo; padding: Out=In.</p>
+        <p><strong>Row 4:</strong> $(28-5)/2+1=11.5+1$ &rarr; depends on assumption. With flooring: $\lfloor11.5\rfloor+1=\mathbf{12}$. State your assumption.</p>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 2.2 &mdash; Same Padding Formula &nbsp;(5 pts)</span>
+      <p class="part-q">For Out=In with stride S=1: derive P in terms of F.
+        What value of P is needed for F=5?</p>
+      <div class="calc-row">
+        <label>$P$ (F=5) =</label>
+        <input id="q2p" class="ans-input" placeholder="?">
+        <button class="check-btn" onclick="ck1('q2p',2,'q2pfb')">Check</button>
+        <span id="q2pfb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>$In=(In-F+2P)+1 \Rightarrow 0=-F+2P+1 \Rightarrow P=(F-1)/2$</p>
+        <p>For F=5: $P=(5-1)/2=\mathbf{2}$</p>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 2.3 &mdash; 2D Multi-Channel Output &nbsp;(5 pts)</span>
+      <div class="setup-box" style="margin-bottom:14px">
+        <ul>
+          <li>Input: $(C,H,W)=(3,5,5)$</li>
+          <li>Conv layer: <strong>8 filters</strong>, each $(C,K_H,K_W)=(3,3,3)$, $S=1$, $P=0$</li>
+        </ul>
+      </div>
+      <p class="part-q">What are the output dimensions $(H_\text{out}, W_\text{out}, D_\text{out})$?</p>
+      <div class="calc-row">
+        <label>$H_\text{out}=$</label><input id="q2H" class="ans-input" style="width:70px" placeholder="?">
+        <label>$W_\text{out}=$</label><input id="q2W" class="ans-input" style="width:70px" placeholder="?">
+        <label>$D_\text{out}=$</label><input id="q2D" class="ans-input" style="width:70px" placeholder="?">
+        <button class="check-btn" onclick="ck3w('q2H','q2W','q2D',3,3,8,'q2Hfb')">Check</button>
+        <span id="q2Hfb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>$H_\text{out}=(5-3)/1+1=\mathbf{3}$, &nbsp;$W_\text{out}=\mathbf{3}$, &nbsp;$D_\text{out}=\text{num filters}=\mathbf{8}$</p>
+        <p>Note: filter depth (=3) must match input channels. Output depth = number of filters, not filter depth.</p>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 2.4 &mdash; Convolution vs. Cross-Correlation &nbsp;(5 pts)</span>
+      <p class="part-q">What is the mathematical difference between convolution and cross-correlation?
+        Which do CNNs actually compute? Does this distinction matter for learning?</p>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p><strong>Convolution</strong> flips (180&deg;) the kernel before sliding. <strong>Cross-correlation</strong> does not flip.</p>
+        <p>CNNs technically compute <strong>cross-correlation</strong>, called &ldquo;convolution&rdquo; by convention.</p>
+        <p><strong>No practical difference for learning:</strong> since weights are learned, the network simply learns the &ldquo;flipped&rdquo; version automatically.</p>
+      </div></details>
+    </div>
+
+  </div>
 </div>
 
-<!-- SCORE SECTION -->
-<div id="score-section">
-  <div class="score-big" id="score-big">0</div>
-  <div class="score-sub" id="score-sub">questions revealed</div>
-  <div class="score-grid" id="score-grid"></div>
-  <div style="margin-top:1rem;color:#6b7280;font-size:.85rem">Keep studying — exam is tomorrow! Good luck 🎯</div>
+<!-- ==================== Q3 ==================== -->
+<div class="question-block">
+  <div class="q-header">
+    <span class="q-num">Q3</span>
+    <span class="q-title">Roofline Model &mdash; Arithmetic Intensity</span>
+    <span class="q-pts">20 Points</span>
+  </div>
+  <div class="q-body">
+
+    <div class="setup-box">
+      <h4>Hardware Specifications</h4>
+      <ul>
+        <li>Peak compute: <strong>200 GFLOP/s</strong></li>
+        <li>Peak memory bandwidth: <strong>50 GB/s</strong></li>
+        <li>Data type: <strong>FP32</strong> (4 bytes per element)</li>
+      </ul>
+      <p style="margin-top:10px">We analyze square matrix multiply $C = A \times B$
+        where $A, B, C$ are each $N\times N$ FP32 matrices.</p>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 3.1 &mdash; Ridge Point &nbsp;(4 pts)</span>
+      <p class="part-q">Compute the ridge point: $\text{Ridge} = \text{Peak Compute} / \text{Peak BW}$.</p>
+      <div class="calc-row">
+        <label>Ridge =</label>
+        <input id="q3r" class="ans-input" placeholder="? FLOP/B">
+        <button class="check-btn" onclick="ck1('q3r',4,'q3rfb')">Check</button>
+        <span id="q3rfb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <div class="box">200 GFLOP/s / 50 GB/s = <strong>4 FLOP/Byte</strong></div>
+        <p>AI &gt; 4 &rArr; compute-bound. AI &lt; 4 &rArr; memory-bound.</p>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 3.2 &mdash; Arithmetic Intensity for $N=200$ &nbsp;(10 pts)</span>
+      <p class="part-q">Calculate the AI for $N=200$. Assume all data loaded from DRAM once.
+        Show: <strong>FLOPs &rarr; Bytes &rarr; AI</strong> &nbsp;&nbsp;
+        <em style="color:#555;font-size:13px">(Hint: FLOPs=$2N^3$, Bytes=$3N^2\times4$)</em></p>
+      <div style="background:#f0f4ff;border-radius:8px;padding:14px 18px;margin:10px 0">
+        <div class="calc-row">
+          <label>FLOPs =</label>
+          <input id="q3fl" class="ans-input" placeholder="e.g. 1.6e7" style="width:130px">
+        </div>
+        <div class="calc-row" style="margin-top:8px">
+          <label>Bytes =</label>
+          <input id="q3by" class="ans-input" placeholder="e.g. 4.8e5" style="width:130px">
+        </div>
+        <div class="calc-row" style="margin-top:8px">
+          <label>AI =</label>
+          <input id="q3ai" class="ans-input" placeholder="~? FLOP/B" style="width:130px">
+        </div>
+        <div style="margin-top:12px">
+          <button class="check-btn" onclick="ckAI()">Check All</button>
+          <span id="q3aifb" class="feedback"></span>
+        </div>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <div class="box">FLOPs = 2 x 200^3 = 2 x 8,000,000 = 1.6 x 10^7</div>
+        <div class="box">Bytes = 3 x 200^2 x 4 = 3 x 40,000 x 4 = 4.8 x 10^5</div>
+        <div class="box">AI = 1.6e7 / 4.8e5 = <strong>33.3 FLOP/Byte</strong></div>
+        <p>Shortcut: $AI \approx N/6 = 200/6 \approx 33.3$ &#10003;</p>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 3.3 &mdash; Bound Classification &amp; Achievable Performance &nbsp;(4 pts)</span>
+      <p class="part-q">Is the $N=200$ GEMM memory-bound or compute-bound? What does the Roofline model predict for achievable performance?</p>
+      <div class="calc-row">
+        <select id="q3bnd" style="border:2px solid #cbd5e1;border-radius:6px;padding:5px 10px;font-size:14px">
+          <option value="">-- Select --</option>
+          <option value="compute">Compute-bound</option>
+          <option value="memory">Memory-bound</option>
+        </select>
+        <label style="margin-left:14px">Achievable =</label>
+        <input id="q3pf" class="ans-input" placeholder="? GFLOP/s">
+        <button class="check-btn" onclick="ckBound()">Check</button>
+        <span id="q3bndfb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>AI=33.3 &gt; Ridge=4 &rArr; <strong>Compute-bound</strong>. Achievable = peak = <strong>200 GFLOP/s</strong>.</p>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 3.4 &mdash; Effect of Doubling $N$ &nbsp;(2 pts)</span>
+      <p class="part-q">If $N$ doubles to 400, what happens to AI and achievable performance? Justify.</p>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>New AI $\approx 400/6 \approx 66.7$ FLOP/B. Still &gt;&gt; ridge (4). Still <strong>compute-bound</strong>.</p>
+        <p>Achievable performance still = <strong>200 GFLOP/s</strong>. Doubling N does not help &mdash; must upgrade hardware.</p>
+      </div></details>
+    </div>
+
+  </div>
 </div>
 
-</div><!-- container -->
+<!-- ==================== Q4 ==================== -->
+<div class="question-block">
+  <div class="q-header">
+    <span class="q-num">Q4</span>
+    <span class="q-title">Flynn's Taxonomy, Scalar vs. Vector Processors &amp; Memory Banks</span>
+    <span class="q-pts">40 Points</span>
+  </div>
+  <div class="q-body">
+
+    <div class="setup-box">
+      <h4>Setup &mdash; The Following Loop Runs on Different Processor Architectures</h4>
+      <pre>for (i = 0; i &lt; 50; i++)
+    C[i] = (A[i] + B[i]) / 2;</pre>
+      <p style="margin-top:12px;font-size:13.5px">
+        <strong>Latencies:</strong> LD=11 &nbsp;|&nbsp; ADD=4 &nbsp;|&nbsp; SHR (&#247;2)=1 &nbsp;|&nbsp; ST=11 &nbsp;|&nbsp; DECBNZ=2 cycles<br>
+        <strong>Vector proc:</strong> 16 memory banks, bank latency=11 cycles, elements stored stride-1. Init overhead=2 cycles.
+      </p>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 4.1 &mdash; Flynn's Taxonomy &nbsp;(8 pts)</span>
+      <p class="part-q">Classify each system as SISD, SIMD, MISD, or MIMD.</p>
+      <div class="flynnbox">
+        <div class="fl-row">
+          <span class="fl-label">Single-core scalar CPU (e.g., Intel Core i7)</span>
+          <select id="fl1" onchange="ckFlynn()">
+            <option value="">-- Type --</option>
+            <option>SISD</option><option>SIMD</option><option>MISD</option><option>MIMD</option>
+          </select>
+        </div>
+        <div class="fl-row">
+          <span class="fl-label">GPU warp (32 threads, one instruction broadcast)</span>
+          <select id="fl2" onchange="ckFlynn()">
+            <option value="">-- Type --</option>
+            <option>SISD</option><option>SIMD</option><option>MISD</option><option>MIMD</option>
+          </select>
+        </div>
+        <div class="fl-row">
+          <span class="fl-label">CRAY-1 vector processor</span>
+          <select id="fl3" onchange="ckFlynn()">
+            <option value="">-- Type --</option>
+            <option>SISD</option><option>SIMD</option><option>MISD</option><option>MIMD</option>
+          </select>
+        </div>
+        <div class="fl-row">
+          <span class="fl-label">Multi-socket server (4 CPUs, each 8 cores)</span>
+          <select id="fl4" onchange="ckFlynn()">
+            <option value="">-- Type --</option>
+            <option>SISD</option><option>SIMD</option><option>MISD</option><option>MIMD</option>
+          </select>
+        </div>
+      </div>
+      <span id="flynnfb" class="feedback" style="display:block;margin-top:8px"></span>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p><strong>SISD</strong> &mdash; single core, one instruction, one data stream.</p>
+        <p><strong>SIMD</strong> &mdash; GPU warp: one instruction broadcast to 32 lanes, different data.</p>
+        <p><strong>SIMD</strong> &mdash; CRAY-1 vector: one vector instruction operates on entire array.</p>
+        <p><strong>MIMD</strong> &mdash; multi-socket: each core runs independent program on independent data.</p>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 4.2 &mdash; Scalar Processor &nbsp;(12 pts)</span>
+      <p class="part-q">(a) Fill in the cycle count for each instruction in one loop iteration:</p>
+      <table class="asm-table">
+        <tr><th>Instruction</th><th>Operation</th><th style="width:90px;text-align:center">Cycles</th></tr>
+        <tr><td><code>LD R1, A[i]</code></td><td>Load A[i]</td><td class="asm-num"><input id="s1" placeholder="?"></td></tr>
+        <tr><td><code>LD R2, B[i]</code></td><td>Load B[i]</td><td class="asm-num"><input id="s2" placeholder="?"></td></tr>
+        <tr><td><code>ADD R3, R1, R2</code></td><td>A[i]+B[i]</td><td class="asm-num"><input id="s3" placeholder="?"></td></tr>
+        <tr><td><code>SHR R3, 1</code></td><td>Divide by 2</td><td class="asm-num"><input id="s4" placeholder="?"></td></tr>
+        <tr><td><code>ST C[i], R3</code></td><td>Store C[i]</td><td class="asm-num"><input id="s5" placeholder="?"></td></tr>
+        <tr><td><code>DECBNZ i, LOOP</code></td><td>Loop control</td><td class="asm-num"><input id="s6" placeholder="?"></td></tr>
+        <tr style="background:#dbeafe"><td colspan="2"><strong>Total per iteration</strong></td>
+          <td class="asm-num"><input id="stot" placeholder="?"></td></tr>
+      </table>
+      <div style="margin-top:10px">
+        <button class="check-btn" onclick="ckScalar()">Check</button>
+        <span id="scfb" class="feedback"></span>
+      </div>
+      <p class="part-q" style="margin-top:18px">(b) Including 4 initialization cycles, total cycles for all 50 iterations?</p>
+      <div class="calc-row">
+        <label>Total =</label>
+        <input id="q4st" class="ans-input" placeholder="?">
+        <button class="check-btn" onclick="ck1('q4st',2004,'q4stfb')">Check</button>
+        <span id="q4stfb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>Per iter: 11+11+4+1+11+2 = <strong>40 cycles</strong></p>
+        <div class="box">Total = 4 + 50 x 40 = 4 + 2000 = <strong>2004 cycles</strong></div>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 4.3 &mdash; Vector Processor &nbsp;(10 pts)</span>
+      <p class="part-q">(a) List the vector instructions (VLEN=50). &nbsp;(b) Using startup+(VLEN-1),
+        fill in cycles per instruction and compute total (include 2-cycle init).</p>
+      <table class="asm-table" style="max-width:480px">
+        <tr><th>Instruction</th><th>Startup</th><th>+49</th><th style="width:90px;text-align:center">Total</th></tr>
+        <tr><td>VLD VA, A</td><td style="text-align:center">11</td><td style="text-align:center">49</td><td class="asm-num"><input id="v1" placeholder="?"></td></tr>
+        <tr><td>VLD VB, B</td><td style="text-align:center">11</td><td style="text-align:center">49</td><td class="asm-num"><input id="v2" placeholder="?"></td></tr>
+        <tr><td>VADD VC, VA, VB</td><td style="text-align:center">4</td><td style="text-align:center">49</td><td class="asm-num"><input id="v3" placeholder="?"></td></tr>
+        <tr><td>VSHR VC, 1</td><td style="text-align:center">1</td><td style="text-align:center">49</td><td class="asm-num"><input id="v4" placeholder="?"></td></tr>
+        <tr><td>VST C, VC</td><td style="text-align:center">11</td><td style="text-align:center">49</td><td class="asm-num"><input id="v5" placeholder="?"></td></tr>
+      </table>
+      <div style="margin:12px 0">
+        <button class="check-btn" onclick="ckVec()">Check Table</button>
+        <span id="vecfb" class="feedback"></span>
+      </div>
+      <div class="calc-row">
+        <label>Total (incl. 2 init) =</label>
+        <input id="q4vt" class="ans-input" placeholder="?">
+        <button class="check-btn" onclick="ck1('q4vt',285,'q4vtfb')">Check</button>
+        <span id="q4vtfb" class="feedback"></span>
+      </div>
+      <div class="calc-row" style="margin-top:8px">
+        <label>Speedup =</label>
+        <input id="q4sp" class="ans-input" placeholder="~?x" style="width:90px">
+        <button class="check-btn" onclick="ckRng('q4sp',6.9,7.2,'q4spfb')">Check</button>
+        <span id="q4spfb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>VLD=60, VLD=60, VADD=53, VSHR=50, VST=60.</p>
+        <div class="box">Total = 2 + 60+60+53+50+60 = <strong>285 cycles</strong></div>
+        <div class="box">Speedup = 2004/285 = <strong>7.03x</strong></div>
+      </div></details>
+    </div>
+
+    <div class="part">
+      <span class="part-label">Part 4.4 &mdash; Memory Bank Analysis &nbsp;(10 pts)</span>
+      <p class="part-q">16 banks, bank latency=11 cycles. $A[k]$ maps to bank $k\bmod16$.</p>
+      <p class="part-q"><strong>(a) Stride=1.</strong> First access to bank 0 is at cycle 1. When is the next? Is there a conflict?</p>
+      <div class="calc-row">
+        <span style="font-size:13.5px">Next access to bank 0 at cycle:</span>
+        <input id="q4s1" class="ans-input" placeholder="?" style="width:70px">
+        <button class="check-btn" onclick="ck1('q4s1',17,'q4s1fb')">Check</button>
+        <span id="q4s1fb" class="feedback"></span>
+      </div>
+      <details class="sol" style="margin-bottom:16px"><summary></summary><div class="sol-body">
+        <p>Stride-1 uses 16 consecutive banks. Return to bank 0 after 16 accesses = <strong>cycle 17</strong>.</p>
+        <p>Bank 0 finishes at cycle 12. Since 17 &gt; 12 &rArr; <strong>no conflict</strong>. &#10003;</p>
+        <p>16 banks &ge; 11-cycle latency: always enough gap between same-bank accesses.</p>
+      </div></details>
+      <p class="part-q"><strong>(b) Stride=4.</strong> Accesses: A[0],A[4],A[8],A[12],A[16],...
+        How many unique banks? Gap between same-bank accesses? Stall penalty?</p>
+      <div class="calc-row">
+        <label>Unique banks =</label>
+        <input id="q4b4" class="ans-input" placeholder="?" style="width:70px">
+        <label style="margin-left:10px">Gap =</label>
+        <input id="q4g4" class="ans-input" placeholder="? cyc" style="width:80px">
+        <label style="margin-left:10px">Stall =</label>
+        <input id="q4st4" class="ans-input" placeholder="? cyc" style="width:80px">
+        <button class="check-btn" onclick="ck3w('q4b4','q4g4','q4st4',4,4,7,'q4b4fb')">Check</button>
+        <span id="q4b4fb" class="feedback"></span>
+      </div>
+      <details class="sol"><summary></summary><div class="sol-body">
+        <p>Banks: 0,4,8,12,0,4,... &rArr; GCD(4,16)=4, only <strong>4 unique banks</strong>.</p>
+        <p>Return to bank 0 every 4 accesses = <strong>gap of 4 cycles</strong>.</p>
+        <div class="box">Stall = bank latency - gap = 11 - 4 = <strong>7 cycles</strong> per re-access</div>
+        <p>Every 4th element causes a 7-cycle stall, drastically reducing throughput.</p>
+      </div></details>
+    </div>
+
+  </div>
+</div>
+
+<div style="text-align:center;color:#94a3b8;font-size:13px;padding:20px 0 40px">
+  &mdash; End of Practice Exam &mdash;<br>
+  <a href="index.html" style="color:#3b82f6;margin-top:6px;display:inline-block">&#8592; Back to Study Guide</a>
+</div>
+
+</div>
 
 <script>
-// ─── TIMER ───────────────────────────────────────────
-var timeLeft = 90 * 60;
-var timerEl = document.getElementById("timer");
-var timerInterval = setInterval(function() {
-  var m = Math.floor(timeLeft / 60);
-  var s = timeLeft % 60;
-  timerEl.textContent = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
-  if (timeLeft <= 300) timerEl.className = "danger";
-  else if (timeLeft <= 900) timerEl.className = "warn";
-  if (timeLeft > 0) timeLeft--;
-  else clearInterval(timerInterval);
-}, 1000);
+let sec=90*60;
+const tmr=document.getElementById('timer');
+setInterval(()=>{
+  if(sec<=0){tmr.textContent='00:00';return;}sec--;
+  const m=Math.floor(sec/60),s=sec%60;
+  tmr.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  tmr.className=sec<=300?'danger':sec<=900?'warn':'';
+},1000);
 
-// ─── SCORE TRACKING ──────────────────────────────────
-var revealed = 0;
-var totalSubs = 20;
-var scores = {};
-function updateBadge() {
-  document.getElementById("score-badge").textContent = "Revealed: " + revealed + " / " + totalSubs;
-  document.getElementById("progress-fill").style.width = (revealed / totalSubs * 100) + "%";
+function fb(id,ok,y,n){const e=document.getElementById(id);if(e){e.className='feedback '+(ok?'ok':'no');e.textContent=ok?y:n;}}
+function nr(v,a,t=0.06){return Math.abs(v-a)<=t*(Math.abs(a)||1)+0.01;}
+function cv(id){const e=document.getElementById(id);return parseFloat(e.value.replace(/[,x]/g,''));}
+
+function ck1(id,a,fid,t=0.05){
+  const e=document.getElementById(id),ok=nr(cv(id),a,t);
+  e.className='ans-input '+(ok?'correct':'wrong');
+  fb(fid,ok,'Correct!','Try again');upd();
 }
-document.querySelectorAll(".sol-wrap").forEach(function(d) {
-  d.addEventListener("toggle", function() {
-    if (d.open) { revealed++; updateBadge(); }
+function ck2(i1,i2,a1,a2,fid){
+  const o1=nr(cv(i1),a1),o2=nr(cv(i2),a2);
+  document.getElementById(i1).className='ans-input '+(o1?'correct':'wrong');
+  document.getElementById(i2).className='ans-input '+(o2?'correct':'wrong');
+  fb(fid,o1&&o2,'Both correct!','Some wrong');upd();
+}
+function ck3w(i1,i2,i3,a1,a2,a3,fid){
+  const os=[nr(cv(i1),a1),nr(cv(i2),a2),nr(cv(i3),a3)];
+  [i1,i2,i3].forEach((id,k)=>{document.getElementById(id).className='ans-input '+(os[k]?'correct':'wrong');});
+  fb(fid,os.every(Boolean),'All correct!','Some wrong');upd();
+}
+function ck5(i1,i2,i3,i4,i5,a1,a2,a3,a4,a5,fid){
+  const ids=[i1,i2,i3,i4,i5],ans=[a1,a2,a3,a4,a5];
+  const os=ids.map((id,k)=>{const o=nr(cv(id),ans[k]);document.getElementById(id).className='ans-input '+(o?'correct':'wrong');return o;});
+  fb(fid,os.every(Boolean),'All correct!','Some wrong — check each');upd();
+}
+function ckRng(id,lo,hi,fid){
+  const v=cv(id),ok=v>=lo&&v<=hi;
+  document.getElementById(id).className='ans-input '+(ok?'correct':'wrong');
+  fb(fid,ok,'Correct!','Try again (~7x)');upd();
+}
+function ckTab(){
+  const rows=[
+    {id:'t1',ok:v=>v==='3'},
+    {id:'t2',ok:v=>v.toLowerCase()==='invalid'},
+    {id:'t3',ok:v=>v==='28'},
+    {id:'t4',ok:v=>v==='12'||v.toLowerCase()==='invalid'},
+  ];
+  let all=true;
+  rows.forEach(r=>{
+    const e=document.getElementById(r.id),o=r.ok(e.value.trim());
+    e.className=(o?'correct':'wrong');if(!o)all=false;
   });
-});
-
-// ─── CHECK FUNCTIONS ─────────────────────────────────
-function checkNum(inId, correct, tol, fbId, pts) {
-  var inp = document.getElementById(inId);
-  var fb = document.getElementById(fbId);
-  var val = parseFloat(inp.value);
-  inp.classList.remove("ok","err");
-  fb.classList.remove("ok","err");
-  if (isNaN(val)) { fb.textContent = "Enter a number"; fb.className = "fb err"; return; }
-  if (Math.abs(val - correct) <= tol) {
-    inp.classList.add("ok");
-    fb.textContent = "Correct! (+" + pts + " pts)";
-    fb.className = "fb ok";
-  } else {
-    inp.classList.add("err");
-    fb.textContent = "Not quite — check your calculation.";
-    fb.className = "fb err";
-  }
+  fb('tfb',all,'All correct!','Some wrong');upd();
 }
-function checkTwo(id1, c1, t1, id2, c2, t2, fbId, pts) {
-  var v1 = parseFloat(document.getElementById(id1).value);
-  var v2 = parseFloat(document.getElementById(id2).value);
-  var fb = document.getElementById(fbId);
-  var ok1 = !isNaN(v1) && Math.abs(v1-c1)<=t1;
-  var ok2 = !isNaN(v2) && Math.abs(v2-c2)<=t2;
-  document.getElementById(id1).classList.remove("ok","err");
-  document.getElementById(id2).classList.remove("ok","err");
-  fb.classList.remove("ok","err");
-  document.getElementById(id1).classList.add(ok1?"ok":"err");
-  document.getElementById(id2).classList.add(ok2?"ok":"err");
-  if (ok1 && ok2) { fb.textContent = "Both correct! (+" + pts + " pts)"; fb.className = "fb ok"; }
-  else { fb.textContent = (ok1?"First ok. ":"First wrong. ") + (ok2?"Second ok.":"Second wrong."); fb.className = "fb err"; }
+function ckAI(){
+  const of=nr(cv('q3fl'),1.6e7,0.11),ob=nr(cv('q3by'),4.8e5,0.11),oa=nr(cv('q3ai'),33.3,0.09);
+  document.getElementById('q3fl').className='ans-input '+(of?'correct':'wrong');
+  document.getElementById('q3by').className='ans-input '+(ob?'correct':'wrong');
+  document.getElementById('q3ai').className='ans-input '+(oa?'correct':'wrong');
+  fb('q3aifb',of&&ob&&oa,'All correct!','Check FLOPs, Bytes, AI');upd();
 }
-function checkThree(id1, c1, id2, c2, id3, c3, fbId, pts) {
-  var v1 = parseFloat(document.getElementById(id1).value);
-  var v2 = parseFloat(document.getElementById(id2).value);
-  var v3 = parseFloat(document.getElementById(id3).value);
-  var fb = document.getElementById(fbId);
-  var ok1 = !isNaN(v1) && Math.abs(v1-c1)<=0.1;
-  var ok2 = !isNaN(v2) && Math.abs(v2-c2)<=0.1;
-  var ok3 = !isNaN(v3) && Math.abs(v3-c3)<=0.1;
-  [id1,id2,id3].forEach(function(id,i){ document.getElementById(id).classList.remove("ok","err"); document.getElementById(id).classList.add([ok1,ok2,ok3][i]?"ok":"err"); });
-  fb.classList.remove("ok","err");
-  if (ok1&&ok2&&ok3) { fb.textContent = "All correct! (+" + pts + " pts)"; fb.className = "fb ok"; }
-  else { fb.textContent = "Some wrong — check solutions."; fb.className = "fb err"; }
+function ckBound(){
+  const sel=document.getElementById('q3bnd'),okB=sel.value==='compute';
+  sel.style.borderColor=okB?'#16a34a':'#dc2626';
+  const okP=nr(cv('q3pf'),200,0.03);
+  document.getElementById('q3pf').className='ans-input '+(okP?'correct':'wrong');
+  fb('q3bndfb',okB&&okP,'Correct!','Check both');upd();
 }
-function checkThreeLoose(id1, c1, t1, id2, c2, t2, id3, c3, t3, fbId, pts) {
-  var v1 = parseFloat(document.getElementById(id1).value);
-  var v2 = parseFloat(document.getElementById(id2).value);
-  var v3 = parseFloat(document.getElementById(id3).value);
-  var fb = document.getElementById(fbId);
-  var ok1 = !isNaN(v1) && Math.abs(v1-c1)<=t1;
-  var ok2 = !isNaN(v2) && Math.abs(v2-c2)<=t2;
-  var ok3 = !isNaN(v3) && Math.abs(v3-c3)<=t3;
-  [id1,id2,id3].forEach(function(id,i){ document.getElementById(id).classList.remove("ok","err"); document.getElementById(id).classList.add([ok1,ok2,ok3][i]?"ok":"err"); });
-  fb.classList.remove("ok","err");
-  if (ok1&&ok2&&ok3) { fb.textContent = "All correct! (+" + pts + " pts)"; fb.className = "fb ok"; }
-  else { fb.textContent = "Some wrong — review setup and try again."; fb.className = "fb err"; }
-}
-function checkText(inId, correct, fbId, pts) {
-  var inp = document.getElementById(inId);
-  var fb = document.getElementById(fbId);
-  var val = inp.value.toString().trim().toLowerCase().replace(/\s/g,"");
-  var cor = correct.toString().trim().toLowerCase();
-  inp.classList.remove("ok","err");
-  fb.classList.remove("ok","err");
-  if (val === cor || val === cor.replace(/\s/g,"")) {
-    inp.classList.add("ok"); fb.textContent = "✓"; fb.className = "fb ok";
-  } else {
-    inp.classList.add("err"); fb.textContent = "✗"; fb.className = "fb err";
-  }
-}
-function checkMCQ(name, correct, fbId, pts) {
-  var sel = document.querySelector("input[name='" + name + "']:checked");
-  var fb = document.getElementById(fbId);
-  fb.classList.remove("ok","err");
-  document.querySelectorAll("[data-mcq='" + name + "']").forEach(function(el) {
-    el.classList.remove("hit","miss","reveal-ok");
-    if (el.querySelector("input").value === correct) el.classList.add("reveal-ok");
+function ckFlynn(){
+  const ans={fl1:'SISD',fl2:'SIMD',fl3:'SIMD',fl4:'MIMD'};
+  let n=0;
+  Object.entries(ans).forEach(([id,a])=>{
+    const s=document.getElementById(id),ok=s.value===a;
+    s.style.borderColor=s.value?ok?'#16a34a':'#dc2626':'#cbd5e1';
+    if(ok)n++;
   });
-  if (!sel) { fb.textContent = "Select an option first."; fb.className = "fb err"; return; }
-  if (sel.value === correct) {
-    sel.closest("[data-mcq]").classList.add("hit");
-    fb.textContent = "Correct! (+" + pts + " pts)"; fb.className = "fb ok";
-  } else {
-    sel.closest("[data-mcq]").classList.add("miss");
-    fb.textContent = "Incorrect — see correct answer highlighted."; fb.className = "fb err";
-  }
+  fb('flynnfb',n===4,`All 4 correct!`,`${n}/4 correct`);upd();
 }
-function checkSelect(selectId, correct, fbId, pts) {
-  var sel = document.getElementById(selectId);
-  var fb = document.getElementById(fbId);
-  fb.classList.remove("ok","err");
-  if (sel.value === correct) { fb.textContent = "✓ " + correct; fb.className = "fb ok"; }
-  else if (!sel.value) { fb.textContent = "Select an option."; fb.className = "fb err"; }
-  else { fb.textContent = "✗ (Ans: " + correct + ")"; fb.className = "fb err"; }
+function ckScalar(){
+  const ans={s1:11,s2:11,s3:4,s4:1,s5:11,s6:2,stot:40};
+  let ok=true;
+  Object.entries(ans).forEach(([id,a])=>{
+    const e=document.getElementById(id),o=nr(parseFloat(e.value),a,0.01);
+    e.className=(o?'correct':'wrong');if(!o)ok=false;
+  });
+  fb('scfb',ok,'All correct!','Some wrong');upd();
 }
-
-// ─── PROCESSOR VISUALIZATION ─────────────────────────
-// 0=idle, 1=LD, 2=ADD, 3=ST
-var VIZ = {
-  scalar: {
-    title: "Scalar Processor — 1 PE, sequential — Total: 12 cycles",
-    ncycles: 12,
-    labels: ["E0 (PE):", "E1 (PE):", "E2 (PE):", "E3 (PE):"],
-    data: [
-      [1,2,3,0,0,0,0,0,0,0,0,0],
-      [0,0,0,1,2,3,0,0,0,0,0,0],
-      [0,0,0,0,0,0,1,2,3,0,0,0],
-      [0,0,0,0,0,0,0,0,0,1,2,3]
-    ]
-  },
-  array: {
-    title: "Array Processor — 4 PEs in parallel — Total: 3 cycles",
-    ncycles: 3,
-    labels: ["PE0 (E0):", "PE1 (E1):", "PE2 (E2):", "PE3 (E3):"],
-    data: [
-      [1,2,3],
-      [1,2,3],
-      [1,2,3],
-      [1,2,3]
-    ]
-  },
-  vector: {
-    title: "Vector Processor — pipeline depth 3 — Total: 6 cycles",
-    ncycles: 6,
-    labels: ["E0:", "E1:", "E2:", "E3:"],
-    data: [
-      [1,2,3,0,0,0],
-      [0,1,2,3,0,0],
-      [0,0,1,2,3,0],
-      [0,0,0,1,2,3]
-    ]
-  }
-};
-var OP_CLS = ["cID","cLD","cAD","cST"];
-var OP_LBL = ["\xB7","LD","ADD","ST"];
-var curMode = "scalar";
-var curStep = -1;
-var animTimer = null;
-
-function renderViz(mode, upTo) {
-  var d = VIZ[mode];
-  var nc = d.ncycles;
-  var html = "";
-  var colTpl = "72px repeat(" + nc + ", 1fr)";
-  // header
-  html += "<div class='t-row' style='grid-template-columns:" + colTpl + "'>";
-  html += "<div class='t-cell hd'>Element</div>";
-  for (var c = 0; c < nc; c++) html += "<div class='t-cell hd'>C" + (c+1) + "</div>";
-  html += "</div>";
-  // rows
-  for (var r = 0; r < d.data.length; r++) {
-    html += "<div class='t-row' style='grid-template-columns:" + colTpl + "'>";
-    html += "<div class='t-cell lbl'>" + d.labels[r] + "</div>";
-    for (var c = 0; c < nc; c++) {
-      var v = d.data[r][c];
-      var cls = OP_CLS[v];
-      var dim = (upTo >= 0 && c > upTo) ? " dim" : "";
-      var lbl = (upTo >= 0 && c > upTo) ? "\xB7" : OP_LBL[v];
-      html += "<div class='t-cell " + cls + dim + "'>" + lbl + "</div>";
-    }
-    html += "</div>";
-  }
-  document.getElementById("viz-grid").innerHTML = html;
-  document.getElementById("mode-title").textContent = d.title;
+function ckVec(){
+  const ans={v1:60,v2:60,v3:53,v4:50,v5:60};
+  let ok=true;
+  Object.entries(ans).forEach(([id,a])=>{
+    const e=document.getElementById(id),o=nr(parseFloat(e.value),a,0.01);
+    e.className=(o?'correct':'wrong');if(!o)ok=false;
+  });
+  fb('vecfb',ok,'All correct!','Some wrong');upd();
 }
-function switchMode(mode, btn) {
-  curMode = mode;
-  curStep = -1;
-  if (animTimer) { clearInterval(animTimer); animTimer = null; document.getElementById("play-btn").textContent = "\u25B6 Animate"; }
-  document.getElementById("cycle-info").textContent = "";
-  document.querySelectorAll(".vtab").forEach(function(b) { b.classList.remove("active"); });
-  btn.classList.add("active");
-  renderViz(mode, -1);
-}
-function playAnimation() {
-  if (animTimer) {
-    clearInterval(animTimer); animTimer = null;
-    document.getElementById("play-btn").textContent = "\u25B6 Animate";
-    return;
-  }
-  curStep = 0;
-  document.getElementById("play-btn").textContent = "\u23F8 Pause";
-  animTimer = setInterval(function() {
-    renderViz(curMode, curStep);
-    document.getElementById("cycle-info").textContent = "Cycle " + (curStep + 1) + " / " + VIZ[curMode].ncycles;
-    curStep++;
-    if (curStep >= VIZ[curMode].ncycles) {
-      clearInterval(animTimer); animTimer = null;
-      document.getElementById("play-btn").textContent = "\u25B6 Animate";
-      document.getElementById("cycle-info").textContent = "Done! Total: " + VIZ[curMode].ncycles + " cycles";
-    }
-  }, 650);
-}
-function resetViz() {
-  if (animTimer) { clearInterval(animTimer); animTimer = null; }
-  curStep = -1;
-  document.getElementById("play-btn").textContent = "\u25B6 Animate";
-  document.getElementById("cycle-info").textContent = "";
-  renderViz(curMode, -1);
-}
-// Initialize
-renderViz("scalar", -1);
-
-// ─── SCORE ────────────────────────────────────────────
-function revealScore() {
-  var section = document.getElementById("score-section");
-  section.style.display = "block";
-  document.getElementById("score-big").textContent = revealed;
-  document.getElementById("score-sub").textContent = "of " + totalSubs + " sub-questions revealed";
-  var pct = Math.round(revealed / totalSubs * 100);
-  var msg = pct < 30 ? "Keep going — you have more to review!" : pct < 70 ? "Good progress! Review the hard ones again." : "Great coverage! Make sure you understand every step.";
-  var grid = document.getElementById("score-grid");
-  grid.innerHTML = "<div class='score-card'><div class='sc-label'>Revealed</div><div class='sc-val'>" + revealed + "/" + totalSubs + "</div></div>"
-    + "<div class='score-card'><div class='sc-label'>Coverage</div><div class='sc-val'>" + pct + "%</div></div>"
-    + "<div class='score-card'><div class='sc-label'>Exam</div><div class='sc-val'>Mar 13</div></div>";
-  section.querySelector("div:last-child").textContent = msg;
-  section.scrollIntoView({behavior:"smooth"});
+function upd(){
+  let n=0;
+  document.querySelectorAll('.ans-input.correct').forEach(()=>n++);
+  document.querySelectorAll('.asm-num input.correct').forEach(()=>n++);
+  document.querySelectorAll('.conv-table td input.correct').forEach(()=>n++);
+  document.getElementById('sc').textContent=Math.min(n*3,120);
 }
 </script>
 </body>
